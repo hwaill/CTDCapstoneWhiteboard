@@ -1,3 +1,34 @@
 *{
-    background-color: aqua; /* test for css connected to html */
+    background-color: rgba(217, 232, 255);
+    color:black;
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; /* test for css connected to html */
+}
+#page-container{
+    width: 50%;
+    margin: 80px auto 0; 
+    text-align: center;
+}
+#navbar{
+    overflow: hidden;
+    top: 0;
+    padding: 20px;
+}
+#navbar a {
+    padding: .5em 1em;
+    text-align: center;
+    text-decoration: none;
+    font-weight: 450;
+    margin: 0 2rem;
+    width: 10%; 
+    margin: 0 1%;
+    font-size:larger;
+}
+#features-title{
+    margin-left: -700px;
+    font-size: 30px;
+    font-weight: 300;
+}
+#whiteboard{
+    margin-left: 350px;
+    width: 600px;
 }
