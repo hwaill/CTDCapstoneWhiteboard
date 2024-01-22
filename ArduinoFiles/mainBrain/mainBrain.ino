@@ -45,8 +45,6 @@ void setup() {
 	pinMode(SERVO_2_ENABLE, OUTPUT);
 	pinMode(SERVO_3_ENABLE, OUTPUT);
 	pinMode(SERVO_SIGNAL, OUTPUT);
-
-
 }
 
 void loop() {
@@ -82,7 +80,7 @@ void updateHallSensorValues() {
   }
 }
 
-
+//for pretty console printing
 const String SENT_HEADER = "SENT:     ";
 const String RECV_HEADER = "RECEIVED: ";
 
