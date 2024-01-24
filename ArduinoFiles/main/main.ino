@@ -19,7 +19,6 @@ const int SERVO_2_ENABLE = 7;
 const int SERVO_3_ENABLE = 8;
 const int SERVO_SIGNAL = 9;
 
-
 //holds button states
 boolean buttonStates[16];
 //holds hall effect sensor values
@@ -85,23 +84,3 @@ void updateHallSensorValues() {
 		hallSensorValues[i + 48] = analogRead(SIGNAL_HALL_MULTI4);
   }
 }
-
-void sendSingleGCODE(String stringToSend) {
-	Serial1.print("\r\n\r\n");
-	delay(2);
-  emptyGRBLSerialBuffer();
-  Serial.print(SENT_HEADER);
-  Serial.print(stringToSend);
-  Serial1.print(stringToSend);
-  Serial.print(waitGRBLSerial());
-}
-
-void sendMultipleGCODE(String stringsToSend[], int arrayLength) {
-	for(int i = 0; i < arrayLength; i++) {
-		sendSingleGCODE(stringsToSend[i]);
-	}
-}
-
-void emptyGRBLSerialBuffer() {
-  while(Serial1.available()) {
-    Serial1.read();

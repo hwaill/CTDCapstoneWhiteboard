@@ -10,11 +10,29 @@ String GCodeHandler::_SENT_HEADER = "SENT:     ";
 String GCodeHandler::_RECV_HEADER = "RECEIVED: ";
 
 void GCodeHandler::sendSingleGCODE(GCodeCommand command) {
-	_gcodeSerial->println(command.toString());
+	_wakeGRBLSerial();
+	_sendSingleGCODE(command);
 }
 
-void GCodeHandler::_sendMultipleGCODE(GCodeCommand commands[]) {
+void GCodeHandler::sendMultipleGCODE(GCodeCommand commands[], int numCommands) {
+	_wakeGRBLSerial();
+	_sendMultipleGCODE(commands, numCommands);
+}
 
+void GCodeHandler::_sendSingleGCODE(GCodeCommand command) {
+	_consoleSerial->println(command.toString());
+	_gcodeSerial->print(command.toString());
+	_gcodeSerial->print('\n');
+	String response = _waitGRBLSerial();
+	_consoleSerial->println(response);
+
+	if(response.equals("ok")) return;
+}
+
+void GCodeHandler::_sendMultipleGCODE(GCodeCommand commands[], int numCommands) {
+	for(int i = 0; i < numCommands; i++) {
+		_sendSingleGCODE(commands[i]);
+	}
 }
 
 void GCodeHandler::_wakeGRBLSerial() {
