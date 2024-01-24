@@ -1,28 +1,7 @@
 #include "GCodeCommand.h"
 
 GCodeCommand::GCodeCommand() {
-	GCodeCommand({}, 0);
-}
-
-GCodeCommand::GCodeCommand(GCodeCommandPair commandPairs[], int numPairs) {
-	_numPairs = numPairs;
-	for(int i = 0; i < numPairs; i++) {
-		_commandPairs[i] = commandPairs[i];
-	}
-}
-
-GCodeCommand GCodeCommand::createCommandFromString(String input) {
 	
-}
-
-void GCodeCommand::addCommandPair(String type, double value) {
-	if(_numPairs < 6) {
-		if(_numPairs == 0) {
-			_commandPairs[_numPairs++] = GCodeCommandPair(type, value, true);
-		} else {
-			_commandPairs[_numPairs++] = GCodeCommandPair(type, value);
-		}
-	}
 }
 
 String GCodeCommand::toString() {

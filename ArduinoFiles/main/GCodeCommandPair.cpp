@@ -10,6 +10,14 @@ GCodeCommandPair::GCodeCommandPair(String type, double value, boolean isPrimaryP
 	_isPrimaryPair = isPrimaryPair;
 }
 
+GCodeCommandPair GCodeCommandPair::createGCodeCommandPairFromString(String input, boolean isPrimaryPair) {
+	String type = input.substring(0, 1);
+	boolean isNegative = input.substring(1, 2).equals("-") ? true : false;
+	double value = isNegative ? input.substring(2).toDouble() * -1 : input.substring(1).toDouble();
+
+	return GCodeCommandPair(type, value, isPrimaryPair);
+}
+
 String GCodeCommandPair::toString() {
 	String toReturn = "";
 
