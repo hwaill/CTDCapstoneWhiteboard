@@ -1,5 +1,4 @@
 #include "GCodeHandler.h"
-#include "Arduino.h"
 
 GCodeHandler::GCodeHandler(Stream &gcodeSerial, Stream &consoleSerial) {
 	_gcodeSerial = &gcodeSerial;

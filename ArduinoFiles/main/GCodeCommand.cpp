@@ -11,6 +11,10 @@ GCodeCommand::GCodeCommand(GCodeCommandPair commandPairs[], int numPairs) {
 	}
 }
 
+GCodeCommand GCodeCommand::createCommandFromString(String input) {
+	
+}
+
 void GCodeCommand::addCommandPair(String type, double value) {
 	if(_numPairs < 6) {
 		if(_numPairs == 0) {

@@ -6,6 +6,8 @@ class GCodeCommand {
 	public:
 		GCodeCommand(GCodeCommandPair commandPairs[], int numPairs);
 		GCodeCommand();
+
+		static GCodeCommand createCommandFromString(String input);
 		
 		void addCommandPair(String type, double value);
 		String toString();
