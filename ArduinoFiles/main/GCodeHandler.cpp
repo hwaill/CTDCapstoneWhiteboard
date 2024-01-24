@@ -3,6 +3,8 @@
 GCodeHandler::GCodeHandler(Stream &gcodeSerial, Stream &consoleSerial) {
 	_gcodeSerial = &gcodeSerial;
 	_consoleSerial = &consoleSerial;
+
+	library = GCodeLibrary();
 }
 
 String GCodeHandler::_SENT_HEADER = "SENT:     ";
