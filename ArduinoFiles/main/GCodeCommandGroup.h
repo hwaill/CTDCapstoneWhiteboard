@@ -9,7 +9,6 @@ class GCodeCommandGroup {
 
 		GCodeCommand* getCommands();
 		int getNumCommands();
-
 	private:
 		GCodeCommand *_commands;
 		int _numCommands;

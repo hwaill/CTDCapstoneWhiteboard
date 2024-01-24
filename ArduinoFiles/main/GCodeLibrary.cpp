@@ -10,6 +10,7 @@ GCodeLibrary::GCodeLibrary() {
 
 }
 
+
 void GCodeLibrary::generateAlphabet() {
 	for(int i = 0; i < 1; i++) {
 		alphabetGroups[i] = _generateCommandGroupFromGCodeCharacter(alphabetGcode[i]);
