@@ -3,11 +3,6 @@
     color:black;
     font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; /* test for css connected to html */
 }
-#page-container{
-    width: 50%;
-    margin: 80px auto 0; 
-    text-align: center;
-}
 #navbar{
     overflow: hidden;
     top: 0;
@@ -23,12 +18,61 @@
     margin: 0 1%;
     font-size:larger;
 }
+#navbar a:hover{
+    color:rgb(55, 59, 171);
+}
+/* -----------Board Display Tab (Index.html)---------- */
+#page-container{
+    display: flex;
+    flex-direction: row;
+    text-align: center;
+    margin-left: 250px;
+    margin-top: 100px;
+}
 #features-title{
-    margin-left: -700px;
     font-size: 30px;
     font-weight: 300;
 }
+#features-list {
+    text-align: left;
+    padding-right: 200px;
+}
 #whiteboard{
-    margin-left: 350px;
     width: 600px;
 }
+/* -----------End of Board Display Tab (Index.html)---------- */
+/* ---------Edit Features Tab---------- */
+.dot1 {
+    background-color: #7ec0b0;
+}
+.dot2 {
+    background-color: #9c89cf;
+}
+.dot3 {
+    background-color: #6386ec;
+}
+button.dot1:hover{
+    background-color: #4b7b6f;
+}
+button.dot2:hover{
+    background-color: #6f5f9b;
+}
+button.dot3:hover{
+    background-color: #405bac;
+}
+#dot-container{
+    width: 50%;
+    margin: 80px auto 0; 
+    text-align: center;
+}
+#dot{
+    height: 250px;
+    width: 250px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 10px;
+    border: none;
+    font-size: 30px;
+    font-weight: 500;
+}
+/* ---------End of Edit Features Tab---------- */
