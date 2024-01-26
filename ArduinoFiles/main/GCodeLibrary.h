@@ -9,7 +9,7 @@
 struct gcodeCharacter {
 	String text;
 	int numCommands;
-	int numPairs[];
+	String numPairs;
 };
 
 class GCodeLibrary {
@@ -18,10 +18,12 @@ class GCodeLibrary {
 
 		void generateAlphabet();
 		GCodeCommandGroup alphabetGroups[52];
-	private:
-		void _generateAlphabet();
 		GCodeCommandPair _generateCommandPairFromString(String input);
 		GCodeCommand _generateCommandFromString(String input, int numPairs);
+	private:
+		void _generateAlphabet();
+		// GCodeCommandPair _generateCommandPairFromString(String input);
+		// GCodeCommand _generateCommandFromString(String input, int numPairs);
 		GCodeCommandGroup _generateCommandGroupFromGCodeCharacter(gcodeCharacter);
 };
 

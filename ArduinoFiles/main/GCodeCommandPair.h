@@ -4,11 +4,10 @@
 
 class GCodeCommandPair {
 	public:
-		GCodeCommandPair();
+		GCodeCommandPair() = default;
 		GCodeCommandPair(String type, double value);
 		String toString();
 		String toStringAtCoordinate(double x, double y);
-		
 	private:
 		String _type;
 		double _value;

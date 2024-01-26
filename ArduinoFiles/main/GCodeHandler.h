@@ -10,6 +10,7 @@ class GCodeHandler {
 		GCodeHandler(Stream &gcodeSerial, Stream &consoleSerial);
 
 		void sendSingleGCODE(GCodeCommand command);
+		void sendSingleGCODE(String command);
 		void sendMultipleGCODE(GCodeCommand commands[], int numCommands);
 
 		GCodeLibrary library;

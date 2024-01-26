@@ -5,6 +5,7 @@
 
 class GCodeCommandGroup {
 	public:
+		GCodeCommandGroup() = default;
 		GCodeCommandGroup(GCodeCommand *commands, int numCommands);
 
 		GCodeCommand* getCommands();

@@ -1,10 +1,9 @@
 #include "GCodeHandler.h"
+#include "GCodeLibrary.h"
 
 GCodeHandler::GCodeHandler(Stream &gcodeSerial, Stream &consoleSerial) {
 	_gcodeSerial = &gcodeSerial;
 	_consoleSerial = &consoleSerial;
-
-	library = GCodeLibrary();
 }
 
 String GCodeHandler::_SENT_HEADER = "SENT:     ";
@@ -23,6 +22,16 @@ void GCodeHandler::sendMultipleGCODE(GCodeCommand commands[], int numCommands) {
 void GCodeHandler::_sendSingleGCODE(GCodeCommand command) {
 	_consoleSerial->println(command.toString());
 	_gcodeSerial->print(command.toString());
+	_gcodeSerial->print('\n');
+	String response = _waitGRBLSerial();
+	_consoleSerial->println(response);
+
+	if(response.equals("ok")) return;
+}
+
+void GCodeHandler::sendSingleGCODE(String command) {
+	_consoleSerial->println(command);
+	_gcodeSerial->print(command);
 	_gcodeSerial->print('\n');
 	String response = _waitGRBLSerial();
 	_consoleSerial->println(response);
