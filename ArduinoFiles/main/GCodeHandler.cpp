@@ -1,5 +1,4 @@
 #include "GCodeHandler.h"
-#include "GCodeLibrary.h"
 
 GCodeHandler::GCodeHandler(Stream &gcodeSerial, Stream &consoleSerial) {
 	_gcodeSerial = &gcodeSerial;
@@ -8,26 +7,6 @@ GCodeHandler::GCodeHandler(Stream &gcodeSerial, Stream &consoleSerial) {
 
 String GCodeHandler::_SENT_HEADER = "SENT:     ";
 String GCodeHandler::_RECV_HEADER = "RECEIVED: ";
-
-void GCodeHandler::sendSingleGCODE(GCodeCommand command) {
-	_wakeGRBLSerial();
-	_sendSingleGCODE(command);
-}
-
-void GCodeHandler::sendMultipleGCODE(GCodeCommand commands[], int numCommands) {
-	_wakeGRBLSerial();
-	_sendMultipleGCODE(commands, numCommands);
-}
-
-void GCodeHandler::_sendSingleGCODE(GCodeCommand command) {
-	_consoleSerial->println(command.toString());
-	_gcodeSerial->print(command.toString());
-	_gcodeSerial->print('\n');
-	String response = _waitGRBLSerial();
-	_consoleSerial->println(response);
-
-	if(response.equals("ok")) return;
-}
 
 void GCodeHandler::sendSingleGCODE(String command) {
 	_consoleSerial->println(command);
@@ -39,9 +18,9 @@ void GCodeHandler::sendSingleGCODE(String command) {
 	if(response.equals("ok")) return;
 }
 
-void GCodeHandler::_sendMultipleGCODE(GCodeCommand commands[], int numCommands) {
+void GCodeHandler::sendMultipleGCODE(String commands[], int numCommands) {
 	for(int i = 0; i < numCommands; i++) {
-		_sendSingleGCODE(commands[i]);
+		sendSingleGCODE(commands[i]);
 	}
 }
 
