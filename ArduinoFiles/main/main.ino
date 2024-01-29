@@ -24,16 +24,13 @@ boolean buttonStates[16];
 //holds hall effect sensor values
 int hallSensorValues[64];
 
-GCodeHandler myGCodeHandler;
+GCodeHandler myGCodeHandler(Serial1, Serial);
 
 void setup() {
 	//Serial is used to communicate with the console
 	Serial.begin(115200);
 	//Serial1 is used to communicate with the CNC arduino
 	Serial1.begin(115200);
-
-	//Serial1 refers to the gcode communication stream, Serial refers to the user console
-	myGCodeHandler = GCodeHandler(Serial1, Serial);
 
 	pinMode(MULTI_SELECT0, OUTPUT);
 	pinMode(MULTI_SELECT1, OUTPUT);
@@ -53,7 +50,9 @@ void setup() {
 }
 
 void loop() {
-
+	Serial.println(myGCodeHandler._mapGCODEToPositionAndScale({"G01 X2.877939 Y0.000000 Z-0.2 F10000.000000",5}, 0, 0, 1));
+	Serial.println(myGCodeHandler._mapGCODEToPositionAndScale({"G01 X2.877939 Y0.000000 Z-0.2 F10000.000000",5}, 20, 20, 2));
+	delay(8000);
 }
 
 //reads all button states in just over 1ms
