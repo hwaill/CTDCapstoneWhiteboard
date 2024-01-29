@@ -1,6 +1,10 @@
+#ifndef GCodeLibrary
+#define GCodeLibrary
+#include "Arduino.h"
+
 struct gcodeCommandString {
-	String commandString;
-	int numPairs;
+	char* commandString;
+	byte numPairs;
 };
 
 /* Indices for characters:
@@ -9,8 +13,8 @@ struct gcodeCommandString {
 26 - 51: a - z
 52 - 61: 0 - 9
 
-
 */
+
 const int LETTER_COMMAND_COUNT[26] {
 	15,
 	28,
@@ -40,7 +44,7 @@ const int LETTER_COMMAND_COUNT[26] {
 	13
 };
 
-const gcodeCommandString GC_CAP_A[LETTER_COMMAND_COUNT[0]] = {
+const gcodeCommandString GC_CAP_A[15] = {
 	{"G00 Z0.2",3},
 	{"G00 X9.278739 Y16.814800",3},
 	{"G01 Z-0.2 F10000.0",3},
@@ -58,7 +62,7 @@ const gcodeCommandString GC_CAP_A[LETTER_COMMAND_COUNT[0]] = {
 	{"G00 Z0.2",2}
 };
 
-const gcodeCommandString GC_CAP_B[LETTER_COMMAND_COUNT[1]] = {
+const gcodeCommandString GC_CAP_B[28] = {
 	{"G00 Z0.2",2},
 	{"G00 X1.854380 Y16.945800",3},
 	{"G01 Z-0.2 F10000.0",3},
@@ -89,7 +93,7 @@ const gcodeCommandString GC_CAP_B[LETTER_COMMAND_COUNT[1]] = {
 	{"G00 Z0.2",2}
 };
 
-const gcodeCommandString GC_CAP_C[LETTER_COMMAND_COUNT[2]] = {
+const gcodeCommandString GC_CAP_C[21] = {
 	{"G00 Z0.2",2},
 	{"G00 X16.814800 Y12.932600",3},
 	{"G01 Z-0.2 F10000.0",3},
@@ -113,7 +117,7 @@ const gcodeCommandString GC_CAP_C[LETTER_COMMAND_COUNT[2]] = {
 	{"G00 Z0.2",2}
 };
 	
-const gcodeCommandString GC_CAP_D[LETTER_COMMAND_COUNT[3]] = {
+const gcodeCommandString GC_CAP_D[19] = {
 	{"G00 Z0.2",2},
 	{"G00 X5.265539 Y16.814800",3},
 	{"G01 Z-0.2 F10000.0",3},
@@ -135,7 +139,7 @@ const gcodeCommandString GC_CAP_D[LETTER_COMMAND_COUNT[3]] = {
 	{"G00 Z0.2",2}
 };
 
-const gcodeCommandString GC_CAP_D[LETTER_COMMAND_COUNT[4]] = {
+const gcodeCommandString GC_CAP_E[17] = {
 	{"G00 Z0.2",2},
 	{"G00 X5.265539 Y16.814800",3},
 	{"G01 Z-0.2 F10000.0",3},
@@ -155,7 +159,7 @@ const gcodeCommandString GC_CAP_D[LETTER_COMMAND_COUNT[4]] = {
 	{"G00 Z0.2",2}
 };
 
-const gcodeCommandString GC_CAP_F[LETTER_COMMAND_COUNT[5]] = {
+const gcodeCommandString GC_CAP_F[13] = {
 	{"G00 Z0.2",2},
 	{"G00 X5.588000 Y16.945800",3},
 	{"G01 Z-0.2 F10000.0",3},
@@ -171,7 +175,7 @@ const gcodeCommandString GC_CAP_F[LETTER_COMMAND_COUNT[5]] = {
 	{"G00 Z0.2",2}
 };
 
-const gcodeCommandString GC_CAP_G[LETTER_COMMAND_COUNT[6]] = {
+const gcodeCommandString GC_CAP_G[26] = {
 	{"G00 Z0.2",2},
 	{"G00 X16.492339 Y12.801600",3},
 	{"G01 Z-0.2 F10000.0",3},
@@ -200,7 +204,7 @@ const gcodeCommandString GC_CAP_G[LETTER_COMMAND_COUNT[6]] = {
 	{"G00 Z0.2",2}
 };
 
-const gcodeCommandString GC_CAP_H[LETTER_COMMAND_COUNT[7]] = {
+const gcodeCommandString GC_CAP_H[13] = {
 	{"G00 Z0.2",2},
 	{"G00 X5.265539 Y16.814800",3},
 	{"G01 Z-0.2 F10000.0",3},
@@ -216,7 +220,7 @@ const gcodeCommandString GC_CAP_H[LETTER_COMMAND_COUNT[7]] = {
 	{"G00 Z0.2",2}
 };
 
-const gcodeCommandString GC_CAP_I[LETTER_COMMAND_COUNT[8]] = {
+const gcodeCommandString GC_CAP_I[5] = {
 	{"G00 Z0.2",2},
 	{"G00 X5.588000 Y16.945800",3},
 	{"G01 Z-0.2 F10000.0",3},
@@ -224,7 +228,7 @@ const gcodeCommandString GC_CAP_I[LETTER_COMMAND_COUNT[8]] = {
 	{"G00 Z0.2",2}
 };
 
-const gcodeCommandString GC_CAP_J[LETTER_COMMAND_COUNT[9]] = {
+const gcodeCommandString GC_CAP_J[13] = {
 	{"G00 Z0.2",2},
 	{"G00 X11.666339 Y16.814800",3},
 	{"G01 Z-0.2 F10000.0",3},
@@ -240,7 +244,7 @@ const gcodeCommandString GC_CAP_J[LETTER_COMMAND_COUNT[9]] = {
 	{"G00 Z0.2",2}
 };
 
-const gcodeCommandString GC_CAP_K[LETTER_COMMAND_COUNT[10]] = {
+const gcodeCommandString GC_CAP_K[13] = {
 	{"G00 Z0.2",2},
 	{"G00 X5.265539 Y16.814800",3},
 	{"G01 Z-0.2 F10000.0",3},
@@ -256,7 +260,7 @@ const gcodeCommandString GC_CAP_K[LETTER_COMMAND_COUNT[10]] = {
 	{"G00 Z0.2",2}
 };
 
-const gcodeCommandString GC_CAP_L[LETTER_COMMAND_COUNT[11]] = {
+const gcodeCommandString GC_CAP_L[9] = {
 	{"G00 Z0.2",2},
 	{"G00 X5.265539 Y16.814800",3},
 	{"G01 Z-0.2 F10000.0",3},
@@ -268,7 +272,7 @@ const gcodeCommandString GC_CAP_L[LETTER_COMMAND_COUNT[11]] = {
 	{"G00 Z0.2",2}
 };
 
-const gcodeCommandString GC_CAP_M[LETTER_COMMAND_COUNT[12]] = {
+const gcodeCommandString GC_CAP_M[17] = {
 	{"G00 Z0.2",2},
 	{"G00 X5.265539 Y16.814800",3},
 	{"G01 Z-0.2 F10000.0",3},
@@ -288,7 +292,7 @@ const gcodeCommandString GC_CAP_M[LETTER_COMMAND_COUNT[12]] = {
 	{"G00 Z0.2",2}
 };
 
-const gcodeCommandString GC_CAP_N[LETTER_COMMAND_COUNT[13]] = {
+const gcodeCommandString GC_CAP_N[13] = {
 	{"G00 Z0.2",2},
 	{"G00 X5.265539 Y16.814800",3},
 	{"G01 Z-0.2 F10000.0",3},
@@ -297,14 +301,14 @@ const gcodeCommandString GC_CAP_N[LETTER_COMMAND_COUNT[13]] = {
 	{"G00 X5.265539 Y16.814800",3},
 	{"G01 Z-0.2 F10000.0",3},
 	{"G01 X16.492339 Y0.000000 Z-0.2 F10000.000000",5},
-	{"G00 Z0.2",#},
+	{"G00 Z0.2",2},
 	{"G00 X16.492339 Y16.814800",3},
 	{"G01 Z-0.2 F10000.0",3},
 	{"G01 X16.492339 Y0.000000 Z-0.2 F10000.000000",5},
 	{"G00 Z0.2",2}
 };
 
-const gcodeCommandString GC_CAP_O[LETTER_COMMAND_COUNT[14]] = {
+const gcodeCommandString GC_CAP_O[24] = {
 	{"G00 Z0.2",2},
 	{"G00 X9.278739 Y16.814800",3},
 	{"G01 Z-0.2 F10000.0",3},
@@ -331,7 +335,7 @@ const gcodeCommandString GC_CAP_O[LETTER_COMMAND_COUNT[14]] = {
 	{"G00 Z0.2",2}
 };
 
-const gcodeCommandString GC_CAP_P[LETTER_COMMAND_COUNT[15]] = {
+const gcodeCommandString GC_CAP_P[17] = {
 	{"G00 Z0.2",2},
 	{"G00 X5.265539 Y16.814800",3},
 	{"G01 Z-0.2 F10000.0",3},
@@ -351,7 +355,7 @@ const gcodeCommandString GC_CAP_P[LETTER_COMMAND_COUNT[15]] = {
 	{"G00 Z0.2",2}
 };
 
-const gcodeCommandString GC_CAP_Q[LETTER_COMMAND_COUNT[16]] = {
+const gcodeCommandString GC_CAP_Q[28] = {
 	{"G00 Z0.2",2},
 	{"G00 X9.278739 Y16.814800",3},
 	{"G01 Z-0.2 F10000.0",3},
@@ -382,7 +386,7 @@ const gcodeCommandString GC_CAP_Q[LETTER_COMMAND_COUNT[16]] = {
 	{"G00 Z0.2",2}
 };
 
-const gcodeCommandString GC_CAP_R[LETTER_COMMAND_COUNT[17]] = {
+const gcodeCommandString GC_CAP_R[21] = {
 	{"G00 Z0.2",2},
 	{"G00 X5.265539 Y16.814800",3},
 	{"G01 Z-0.2 F10000.0",3},
@@ -406,7 +410,7 @@ const gcodeCommandString GC_CAP_R[LETTER_COMMAND_COUNT[17]] = {
 	{"G00 Z0.2",2}
 };
 
-const gcodeCommandString GC_CAP_S[LETTER_COMMAND_COUNT[18]] = {
+const gcodeCommandString GC_CAP_S[23] = {
 	{"G00 Z0.2",2},
 	{"G00 X15.679539 Y14.401800",3},
 	{"G01 Z-0.2 F10000.0",3},
@@ -432,7 +436,7 @@ const gcodeCommandString GC_CAP_S[LETTER_COMMAND_COUNT[18]] = {
 	{"G00 Z0.2",2}
 };
 
-const gcodeCommandString GC_CAP_T[LETTER_COMMAND_COUNT[19]] = {
+const gcodeCommandString GC_CAP_T[9] = {
 	{"G00 Z0.2",2},
 	{"G00 X8.465939 Y16.814800",3},
 	{"G01 Z-0.2 F10000.0",3},
@@ -444,7 +448,7 @@ const gcodeCommandString GC_CAP_T[LETTER_COMMAND_COUNT[19]] = {
 	{"G00 Z0.2",2}
 };
 
-const gcodeCommandString GC_CAP_U[LETTER_COMMAND_COUNT[20]] = {
+const gcodeCommandString GC_CAP_U[13] = {
 	{"G00 Z0.2",2},
 	{"G00 X5.265539 Y16.814800",3},
 	{"G01 Z-0.2 F10000.0",3},
@@ -460,7 +464,7 @@ const gcodeCommandString GC_CAP_U[LETTER_COMMAND_COUNT[20]] = {
 	{"G00 Z0.2",2}
 };
 
-const gcodeCommandString GC_CAP_V[LETTER_COMMAND_COUNT[21]] = {
+const gcodeCommandString GC_CAP_V[9] = {
 	{"G00 Z0.2",2},
 	{"G00 X2.877939 Y16.814800",3},
 	{"G01 Z-0.2 F10000.0",3},
@@ -472,7 +476,7 @@ const gcodeCommandString GC_CAP_V[LETTER_COMMAND_COUNT[21]] = {
 	{"G00 Z0.2",2}
 };
 
-const gcodeCommandString GC_CAP_W[LETTER_COMMAND_COUNT[22]] = {
+const gcodeCommandString GC_CAP_W[17] = {
 	{"G00 Z0.2",2},
 	{"G00 X3.690739 Y16.814800",3},
 	{"G01 Z-0.2 F10000.0",3},
@@ -492,7 +496,7 @@ const gcodeCommandString GC_CAP_W[LETTER_COMMAND_COUNT[22]] = {
 	{"G00 Z0.2",2}
 };
 
-const gcodeCommandString GC_CAP_X[LETTER_COMMAND_COUNT[23]] = {
+const gcodeCommandString GC_CAP_X[9] = {
 	{"G00 Z0.2",2},
 	{"G00 X4.478139 Y16.814800",3},
 	{"G01 Z-0.2 F10000.0",3},
@@ -504,7 +508,7 @@ const gcodeCommandString GC_CAP_X[LETTER_COMMAND_COUNT[23]] = {
 	{"G00 Z0.2",2}
 };
 
-const gcodeCommandString GC_CAP_Y[LETTER_COMMAND_COUNT[24]] = {
+const gcodeCommandString GC_CAP_Y[10] = {
 	{"G00 Z0.2",2},
 	{"G00 X2.877939 Y16.814800",3},
 	{"G01 Z-0.2 F10000.0",3},
@@ -517,7 +521,7 @@ const gcodeCommandString GC_CAP_Y[LETTER_COMMAND_COUNT[24]] = {
 	{"G00 Z0.2",2}
 };
 
-const gcodeCommandString GC_CAP_Z[LETTER_COMMAND_COUNT[25]] = {
+const gcodeCommandString GC_CAP_Z[13] = {
 	{"G00 Z0.2",2},
 	{"G00 X15.679539 Y16.814800",3},
 	{"G01 Z-0.2 F10000.0",3},
@@ -532,3 +536,5 @@ const gcodeCommandString GC_CAP_Z[LETTER_COMMAND_COUNT[25]] = {
 	{"G01 X15.679539 Y16.814800 Z-0.2 F10000.000000",5},
 	{"G00 Z0.2",2}
 };
+
+#endif

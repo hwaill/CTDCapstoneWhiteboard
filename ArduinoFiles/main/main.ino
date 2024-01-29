@@ -25,7 +25,6 @@ boolean buttonStates[16];
 int hallSensorValues[64];
 
 GCodeHandler myGCodeHandler(Serial1, Serial);
-GCodeLibrary myLibrary;
 
 void setup() {
 	//Serial is used to communicate with the console
@@ -51,13 +50,8 @@ void setup() {
 }
 
 void loop() {
-	//G00 X9.278739 
-	Serial.println(myLibrary._generateCommandPairFromString("X9.278739").toString());
-	Serial.println(myLibrary._generateCommandPairFromString("X9.278739").toStringAtCoordinate(50, 50));
-	Serial.println(myLibrary._generateCommandPairFromString("Y16.814800").toString());
-	Serial.println(myLibrary._generateCommandPairFromString("Y16.814800").toStringAtCoordinate(50, 50));
-	Serial.println(myLibrary._generateCommandFromString("G00 X9.278739 Y16.814800", 3)->toString());
-	Serial.println(myLibrary._generateCommandFromString("G00 X9.278739 Y16.814800", 3)->toStringAtCoordinate(30, 40));
+	Serial.println(myGCodeHandler._mapGCODEToPositionAndScale({"G01 X2.877939 Y0.000000 Z-0.2 F10000.000000",5}, 0, 0, 1));
+	Serial.println(myGCodeHandler._mapGCODEToPositionAndScale({"G01 X2.877939 Y0.000000 Z-0.2 F10000.000000",5}, 20, 20, 2));
 	delay(8000);
 }
 
