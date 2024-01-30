@@ -8,9 +8,12 @@ class GCodeHandler {
 	public:
 		GCodeHandler(Stream &gcodeSerial, Stream &consoleSerial);
 
-		void sendSingleGCODE(String command);
-		void sendMultipleGCODE(String commands[], int numCommands);
+		void sendSingleGCODE(char* command);
+		void sendSingleGCODE(const char* command);
+		void sendMultipleGCODE(char* commands[], int numCommands);
+		void sendMultipleGCODE(const char* commands[], int numCommands);
 		String _mapGCODEToPositionAndScale(gcodeCommandString command, double posX, double posY, double scaleX);
+		void initialize();
 	private:
 		Stream* _gcodeSerial;
 		Stream* _consoleSerial;
@@ -21,8 +24,6 @@ class GCodeHandler {
 		void _emptyGRBLSerialBuffer();
 		void _wakeGRBLSerial();
 		int _mapCharToIndex(char c);
-		void _sendSingleGCODE(String command);
-		void _sendMultipleGCODE(String commands[], int numCommands);
 };
 
 #endif

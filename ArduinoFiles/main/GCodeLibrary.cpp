@@ -15,7 +15,43 @@ struct gcodeCommandString {
 
 */
 
-const int LETTER_COMMAND_COUNT[26] {
+inline const char* GRBL_SETTINGS[33] = {
+	"$0=10", //step pulse time, microseconds
+	"$1=25", //step idle delay, microseconds
+	"$2=7", //step pulse invert, mask
+	"$3=0", //step directino invert, mask
+	"$4=1", //invert step enable pin, boolean
+	"$5=0", //invert limit pins, boolean
+	"$6=0", //invert probe pin, boolean
+	"$10=1", //status report options, mask
+	"$11=0.01", //junction deviation, mm
+	"$12=0.002", //arc tolerance, mm
+	"$13=0", //report in inches, boolean
+	"$20=0", //soft limits enable, boolean
+	"$21=0", //hard limits enable, boolean
+	"$22=0", //homing cycle enable, booleanm
+	"$23=0", //homing direction invert, mask
+	"$24=25", //homing locate feed rate, mm/min
+	"$25=500", //homing search seek rate, mm/min
+	"$26=250", //homing switch debounce delay, ms
+	"$27=1", //homing switch pull-off distance, mm
+	"$30=1000", //maximum spindle speed, RPM
+	"$31=0", //minimum spindle speed, RPM
+	"$100=106.667", //x-axis travel resolution, steps/mm
+	"$101=106.667", //y-axis travel resolution, steps/mm
+	"$102=250", //z-axis travel resolution, steps/mm
+	"$110=30000", //x-axis maximum rate, mm/min
+	"$111=30000", //y-axis maximum rate, mm/min
+	"$112=50000", //z-axis maximum rate, mm/min
+	"$120=800", //x-axis acceleration, mm/s^2
+	"$121=800", //y-axis acceleration, mm/s^2
+	"$122=500", //z-axis acceleration, mm/s^2
+	"$130=200", //x-axis maximum travel, mm
+	"$131=200", //y-axis maximum travel, mm
+	"$132=200" //z-axis maximum travel, mm
+};
+
+const int LETTER_COMMAND_COUNT[26] = {
 	15,
 	28,
 	21,

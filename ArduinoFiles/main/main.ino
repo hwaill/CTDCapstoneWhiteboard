@@ -31,6 +31,7 @@ void setup() {
 	Serial.begin(115200);
 	//Serial1 is used to communicate with the CNC arduino
 	Serial1.begin(115200);
+	delay(100);
 
 	pinMode(MULTI_SELECT0, OUTPUT);
 	pinMode(MULTI_SELECT1, OUTPUT);
@@ -47,11 +48,16 @@ void setup() {
 	pinMode(SERVO_2_ENABLE, OUTPUT);
 	pinMode(SERVO_3_ENABLE, OUTPUT);
 	pinMode(SERVO_SIGNAL, OUTPUT);
+
+	myGCodeHandler.initialize();
 }
 
 void loop() {
-	Serial.println(myGCodeHandler._mapGCODEToPositionAndScale({"G01 X2.877939 Y0.000000 Z-0.2 F10000.000000",5}, 0, 0, 1));
-	Serial.println(myGCodeHandler._mapGCODEToPositionAndScale({"G01 X2.877939 Y0.000000 Z-0.2 F10000.000000",5}, 20, 20, 2));
+	//Serial.println(myGCodeHandler._mapGCODEToPositionAndScale({"G01 X2.877939 Y0.000000 Z-0.2 F10000.000000",5}, 0, 0, 1));
+	//Serial.println(myGCodeHandler._mapGCODEToPositionAndScale({"G01 X2.877939 Y0.000000 Z-0.2 F10000.000000",5}, 20, 20, 2));
+	Serial.println("test");
+
+	myGCodeHandler.sendSingleGCODE("$$");
 	delay(8000);
 }
 

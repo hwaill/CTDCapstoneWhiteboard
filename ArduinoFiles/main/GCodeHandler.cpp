@@ -8,20 +8,38 @@ GCodeHandler::GCodeHandler(Stream &gcodeSerial, Stream &consoleSerial) {
 String GCodeHandler::_SENT_HEADER = "SENT:     ";
 String GCodeHandler::_RECV_HEADER = "RECEIVED: ";
 
-void GCodeHandler::sendSingleGCODE(String command) {
+void GCodeHandler::sendSingleGCODE(char* command) {
+	_consoleSerial->println(command);
+	_gcodeSerial->print(command);
+	_gcodeSerial->print('\n');
+	String response = _waitGRBLSerial();
+	_consoleSerial->print(response);
+}
+
+void GCodeHandler::sendSingleGCODE(const char* command) {
 	_consoleSerial->println(command);
 	_gcodeSerial->print(command);
 	_gcodeSerial->print('\n');
 	String response = _waitGRBLSerial();
 	_consoleSerial->println(response);
-
-	if(response.equals("ok")) return;
 }
 
-void GCodeHandler::sendMultipleGCODE(String commands[], int numCommands) {
+void GCodeHandler::sendMultipleGCODE(char* commands[], int numCommands) {
 	for(int i = 0; i < numCommands; i++) {
 		sendSingleGCODE(commands[i]);
 	}
+}
+
+void GCodeHandler::sendMultipleGCODE(const char* commands[], int numCommands) {
+	for(int i = 0; i < numCommands; i++) {
+		sendSingleGCODE(commands[i]);
+	}
+}
+
+void GCodeHandler::initialize() {
+	
+	_consoleSerial->println("INIT");
+	sendMultipleGCODE(GRBL_SETTINGS, 33);
 }
 
 void GCodeHandler::_wakeGRBLSerial() {
