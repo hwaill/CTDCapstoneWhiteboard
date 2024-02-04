@@ -8,13 +8,21 @@ class GCodeHandler {
 	public:
 		GCodeHandler(Stream &gcodeSerial, Stream &consoleSerial);
 
-		void sendSingleGCODE(char* command);
-		void sendSingleGCODE(const char* command);
+		void sendSingleGCODE(String command);
 		void sendMultipleGCODE(char* commands[], int numCommands);
 		void sendMultipleGCODE(const char* commands[], int numCommands);
-		String _mapGCODEToPositionAndScale(gcodeCommandString command, double posX, double posY, double scaleX);
+
+		String mapGCODEToPositionAndScale(gcodeCommandString command, double posX, double posY, double scale);
+		void sendCharacterAtPositionAndScale(gcodeCommandString commands[], int numCommands, double posX, double posY, double scale);
+		
+		void drawLine(double startX, double startY, double endX, double endY);
+		void drawRect(double startX, double startY, double endX, double endY);
+		void drawCircle(double centerX, double centerY, double radius);
+		
 		void initialize();
 	private:
+		float _cursorX;
+		float _cursorY;
 		Stream* _gcodeSerial;
 		Stream* _consoleSerial;
 

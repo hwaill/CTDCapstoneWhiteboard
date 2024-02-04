@@ -3,12 +3,15 @@
 GCodeHandler::GCodeHandler(Stream &gcodeSerial, Stream &consoleSerial) {
 	_gcodeSerial = &gcodeSerial;
 	_consoleSerial = &consoleSerial;
+
+	_cursorX = 0;
+	_cursorY = 0;
 }
 
 String GCodeHandler::_SENT_HEADER = "SENT:     ";
 String GCodeHandler::_RECV_HEADER = "RECEIVED: ";
 
-void GCodeHandler::sendSingleGCODE(char* command) {
+void GCodeHandler::sendSingleGCODE(String command) {
 	_consoleSerial->println(command);
 	_gcodeSerial->print(command);
 	_gcodeSerial->print('\n');
@@ -16,13 +19,13 @@ void GCodeHandler::sendSingleGCODE(char* command) {
 	_consoleSerial->print(response);
 }
 
-void GCodeHandler::sendSingleGCODE(const char* command) {
-	_consoleSerial->println(command);
-	_gcodeSerial->print(command);
-	_gcodeSerial->print('\n');
-	String response = _waitGRBLSerial();
-	_consoleSerial->println(response);
-}
+// void GCodeHandler::sendSingleGCODE(const char* command) {
+// 	_consoleSerial->println(command);
+// 	_gcodeSerial->print(command);
+// 	_gcodeSerial->print('\n');
+// 	String response = _waitGRBLSerial();
+// 	_consoleSerial->println(response);
+// }
 
 void GCodeHandler::sendMultipleGCODE(char* commands[], int numCommands) {
 	for(int i = 0; i < numCommands; i++) {
@@ -67,7 +70,7 @@ void GCodeHandler::_emptyGRBLSerialBuffer() {
 }
 
 
-String GCodeHandler::_mapGCODEToPositionAndScale(gcodeCommandString command, double posX, double posY, double scale) {
+String GCodeHandler::mapGCODEToPositionAndScale(gcodeCommandString command, double posX, double posY, double scale) {
 	String output = "";
 	String input = command.commandString;
 
@@ -108,4 +111,99 @@ String GCodeHandler::_mapGCODEToPositionAndScale(gcodeCommandString command, dou
 	}
 
 	return output;
+}
+
+void GCodeHandler::sendCharacterAtPositionAndScale(gcodeCommandString commands[], int numCommands, double posX, double posY, double scale) {
+	for(int i = 0; i < numCommands; i++) {
+		sendSingleGCODE(mapGCODEToPositionAndScale(commands[i], posX, posY, scale));
+	}
+}
+
+void GCodeHandler::drawLine(double startX, double startY, double endX, double endY) {
+	sendSingleGCODE("G00 Z0.2");
+
+	String lineCommand = "G00 X";
+	lineCommand += startX;
+	lineCommand += " Y";
+	lineCommand += startY;
+
+	sendSingleGCODE(lineCommand);
+	sendSingleGCODE("G00 Z-0.2");
+
+	lineCommand = "G01 X";
+	lineCommand += endX;
+	lineCommand += " Y";
+	lineCommand += endY;
+	lineCommand += " F15000";
+
+	sendSingleGCODE(lineCommand);
+	sendSingleGCODE("G00 Z0.2");
+
+	return;
+}
+
+void GCodeHandler::drawRect(double startX, double startY, double endX, double endY) {
+	sendSingleGCODE("G00 Z0.2");
+
+	String rectCommand = "G00 X";
+	rectCommand += startX;
+	rectCommand += " Y";
+	rectCommand += startY;
+
+	sendSingleGCODE(rectCommand);
+	sendSingleGCODE("G00 Z-0.2");
+
+	rectCommand = "G01 X";
+	rectCommand += startX;
+	rectCommand += " Y";
+	rectCommand += endY;
+	rectCommand += " F15000";
+
+	sendSingleGCODE(rectCommand);
+
+	rectCommand = "G01 X";
+	rectCommand += endX;
+	rectCommand += " Y";
+	rectCommand += endY;
+	rectCommand += " F15000";
+
+	sendSingleGCODE(rectCommand);
+
+	rectCommand = "G01 X";
+	rectCommand += endX;
+	rectCommand += " Y";
+	rectCommand += startY;
+	rectCommand += " F15000";
+
+	sendSingleGCODE(rectCommand);
+
+	rectCommand = "G01 X";
+	rectCommand += startX;
+	rectCommand += " Y";
+	rectCommand += startY;
+	rectCommand += " F15000";
+
+	sendSingleGCODE(rectCommand);
+	sendSingleGCODE("G00 Z0.2");
+
+	return;
+}
+
+void GCodeHandler::drawCircle(double centerX, double centerY, double radius) {
+	sendSingleGCODE("G00 Z0.2");
+
+	String circleCommand = "G00 X";
+	circleCommand += centerX - radius;
+	circleCommand += " Y";
+	circleCommand += centerY;
+
+	sendSingleGCODE(circleCommand);
+	sendSingleGCODE("G00 Z-0.2");
+
+	circleCommand = "G02 I";
+	circleCommand += radius;
+	circleCommand += " F15000";
+
+	sendSingleGCODE(circleCommand);
+	sendSingleGCODE("G00 Z0.2");
 }
