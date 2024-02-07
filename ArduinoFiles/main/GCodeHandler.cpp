@@ -19,14 +19,6 @@ void GCodeHandler::sendSingleGCODE(String command) {
 	_consoleSerial->print(response);
 }
 
-// void GCodeHandler::sendSingleGCODE(const char* command) {
-// 	_consoleSerial->println(command);
-// 	_gcodeSerial->print(command);
-// 	_gcodeSerial->print('\n');
-// 	String response = _waitGRBLSerial();
-// 	_consoleSerial->println(response);
-// }
-
 void GCodeHandler::sendMultipleGCODE(char* commands[], int numCommands) {
 	for(int i = 0; i < numCommands; i++) {
 		sendSingleGCODE(commands[i]);
@@ -119,6 +111,12 @@ void GCodeHandler::sendCharacterAtPositionAndScale(gcodeCommandString commands[]
 	}
 }
 
+void GCodeHandler::sendCharacterAtPositionAndScale(const gcodeCommandString commands[], int numCommands, double posX, double posY, double scale) {
+	for(int i = 0; i < numCommands; i++) {
+		sendSingleGCODE(mapGCODEToPositionAndScale(commands[i], posX, posY, scale));
+	}
+}
+
 void GCodeHandler::drawLine(double startX, double startY, double endX, double endY) {
 	sendSingleGCODE("G00 Z0.2");
 
@@ -200,7 +198,11 @@ void GCodeHandler::drawCircle(double centerX, double centerY, double radius) {
 	sendSingleGCODE(circleCommand);
 	sendSingleGCODE("G00 Z-0.2");
 
-	circleCommand = "G02 I";
+	circleCommand = "G02 X";
+	circleCommand += centerX - radius;
+	circleCommand += " Y";
+	circleCommand += centerY;
+	circleCommand += " I";
 	circleCommand += radius;
 	circleCommand += " F15000";
 

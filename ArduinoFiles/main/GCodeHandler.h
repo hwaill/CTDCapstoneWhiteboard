@@ -14,6 +14,7 @@ class GCodeHandler {
 
 		String mapGCODEToPositionAndScale(gcodeCommandString command, double posX, double posY, double scale);
 		void sendCharacterAtPositionAndScale(gcodeCommandString commands[], int numCommands, double posX, double posY, double scale);
+		void sendCharacterAtPositionAndScale(const gcodeCommandString commands[], int numCommands, double posX, double posY, double scale);
 		
 		void drawLine(double startX, double startY, double endX, double endY);
 		void drawRect(double startX, double startY, double endX, double endY);
