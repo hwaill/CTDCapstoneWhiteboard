@@ -57,18 +57,11 @@ void setup() {
 }
 
 void loop() {
-	//Serial.println(myGCodeHandler._mapGCODEToPositionAndScale({"G01 X2.877939 Y0.000000 Z-0.2 F10000.000000",5}, 0, 0, 1));
-	//Serial.println(myGCodeHandler._mapGCODEToPositionAndScale({"G01 X2.877939 Y0.000000 Z-0.2 F10000.000000",5}, 20, 20, 2));
-	Serial.println("test");
-	delay(2000);
-	myGCodeHandler.sendSingleGCODE("G10 P0 L20 X0 Y0 Z0.2");
-	myGCodeHandler.sendCharacterAtPositionAndScale(GC_CAP_H, 13, 0, 0, 3);
-	myGCodeHandler.sendCharacterAtPositionAndScale(GC_CAP_E, 17, 50, 0, 3);
-	myGCodeHandler.sendCharacterAtPositionAndScale(GC_CAP_L, 9, 96, 0, 3);
-	myGCodeHandler.sendCharacterAtPositionAndScale(GC_CAP_L, 9, 142, 0, 3);
-	myGCodeHandler.sendCharacterAtPositionAndScale(GC_CAP_O, 24, 184, 0, 3);
-	myGCodeHandler.drawLine(-5, -10, 250, -10);
-	delay(400000);
+	
+}
+
+void printthis(const char* input) {
+	Serial.println(input);
 }
 
 //reads all button states in just over 1ms

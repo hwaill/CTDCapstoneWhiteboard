@@ -11,18 +11,17 @@ GCodeHandler::GCodeHandler(Stream &gcodeSerial, Stream &consoleSerial) {
 String GCodeHandler::_SENT_HEADER = "SENT:     ";
 String GCodeHandler::_RECV_HEADER = "RECEIVED: ";
 
+double GCodeHandler::_CANVAS_START_X = 0;
+double GCodeHandler::_CANVAS_START_Y = 0;
+double GCodeHandler::_CANVAS_END_X = 863;
+double GCodeHandler::_CANVAS_END_Y = 563;
+
 void GCodeHandler::sendSingleGCODE(String command) {
 	_consoleSerial->println(command);
 	_gcodeSerial->print(command);
 	_gcodeSerial->print('\n');
 	String response = _waitGRBLSerial();
 	_consoleSerial->print(response);
-}
-
-void GCodeHandler::sendMultipleGCODE(char* commands[], int numCommands) {
-	for(int i = 0; i < numCommands; i++) {
-		sendSingleGCODE(commands[i]);
-	}
 }
 
 void GCodeHandler::sendMultipleGCODE(const char* commands[], int numCommands) {
@@ -61,12 +60,17 @@ void GCodeHandler::_emptyGRBLSerialBuffer() {
   }
 }
 
-
-String GCodeHandler::mapGCODEToPositionAndScale(gcodeCommandString command, double posX, double posY, double scale) {
+String GCodeHandler::mapGCODEToPositionAndScale(const char* command, double posX, double posY, double scale) {
 	String output = "";
-	String input = command.commandString;
+	String input = command;
 
-	int numPairs = command.numPairs;
+	int numPairs = 1;
+	int index = 0;
+	while(command[index]) {
+		if(command[index++] == ' ') {
+			numPairs++;
+		}
+	}
 
 	String currentPairString;
 	String type;
@@ -89,13 +93,13 @@ String GCodeHandler::mapGCODEToPositionAndScale(gcodeCommandString command, doub
 			value *= scale;
 		}
 
-		if(type.equals("X") || type.equals("I") || type.equals("P")) {
+		if(type.equals("X")) {
 			value += posX;
-		} else if(type.equals("Y") || type.equals("J") || type.equals("Q")) {
+		} else if(type.equals("Y")) {
 			value += posY;
 		}
 
-		output = output + type + (type.equals("G") ? String((int)(value)) : String(value, 5));
+		output = output + type + (type.equals("G") ? String((int)(value)) : String(value, 6));
 
 		if(i != numPairs - 1) {
 			output = output + " ";
@@ -105,15 +109,11 @@ String GCodeHandler::mapGCODEToPositionAndScale(gcodeCommandString command, doub
 	return output;
 }
 
-void GCodeHandler::sendCharacterAtPositionAndScale(gcodeCommandString commands[], int numCommands, double posX, double posY, double scale) {
-	for(int i = 0; i < numCommands; i++) {
-		sendSingleGCODE(mapGCODEToPositionAndScale(commands[i], posX, posY, scale));
-	}
-}
+void GCodeHandler::sendCharacterAtPositionAndScale(const char* commands[], double posX, double posY, double scale) {
+	int index = 0;
 
-void GCodeHandler::sendCharacterAtPositionAndScale(const gcodeCommandString commands[], int numCommands, double posX, double posY, double scale) {
-	for(int i = 0; i < numCommands; i++) {
-		sendSingleGCODE(mapGCODEToPositionAndScale(commands[i], posX, posY, scale));
+	while(commands[index] != "END") {
+		sendSingleGCODE(mapGCODEToPositionAndScale(commands[index++], posX, posY, scale));
 	}
 }
 
@@ -208,4 +208,33 @@ void GCodeHandler::drawCircle(double centerX, double centerY, double radius) {
 
 	sendSingleGCODE(circleCommand);
 	sendSingleGCODE("G00 Z0.2");
+}
+
+int GCodeHandler::_mapCharToIndex(char c) {
+	/* Indices for characters:
+	0 - 25: A - Z
+	26 - 51: a - z
+	52 - 61: 0 - 9
+	62: ,
+	63: !
+	64: .
+	65: ?
+	*/
+	int index;
+
+	if(c >= 65 && c < 91) {
+		index = c - 65;
+	} else if(c >= 97 && c < 123) {
+		index = c - 71;
+	} else if(c >= 48 && c < 58) {
+		index = c + 4;
+	} else if (c == ',') {
+		index = 62;
+	} else if (c == '!') {
+		index = 63;
+	} else if (c == '.') {
+		index = 64;
+	} else if (c == '?') {
+		index = 65;
+	}
 }
