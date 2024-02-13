@@ -3,6 +3,7 @@
 #define GCodeHandlerClass
 #include "Arduino.h"
 #include "GCodeCommand.h"
+#include "GCodeLibrary.h"
 
 class GCodeHandler {
 	public:
@@ -10,6 +11,8 @@ class GCodeHandler {
 
 		void sendSingleGCODE(GCodeCommand command);
 		void sendMultipleGCODE(GCodeCommand commands[], int numCommands);
+
+		GCodeLibrary library;
 	private:
 		Stream* _gcodeSerial;
 		Stream* _consoleSerial;

@@ -10,7 +10,6 @@ class GCodeCommand {
 		String toStringAtCoordinate(double x, double y);
 		GCodeCommandPair *_commandPairs;
 		int _numPairs;
-		virtual static 
 };
 
 class GCodeCommand_1 : public GCodeCommand {
