@@ -60,10 +60,6 @@ void loop() {
 	
 }
 
-void printthis(const char* input) {
-	Serial.println(input);
-}
-
 //reads all button states in just over 1ms
 void updateButtonStates() {
 	for(int i = 0; i < 16; i++) {

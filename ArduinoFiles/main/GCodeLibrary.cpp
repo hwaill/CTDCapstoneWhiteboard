@@ -13,8 +13,9 @@
 	*/
 
 inline const double LINE_HEIGHT = 60;
+inline const double MAX_DESCENDER = -15;
 
-inline const double CHARACTER_WIDTHS[66] {
+inline const double CHARACTER_WIDTHS[67] {
 	40, //A
 	38, //B
 	42, //C
@@ -80,7 +81,8 @@ inline const double CHARACTER_WIDTHS[66] {
 	12, //,
 	12, //!
 	12, //.
-	28 //?
+	28, //?
+	28 //(space)
 };
 
 inline const char* GRBL_SETTINGS[33] = {
@@ -1184,7 +1186,11 @@ inline const char* GC_PUNCT_QUESTION[] = {
 	"END"
 };
 
-inline const char** CHARACTERS[66] {
+inline const char* GC_SPACE[] = {
+	"END"
+};
+
+inline const char** CHARACTERS[67] {
 	GC_CAP_A,
 	GC_CAP_B,
 	GC_CAP_C,
@@ -1250,7 +1256,8 @@ inline const char** CHARACTERS[66] {
 	GC_PUNCT_COMMA,
 	GC_PUNCT_EXCLAMATION,
 	GC_PUNCT_PERIOD,
-	GC_PUNCT_QUESTION
+	GC_PUNCT_QUESTION,
+	GC_SPACE
 };
 
 #endif

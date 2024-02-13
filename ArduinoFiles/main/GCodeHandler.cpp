@@ -1,22 +1,119 @@
 #include "GCodeHandler.h"
 
+/*
+	Constructor requires a serial stream over which to send gcode, and a serial stream to log to the console
+*/
 GCodeHandler::GCodeHandler(Stream &gcodeSerial, Stream &consoleSerial) {
 	_gcodeSerial = &gcodeSerial;
 	_consoleSerial = &consoleSerial;
 
 	_cursorX = 0;
 	_cursorY = 0;
+	_fontScale = 1;
+
+	_textConstraintStartX = CANVAS_START_X;
+	_textConstraintStartY = CANVAS_START_Y;
+	_textConstraintEndX = CANVAS_END_X;
+	_textConstraintEndY = CANVAS_END_Y;
 }
 
+/*
+	Static Variables
+*/
+
+//these are used for readability in the console
 String GCodeHandler::_SENT_HEADER = "SENT:     ";
 String GCodeHandler::_RECV_HEADER = "RECEIVED: ";
 
-double GCodeHandler::_CANVAS_START_X = 0;
-double GCodeHandler::_CANVAS_START_Y = 0;
-double GCodeHandler::_CANVAS_END_X = 863;
-double GCodeHandler::_CANVAS_END_Y = 563;
+//these define the acceptable drawing area for the plotter
+double GCodeHandler::CANVAS_START_X = 0;
+double GCodeHandler::CANVAS_START_Y = 0;
+double GCodeHandler::CANVAS_END_X = 863;
+double GCodeHandler::CANVAS_END_Y = 563;
 
-void GCodeHandler::sendSingleGCODE(String command) {
+/*
+	Public Functions
+*/
+
+//initializes the machine
+void GCodeHandler::initialize() {
+	_consoleSerial->println("Initializing Plotter and GRBL Configuration");
+	_wakeGRBLSerial();
+	_sendMultipleCommands(GRBL_SETTINGS, 33);
+}
+
+void GCodeHandler::setCursor(double x, double y) {
+	_cursorX = x;
+	_cursorY = y;
+	
+	_checkCursorInBounds(false);
+}
+
+void GCodeHandler::setFontScale(double scale) {
+	_fontScale = scale;
+}
+
+void GCodeHandler::setTextConstraints(double startX, double startY, double endX, double endY) {
+	_textConstraintStartX = startX;
+	_textConstraintStartY = startY;
+	_textConstraintEndX = endX;
+	_textConstraintEndY = endY;
+}
+
+void GCodeHandler::sendSingleCommand(String command) {
+	_wakeGRBLSerial();
+	_sendSingleCommand(command);
+}
+
+void GCodeHandler::sendSingleCommand(const char* command, double posX, double posY, double scale) {
+	_wakeGRBLSerial();
+	_sendSingleCommand(command, posX, posY, scale);
+}
+
+void GCodeHandler::sendMultipleCommands(const char* commands[], int numCommands) {
+	_wakeGRBLSerial();
+	_sendMultipleCommands(commands, numCommands);
+}
+
+void GCodeHandler::sendMultipleCommands(const char* commands[], int numCommands, double posX, double posY, double scale) {
+	_wakeGRBLSerial();
+	_sendMultipleCommands(commands, numCommands, posX, posY, scale);
+}
+
+void GCodeHandler::sendCharacter(const char c, double posX, double posY, double scale) {
+	_wakeGRBLSerial();
+	_sendCharacter(c, posX, posY, scale);
+}
+
+void GCodeHandler::sendWord(const char* word) {
+	_wakeGRBLSerial();
+	_sendWord(word);
+}
+
+void GCodeHandler::write(const char* text, int wrapBehavior, boolean obeyConstraints) {
+	double xStart = cursorX;
+}
+
+void GCodeHandler::drawLine(double startX, double startY, double endX, double endY) {
+	_wakeGRBLSerial();
+	_drawLine(startX, startY, endX, endY);
+}
+
+void GCodeHandler::drawRect(double startX, double startY, double endX, double endY) {
+	_wakeGRBLSerial();
+	_drawRect(startX, startY, endX, endY);
+}
+
+void GCodeHandler::drawCircle(double centerX, double centerY, double radius) {
+	_wakeGRBLSerial();
+	_drawCircle(centerX, centerY, radius);
+}
+
+/*
+	Private Functions
+*/
+
+void GCodeHandler::_sendSingleCommand(String command) {
 	_consoleSerial->println(command);
 	_gcodeSerial->print(command);
 	_gcodeSerial->print('\n');
@@ -24,16 +121,69 @@ void GCodeHandler::sendSingleGCODE(String command) {
 	_consoleSerial->print(response);
 }
 
-void GCodeHandler::sendMultipleGCODE(const char* commands[], int numCommands) {
+void GCodeHandler::_sendSingleCommand(const char* command, double posX, double posY, double scale) {
+	_sendSingleCommand(_mapGCODEToPositionAndScale(command, posX, posY, scale));
+}
+
+void GCodeHandler::_sendMultipleCommands(const char* commands[], int numCommands) {
 	for(int i = 0; i < numCommands; i++) {
-		sendSingleGCODE(commands[i]);
+		_sendSingleCommand(commands[i]);
 	}
 }
 
-void GCodeHandler::initialize() {
+void GCodeHandler::_sendMultipleCommands(const char* commands[], int numCommands, double posX, double posY, double scale) {
+	for(int i = 0; i < numCommands; i++) {
+		_sendSingleCommand(_mapGCODEToPositionAndScale(commands[i], posX, posY, scale));
+	}
+}
+
+void GCodeHandler::_sendMultipleCommandsWithTerminator(const char* commands[], double posX, double posY, double scale) {
+	int index = 0;
+	while(commands[index] != "END") {
+		_sendSingleCommand(_mapGCODEToPositionAndScale(commands[index++], posX, posY, scale));
+	}
+}
+
+void GCodeHandler::_sendCharacter(const char c, double posX, double posY, double scale) {
+	int index = _mapCharToIndex(c);
 	
-	_consoleSerial->println("INIT");
-	sendMultipleGCODE(GRBL_SETTINGS, 33);
+	if(index == -1) return;
+	if(CHARACTER_WIDTHS[index] * scale + posX > CANVAS_END_X) return;
+	if(LINE_HEIGHT * scale + posY > CANVAS_END_Y) return;
+	if(MAX_DESCENDER * scale + posY < CANVAS_START_Y) return;
+
+	_sendMultipleCommandsWithTerminator(CHARACTERS[index], posX, posY, scale);
+}
+
+void GCodeHandler::_sendCharacterWithCursor(const char c) {
+	int index = _mapCharToIndex(c);
+	
+	if(index == -1) return;
+	if(CHARACTER_WIDTHS[index] * _fontScale + _cursorX > CANVAS_END_X) return;
+	if(LINE_HEIGHT * _fontScale + _cursorY > CANVAS_END_Y) return;
+	if(MAX_DESCENDER * _fontScale + _cursorY < CANVAS_START_Y) return;
+
+	_sendMultipleCommandsWithTerminator(CHARACTERS[index], _cursorX, _cursorY, _fontScale);
+	
+	_cursorX += CHARACTER_WIDTHS[index] * _fontScale;
+}
+
+void GCodeHandler::_sendWord(const char* word) {
+	const char* c = &word[0];
+	while(*c != '\0') {
+    _sendCharacterWithCursor(*c);
+		++c;
+	}
+}
+
+double GCodeHandler::_calculateWordWidth(const char* word) {
+	double width = 0;
+	const char* c = &word[0];
+	while(*c != '\0') {
+		width += CHARACTER_WIDTHS[*c] * _fontScale;
+	}
+
+	return width;
 }
 
 void GCodeHandler::_wakeGRBLSerial() {
@@ -60,7 +210,7 @@ void GCodeHandler::_emptyGRBLSerialBuffer() {
   }
 }
 
-String GCodeHandler::mapGCODEToPositionAndScale(const char* command, double posX, double posY, double scale) {
+String GCodeHandler::_mapGCODEToPositionAndScale(const char* command, double posX, double posY, double scale) {
 	String output = "";
 	String input = command;
 
@@ -109,24 +259,16 @@ String GCodeHandler::mapGCODEToPositionAndScale(const char* command, double posX
 	return output;
 }
 
-void GCodeHandler::sendCharacterAtPositionAndScale(const char* commands[], double posX, double posY, double scale) {
-	int index = 0;
-
-	while(commands[index] != "END") {
-		sendSingleGCODE(mapGCODEToPositionAndScale(commands[index++], posX, posY, scale));
-	}
-}
-
-void GCodeHandler::drawLine(double startX, double startY, double endX, double endY) {
-	sendSingleGCODE("G00 Z0.2");
+void GCodeHandler::_drawLine(double startX, double startY, double endX, double endY) {
+	_sendSingleCommand("G00 Z0.2");
 
 	String lineCommand = "G00 X";
 	lineCommand += startX;
 	lineCommand += " Y";
 	lineCommand += startY;
 
-	sendSingleGCODE(lineCommand);
-	sendSingleGCODE("G00 Z-0.2");
+	_sendSingleCommand(lineCommand);
+	_sendSingleCommand("G00 Z-0.2");
 
 	lineCommand = "G01 X";
 	lineCommand += endX;
@@ -134,22 +276,22 @@ void GCodeHandler::drawLine(double startX, double startY, double endX, double en
 	lineCommand += endY;
 	lineCommand += " F15000";
 
-	sendSingleGCODE(lineCommand);
-	sendSingleGCODE("G00 Z0.2");
+	_sendSingleCommand(lineCommand);
+	_sendSingleCommand("G00 Z0.2");
 
 	return;
 }
 
-void GCodeHandler::drawRect(double startX, double startY, double endX, double endY) {
-	sendSingleGCODE("G00 Z0.2");
+void GCodeHandler::_drawRect(double startX, double startY, double endX, double endY) {
+	_sendSingleCommand("G00 Z0.2");
 
 	String rectCommand = "G00 X";
 	rectCommand += startX;
 	rectCommand += " Y";
 	rectCommand += startY;
 
-	sendSingleGCODE(rectCommand);
-	sendSingleGCODE("G00 Z-0.2");
+	_sendSingleCommand(rectCommand);
+	_sendSingleCommand("G00 Z-0.2");
 
 	rectCommand = "G01 X";
 	rectCommand += startX;
@@ -157,7 +299,7 @@ void GCodeHandler::drawRect(double startX, double startY, double endX, double en
 	rectCommand += endY;
 	rectCommand += " F15000";
 
-	sendSingleGCODE(rectCommand);
+	_sendSingleCommand(rectCommand);
 
 	rectCommand = "G01 X";
 	rectCommand += endX;
@@ -165,7 +307,7 @@ void GCodeHandler::drawRect(double startX, double startY, double endX, double en
 	rectCommand += endY;
 	rectCommand += " F15000";
 
-	sendSingleGCODE(rectCommand);
+	_sendSingleCommand(rectCommand);
 
 	rectCommand = "G01 X";
 	rectCommand += endX;
@@ -173,7 +315,7 @@ void GCodeHandler::drawRect(double startX, double startY, double endX, double en
 	rectCommand += startY;
 	rectCommand += " F15000";
 
-	sendSingleGCODE(rectCommand);
+	_sendSingleCommand(rectCommand);
 
 	rectCommand = "G01 X";
 	rectCommand += startX;
@@ -181,22 +323,22 @@ void GCodeHandler::drawRect(double startX, double startY, double endX, double en
 	rectCommand += startY;
 	rectCommand += " F15000";
 
-	sendSingleGCODE(rectCommand);
-	sendSingleGCODE("G00 Z0.2");
+	_sendSingleCommand(rectCommand);
+	_sendSingleCommand("G00 Z0.2");
 
 	return;
 }
 
-void GCodeHandler::drawCircle(double centerX, double centerY, double radius) {
-	sendSingleGCODE("G00 Z0.2");
+void GCodeHandler::_drawCircle(double centerX, double centerY, double radius) {
+	_sendSingleCommand("G00 Z0.2");
 
 	String circleCommand = "G00 X";
 	circleCommand += centerX - radius;
 	circleCommand += " Y";
 	circleCommand += centerY;
 
-	sendSingleGCODE(circleCommand);
-	sendSingleGCODE("G00 Z-0.2");
+	_sendSingleCommand(circleCommand);
+	_sendSingleCommand("G00 Z-0.2");
 
 	circleCommand = "G02 X";
 	circleCommand += centerX - radius;
@@ -206,8 +348,8 @@ void GCodeHandler::drawCircle(double centerX, double centerY, double radius) {
 	circleCommand += radius;
 	circleCommand += " F15000";
 
-	sendSingleGCODE(circleCommand);
-	sendSingleGCODE("G00 Z0.2");
+	_sendSingleCommand(circleCommand);
+	_sendSingleCommand("G00 Z0.2");
 }
 
 int GCodeHandler::_mapCharToIndex(char c) {
@@ -219,6 +361,7 @@ int GCodeHandler::_mapCharToIndex(char c) {
 	63: !
 	64: .
 	65: ?
+	66: (space)
 	*/
 	int index;
 
@@ -236,5 +379,38 @@ int GCodeHandler::_mapCharToIndex(char c) {
 		index = 64;
 	} else if (c == '?') {
 		index = 65;
+	} else if (c == ' ') {
+		index = 66;
+	} else {
+		index = -1;
+	}
+
+	return index;
+}
+
+void GCodeHandler::_checkCursorInBounds(boolean obeyConstraints) {
+	double minX, maxX, minY, maxY;
+	
+	if(obeyConstraints) {
+		minX = _textConstraintStartX;
+		maxX = _textConstraintEndX;
+		minY = _textConstraintStartY - MAX_DESCENDER * _fontScale;
+		maxY = _textConstraintEndY - LINE_HEIGHT * _fontScale;
+	} else {
+		minX = CANVAS_START_X;
+		maxX = CANVAS_END_X;
+		minY = CANVAS_START_Y - MAX_DESCENDER * _fontScale;
+		maxY = CANVAS_END_Y - LINE_HEIGHT * _fontScale;
+	}
+	if(_cursorX < minX) {
+		_cursorX = minX;
+	} else if(_cursorX > maxX) {
+		_cursorX = maxX;
+	}
+
+	if(_cursorY > maxY - LINE_HEIGHT * _fontScale) {
+		_cursorY = maxY - LINE_HEIGHT * _fontScale;
+	} else if(_cursorY < minX - MAX_DESCENDER * _fontScale) {
+		_cursorY = minX - MAX_DESCENDER * _fontScale;
 	}
 }
