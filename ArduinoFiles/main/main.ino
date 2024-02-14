@@ -57,8 +57,6 @@ void setup() {
 }
 
 void loop() {
-	//Serial.println(myGCodeHandler._mapGCODEToPositionAndScale({"G01 X2.877939 Y0.000000 Z-0.2 F10000.000000",5}, 0, 0, 1));
-	//Serial.println(myGCodeHandler._mapGCODEToPositionAndScale({"G01 X2.877939 Y0.000000 Z-0.2 F10000.000000",5}, 20, 20, 2));
 	Serial.println("test");
 	delay(2000);
 	myGCodeHandler.sendSingleCommand("G10 P0 L20 X0 Y0 Z0.2");
