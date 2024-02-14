@@ -31,6 +31,7 @@ void setup() {
 	Serial.begin(115200);
 	//Serial1 is used to communicate with the CNC arduino
 	Serial1.begin(115200);
+	delay(100);
 
 	pinMode(MULTI_SELECT0, OUTPUT);
 	pinMode(MULTI_SELECT1, OUTPUT);
@@ -47,12 +48,27 @@ void setup() {
 	pinMode(SERVO_2_ENABLE, OUTPUT);
 	pinMode(SERVO_3_ENABLE, OUTPUT);
 	pinMode(SERVO_SIGNAL, OUTPUT);
+
+	myGCodeHandler.initialize();
+
+	digitalWrite(SERVO_1_ENABLE, HIGH);
+	digitalWrite(SERVO_2_ENABLE, LOW);
+	digitalWrite(SERVO_3_ENABLE, LOW);
 }
 
 void loop() {
-	Serial.println(myGCodeHandler._mapGCODEToPositionAndScale({"G01 X2.877939 Y0.000000 Z-0.2 F10000.000000",5}, 0, 0, 1));
-	Serial.println(myGCodeHandler._mapGCODEToPositionAndScale({"G01 X2.877939 Y0.000000 Z-0.2 F10000.000000",5}, 20, 20, 2));
-	delay(8000);
+	//Serial.println(myGCodeHandler._mapGCODEToPositionAndScale({"G01 X2.877939 Y0.000000 Z-0.2 F10000.000000",5}, 0, 0, 1));
+	//Serial.println(myGCodeHandler._mapGCODEToPositionAndScale({"G01 X2.877939 Y0.000000 Z-0.2 F10000.000000",5}, 20, 20, 2));
+	Serial.println("test");
+	delay(2000);
+	myGCodeHandler.sendSingleCommand("G10 P0 L20 X0 Y0 Z0.2");
+	myGCodeHandler.setCursor(100, 480);
+	myGCodeHandler.setFontScale(1.2);
+	myGCodeHandler.sendWord("Good morning, Doug!");
+	myGCodeHandler.setCursor(100, 420);
+	myGCodeHandler.setFontScale(0.6);
+	myGCodeHandler.sendWord("Wed, February 14, 2024");
+	delay(400000);
 }
 
 //reads all button states in just over 1ms
