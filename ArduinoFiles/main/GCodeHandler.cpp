@@ -90,8 +90,8 @@ void GCodeHandler::sendWord(const char* word) {
 	_sendWord(word);
 }
 
-void GCodeHandler::write(const char* text, int wrapBehavior, boolean obeyConstraints) {
-	double xStart = cursorX;
+void GCodeHandler::write(const char* text, int wrapBehavior, bool obeyConstraints) {
+	double xStart = _cursorX;
 }
 
 void GCodeHandler::drawLine(double startX, double startY, double endX, double endY) {
@@ -388,7 +388,7 @@ int GCodeHandler::_mapCharToIndex(char c) {
 	return index;
 }
 
-void GCodeHandler::_checkCursorInBounds(boolean obeyConstraints) {
+void GCodeHandler::_checkCursorInBounds(bool obeyConstraints) {
 	double minX, maxX, minY, maxY;
 	
 	if(obeyConstraints) {
