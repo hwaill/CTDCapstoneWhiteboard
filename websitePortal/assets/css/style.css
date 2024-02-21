@@ -21,7 +21,7 @@
 #navbar a:hover{
     color:rgb(55, 59, 171);
 }
-/* -----------Board Display Tab (Index.html)---------- */
+/* -----------Board Display Tab)---------- */
 #page-container{
     display: flex;
     flex-direction: row;
@@ -40,7 +40,7 @@
 #whiteboard{
     width: 600px;
 }
-/* -----------End of Board Display Tab (Index.html)---------- */
+/* -----------End of Board Display Tab ---------- */
 /* ---------Edit Features Tab---------- */
 .dot1 {
     background-color: #7ec0b0;
