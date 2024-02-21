@@ -91,7 +91,40 @@ void GCodeHandler::sendWord(const char* word) {
 }
 
 void GCodeHandler::write(const char* text, int wrapBehavior, bool obeyConstraints) {
+	double xMax = obeyConstraints ? _textConstraintEndX : CANVAS_END_X;
+	double yMin = obeyConstraints ? _textConstraintStartY : CANVAS_START_Y;
+	String textToWrite = text;
+	int numWords = 1;
+	int index = 0;
+	while(text[index]) {
+		if(text[index++] == ' ') {
+			numWords++;
+		}
+	}
+
+	_wakeGRBLSerial();
+
 	double xStart = _cursorX;
+	double yStart = _cursorY;
+
+	for(int i = 0; i < numWords; i++) {
+		if((i < numWords - 1 && (_cursorX + _calculateWordWidth(textToWrite.substring(0, textToWrite.indexOf(' '))) > xMax)) || (i == numWords - 1 && (_cursorX + _calculateWordWidth(textToWrite.substring(0)) > xMax))) {
+			//word needs to wrap
+			if(_cursorY - (LINE_HEIGHT * _fontScale) < yMin) {
+				return;
+			}
+
+			_cursorY -= (LINE_HEIGHT * _fontScale);
+			_cursorX = xStart;
+		}
+
+		if(i < numWords - 1) {
+			_sendWord(textToWrite.substring(0, textToWrite.indexOf(' ')));
+			textToWrite = textToWrite.substring(textToWrite.indexOf(' ') + 1);
+		} else {
+			_sendWord(textToWrite.substring(0));
+		}
+	}
 }
 
 void GCodeHandler::drawLine(double startX, double startY, double endX, double endY) {
@@ -176,6 +209,14 @@ void GCodeHandler::_sendWord(const char* word) {
 	}
 }
 
+void GCodeHandler::_sendWord(String word) {
+	int stringLength = word.length() + 1;
+	char wordChars[stringLength];
+	word.toCharArray(wordChars, stringLength);
+
+	_sendWord(wordChars);
+}
+
 double GCodeHandler::_calculateWordWidth(const char* word) {
 	double width = 0;
 	const char* c = &word[0];
@@ -184,6 +225,14 @@ double GCodeHandler::_calculateWordWidth(const char* word) {
 	}
 
 	return width;
+}
+
+double GCodeHandler::_calculateWordWidth(String word) {
+	int stringLength = word.length() + 1;
+	char wordChars[stringLength];
+	word.toCharArray(wordChars, stringLength);
+
+	return _calculateWordWidth(wordChars);
 }
 
 void GCodeHandler::_wakeGRBLSerial() {

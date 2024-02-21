@@ -57,6 +57,7 @@ void setup() {
 }
 
 void loop() {
+
 	Serial.println("test");
 	delay(2000);
 	myGCodeHandler.sendSingleCommand("G10 P0 L20 X0 Y0 Z0.2");

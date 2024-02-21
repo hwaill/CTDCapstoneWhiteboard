@@ -53,7 +53,9 @@ class GCodeHandler {
 		void _sendCharacter(const char c, double posX, double posY, double scale);
 		void _sendCharacterWithCursor(const char c);
 		void _sendWord(const char* word);
+		void _sendWord(String word);
 		double _calculateWordWidth(const char* word);
+		double _calculateWordWidth(String word);
 		void _drawLine(double startX, double startY, double endX, double endY);
 		void _drawRect(double startX, double startY, double endX, double endY);
 		void _drawCircle(double centerX, double centerY, double radius);
