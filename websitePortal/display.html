@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="assets/css/style.css">
+
     <title>Home</title>
 </head>
 <body>
@@ -16,35 +17,38 @@
     <div id="page-container">
         <div id="rectangle">
             <form id="features-list">
-                
+
                 <h3 id="features-title">Features</h3>
-    
-                <input type="checkbox" id="Todo-Check" name="Todo-Check">
+                
+                
+                <input type="checkbox" id="Todo-Check" name="Todo-Check" onchange="featureSelected()">
                 <label for="Todo-Check">To-Do List</label><br>
         
-                <input type="checkbox" id="WeeklyCal-Check" name="WeeklyCal-Check">
+                <input type="checkbox" id="WeeklyCal-Check" name="WeeklyCal-Check" onchange="featureSelected()">
                 <label for="WeeklyCal-Check">Weekly Calendar</label><br>
         
-                <input type="checkbox" id="Quotes-Check" name="Quotes-Check">
+                <input type="checkbox" id="Quotes-Check" name="Quotes-Check" onchange="featureSelected()">
                 <label for="Quotes-Check">Daily Quote</label><br>
         
-                <input type="checkbox" id="Weather-Check" name="Weather-Check">
+                <input type="checkbox" id="Weather-Check" name="Weather-Check" onchange="featureSelected()">
                 <label for="Weather-Check">Weather</label><br>
         
-                <input type="checkbox" id="Game-Check" name="Game-Check">
+                <input type="checkbox" id="Game-Check" name="Game-Check" onchange="featureSelected()">
                 <label for="Game-Check">Tic-Tac-Toe</label><br>
         
-                <input type="checkbox" id="Mood-Check" name="Mood-Check">
+                <input type="checkbox" id="Mood-Check" name="Mood-Check" onchange="featureSelected()">
                 <label for="Mood-Check">Mood Tracker</label><br>
         
-                <input type="checkbox" id="Theme-Check" name="Theme-Check">
+                <input type="checkbox" id="Theme-Check" name="Theme-Check" onchange="featureSelected()">
                 <label for="Theme-Check">Theme</label><br>
+                
+
             </form>
         </div>
 
-
         <img id="whiteboard" src="images/whiteBoard.png">
-    </div>
 
+    </div>
+    <script src="index.js"></script>
 </body>
 </html>
