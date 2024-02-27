@@ -1,10 +1,8 @@
 #include <ArduinoBLE.h>
 
-BLEService accelService("19b10000-e8f2-537e-4f6c-d104768a1214");
+BLEService whiteboardService("19b10000-e8f2-537e-4f6c-d104768a1214");
 
-BLEFloatCharacteristic xCharacteristic("19b10001-e8f2-537e-4f6c-d104768a1214", BLENotify);
-BLEFloatCharacteristic yCharacteristic("19b10002-e8f2-537e-4f6c-d104768a1214", BLENotify);
-BLEFloatCharacteristic zCharacteristic("19b10003-e8f2-537e-4f6c-d104768a1214", BLENotify);
+BLECharacteristic toDoCharacteristic("19b10001-e8f2-537e-4f6c-d104768a1214", BLERead | BLEWrite | BLENotify, "0000010000");
 
 BLEBoolCharacteristic ledCharacteristic("19b10004-e8f2-537e-4f6c-d104768a1214", BLERead | BLEWrite);
 
@@ -21,25 +19,23 @@ void setup(){
     while (1);
   }
 
-  BLE.setLocalName("Accelerometer");
-  BLE.setAdvertisedService(accelService);
+  BLE.setLocalName("WhiteBoardConfig");
+  BLE.setAdvertisedService(whiteboardService);
 
-  accelService.addCharacteristic(xCharacteristic);
-  accelService.addCharacteristic(yCharacteristic);
-  accelService.addCharacteristic(zCharacteristic);
+  whiteboardService.addCharacteristic(toDoCharacteristic);
   
-  accelService.addCharacteristic(ledCharacteristic);
+  whiteboardService.addCharacteristic(ledCharacteristic);
 
-  BLE.addService(accelService);
+  BLE.addService(whiteboardService);
 
-  ledCharacteristic.writeValue(0);
+  ledCharacteristic.setValue(0);
 
   BLE.setEventHandler(BLEConnected, connectHandler);
   BLE.setEventHandler(BLEDisconnected, disconnectHandler);
 
   BLE.advertise();
 
-  Serial.println("Accel begin");
+  Serial.println("Comms begin");
 }
 
 unsigned long prevTime = 0;
@@ -48,29 +44,22 @@ void loop(){
 
   BLE.poll();
 
-  float x, y, z;
-
   unsigned long t = millis();
 
   if(central.connected()){
     if(t - prevTime > 100){
-      xCharacteristic.writeValue(x);
-      yCharacteristic.writeValue(y);
-      zCharacteristic.writeValue(z);
+      Serial.println((char*)toDoCharacteristic.value());
+      prevTime = t;
+    }
+  } else {
+    if(t - prevTime > 100){
+      central = BLE.central();
       prevTime = t;
     }
   }
-  else{
-    if(t - prevTime > 100){
-      central = BLE.central();
-      Serial.print('\t');
-      Serial.print(x);
-      Serial.print('\t');
-      Serial.print(y);
-      Serial.print('\t');
-      Serial.println(z);
-      prevTime = t;
-    }
+
+  if(toDoCharacteristic.written()) {
+    Serial.println("test");
   }
 
   if(ledCharacteristic.written()){
