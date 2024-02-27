@@ -1,4 +1,23 @@
+#include "RTC.h"
+#include <NTPClient.h>
+#include <WiFiS3.h>
+#include <WiFiUdp.h>
+#include <SPI.h>
+#include <SD.h>
+
 #include "GCodeHandler.h"
+
+///////Enter login data in the Secret tab/arduino_secrets.h
+char ssid[] = "network";  // network SSID
+char pass[] = "password";  // network password
+
+int wifiStatus = WL_IDLE_STATUS;
+WiFiUDP Udp;  // A UDP instance to let us send and receive packets over UDP
+NTPClient timeClient(Udp);
+
+RTCTime currentTime;
+
+unsigned long lastTimeUpdate;
 
 //Selectors choose which multiplexer channel to read
 const int MULTI_SELECT0 = 5;
@@ -49,6 +68,15 @@ void setup() {
 	pinMode(SERVO_3_ENABLE, OUTPUT);
 	pinMode(SERVO_SIGNAL, OUTPUT);
 
+  connectToWiFi();
+  RTC.begin();
+  Serial.println("\nStarting connection to server...");
+  timeClient.begin();
+  timeClient.update();
+
+  // Get the current time from NTP
+  NTP();
+
 	myGCodeHandler.initialize();
 
 	digitalWrite(SERVO_1_ENABLE, HIGH);
@@ -57,17 +85,27 @@ void setup() {
 }
 
 void loop() {
+	RTC.getTime(currentTime);
 
-	Serial.println("test");
-	delay(2000);
-	myGCodeHandler.sendSingleCommand("G10 P0 L20 X0 Y0 Z0.2");
-	myGCodeHandler.setCursor(100, 480);
-	myGCodeHandler.setFontScale(1.2);
-	myGCodeHandler.sendWord("Good morning, Doug!");
-	myGCodeHandler.setCursor(100, 420);
-	myGCodeHandler.setFontScale(0.6);
-	myGCodeHandler.sendWord("Wed, February 14, 2024");
-	delay(400000);
+	// Print out date (DD/MM//YYYY)
+  // Serial.print(currentTime.getDayOfMonth());
+  // Serial.print("/");
+  // Serial.print(Month2int(currentTime.getMonth()));
+  // Serial.print("/");
+  // Serial.print(currentTime.getYear());
+  // Serial.print(" - ");
+
+  // Print time (HH/MM/SS)
+  // Serial.print(currentTime.getHour());
+  // Serial.print(":");
+  // Serial.print(currentTime.getMinutes());
+  // Serial.print(":");
+  // Serial.println(currentTime.getSeconds());
+
+	//update
+	if((unsigned long)(millis() - lastTimeUpdate) > 6000000) {
+		NTP();
+	}
 }
 
 //reads all button states in just over 1ms
@@ -97,4 +135,61 @@ void updateHallSensorValues() {
 		hallSensorValues[i + 32] = analogRead(SIGNAL_HALL_MULTI3);
 		hallSensorValues[i + 48] = analogRead(SIGNAL_HALL_MULTI4);
   }
+}
+
+void printWifiStatus() {
+  // print the SSID of the network you're attached to:
+  Serial.print("SSID: ");
+  Serial.println(WiFi.SSID());
+
+  // print your board's IP address:
+  IPAddress ip = WiFi.localIP();
+  Serial.print("IP Address: ");
+  Serial.println(ip);
+
+  // print the received signal strength:
+  long rssi = WiFi.RSSI();
+  Serial.print("signal strength (RSSI):");
+  Serial.print(rssi);
+  Serial.println(" dBm");
+}
+
+void connectToWiFi() {
+  // check for the WiFi module:
+  if (WiFi.status() == WL_NO_MODULE) {
+    Serial.println("Communication with WiFi module failed!");
+    // don't continue
+    while (true)
+      ;
+  }
+
+  String fv = WiFi.firmwareVersion();
+  if (fv < WIFI_FIRMWARE_LATEST_VERSION) {
+    Serial.println("Please upgrade the firmware");
+  }
+
+  // attempt to connect to WiFi network:
+  while (wifiStatus != WL_CONNECTED) {
+    Serial.print("Attempting to connect to SSID: ");
+    Serial.println(ssid);
+    // Connect to WPA/WPA2 network.
+    wifiStatus = WiFi.begin(ssid, pass);
+
+    // wait 10 seconds for connection:
+    delay(10000);
+  }
+
+  Serial.println("Connected to WiFi");
+  printWifiStatus();
+}
+
+void NTP() {
+  // Get the current date and time from an NTP server and convert
+  // Time Zone offset for Cairns is 10 hours
+  auto timeZoneOffsetHours = 10;
+  auto unixTime = timeClient.getEpochTime() + (timeZoneOffsetHours * 3600);
+  RTCTime timeToSet = RTCTime(unixTime);
+  RTC.setTime(timeToSet);
+
+	lastTimeUpdate = millis();
 }

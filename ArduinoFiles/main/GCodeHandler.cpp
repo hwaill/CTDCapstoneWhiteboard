@@ -40,6 +40,8 @@ void GCodeHandler::initialize() {
 	_consoleSerial->println("Initializing Plotter and GRBL Configuration");
 	_wakeGRBLSerial();
 	_sendMultipleCommands(GRBL_SETTINGS, 33);
+	_sendSingleCommand("$H");
+	_sendSingleCommand("G10 P0 L20 X0 Y0 Z0.2");
 }
 
 void GCodeHandler::setCursor(double x, double y) {
