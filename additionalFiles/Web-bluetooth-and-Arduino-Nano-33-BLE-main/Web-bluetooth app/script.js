@@ -5,11 +5,10 @@ let xCharacteristic, yCharacteristic, zCharacteristic, ledCharacteristic;
 
 const serviceUUID = "19b10000-e8f2-537e-4f6c-d104768a1214";
 
-const xCharacteristicUUID = "19b10001-e8f2-537e-4f6c-d104768a1214";
-const yCharacteristicUUID = "19b10002-e8f2-537e-4f6c-d104768a1214";
-const zCharacteristicUUID = "19b10003-e8f2-537e-4f6c-d104768a1214";
-
+const toDoCharacteristicUUID = "19b10001-e8f2-537e-4f6c-d104768a1214";
 const ledCharacteristicUUID = "19b10004-e8f2-537e-4f6c-d104768a1214";
+
+let decoder = new TextDecoder("utf-8");
 
 async function connect(){
 
@@ -17,48 +16,39 @@ async function connect(){
     const server = await device.gatt.connect();
     const service = await server.getPrimaryService(serviceUUID);
 
-    xCharacteristic = await service.getCharacteristic(xCharacteristicUUID);
-    yCharacteristic = await service.getCharacteristic(yCharacteristicUUID);
-    zCharacteristic = await service.getCharacteristic(zCharacteristicUUID);
+    toDoCharacteristic = await service.getCharacteristic(toDoCharacteristicUUID);
+    toDoCharacteristic.readValue().then((result) => {
+        document.getElementById('x').textContent = decoder.decode(result);
+    });
     
     ledCharacteristic = await service.getCharacteristic(ledCharacteristicUUID);
 
-    await xCharacteristic.startNotifications();
-    await yCharacteristic.startNotifications();
-    await zCharacteristic.startNotifications();
-
-    xCharacteristic.addEventListener('characteristicvaluechanged', readX);
-    yCharacteristic.addEventListener('characteristicvaluechanged', readY);
-    zCharacteristic.addEventListener('characteristicvaluechanged', readZ);
+    toDoCharacteristic.addEventListener('characteristicvaluechanged', readToDo);
 
 }
 
-function readX(event) {
-    x = event.target.value.getFloat32(0, true);
-    x = parseFloat(x.toFixed(2));
-    document.getElementById('x').textContent = x;
+function readToDo(event) {
+    console.log("test");
+    x = event.target.value;
+    document.getElementById('x').textContent = decoder.decode(x);
 }
-
-function readY(event) {
-    y = event.target.value.getFloat32(0, true);
-    y = parseFloat(y.toFixed(2));
-    document.getElementById('y').textContent = y;
-}
-
-function readZ(event) {
-    z = event.target.value.getFloat32(0, true);
-    z = parseFloat(z.toFixed(2));
-    document.getElementById('z').textContent = z;
-} 
 
 async function toggleLED(){
-    ledState = !ledState;
+    let encoder = new TextEncoder('utf-8');
+    let sendMsg = encoder.encode("1000100010");
 
-    let buffer = new ArrayBuffer(1);
-    let view = new Uint8Array(buffer);
-    view[0] = ledState;
+    await toDoCharacteristic.writeValue(sendMsg);
+    toDoCharacteristic.readValue().then((result) => {
+        document.getElementById('x').textContent = decoder.decode(result);
+    });
+    
+    // ledState = !ledState;
 
-    await ledCharacteristic.writeValue(view);
+    // let buffer = new ArrayBuffer(1);
+    // let view = new Uint8Array(buffer);
+    // view[0] = ledState;
+
+    // await ledCharacteristic.writeValue(view);
 }
 
 document.getElementById('connect').addEventListener("click", connect);
