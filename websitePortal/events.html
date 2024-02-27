@@ -18,9 +18,22 @@
     <form action="">
         <label for="eventName">Event:</label>
         <input type="text" id="eventName" name="EventName"><br><br>
+
         <label for="eventDate">Date:</label>
         <input type="text" id="eventDate" name="eventDate"><br><br>
         <input type="submit" value="Submit">
+
+        <form id="event-date-or-daily" value="">
+            <input type="radio" id="eventDate-Check" name="date" value="1" onchange="showDateBox()">
+            <label for="date-Check">Date</label><br>
+
+            <label id="eventDate-label" for="eventDate">Date:</label>
+            <input type="text" id="eventDate" name="eventDate"><br><br>
+
+            <input type="radio" id="daily-Check" name="date" value="2" onchange="showDateBox()">
+            <label for="daily-Check">Daily</label><br>
+
+        </form>
     </form>
 </body>
 </html>

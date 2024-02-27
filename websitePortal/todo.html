@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="assets/css/style.css">
-    <script src="index.js"></script>
     <title>Edit To-Do List</title>
 </head>
 <body>
@@ -18,7 +17,22 @@
     <form action="">
         <label for="taskName">Task:</label>
         <input type="text" id="taskName" name="taskName"><br><br>
-        <input type="submit" value="Submit">
+
+        <form id="todo-date-or-daily" value="">
+            <input type="radio" id="date-Check" name="date" value="1" onchange="showDateBox()">
+            <label for="date-Check">Date</label><br>
+
+            <label id="eventDate-label" for="eventDate">Date:</label>
+            <input type="text" id="eventDate" name="eventDate"><br><br>
+
+            <input type="radio" id="daily-Check" name="date" value="2" onchange="showDateBox()">
+            <label for="daily-Check">Daily</label><br>
+
+        </form>
+
+        <input type="submit" value="Submit" onclick="getTask()">
+
     </form>
+    <script src="index.js"></script>
 </body>
 </html>

@@ -6,12 +6,18 @@ var gameCheckBox = document.getElementById("Game-Check");
 var moodCheckBox = document.getElementById("Mood-Check");
 var themeCheckBox = document.getElementById("Theme-Check");
 
-var theme = document.getElementById("themes-list");
 var spaceCheckBox = document.getElementById("spaceTheme-Check");
 var plantsCheckBox = document.getElementById("plantTheme-Check");
 var heartsCheckBox = document.getElementById("heartTheme-Check");
 var swirlsCheckBox = document.getElementById("swirlTheme-Check");
 var blankCheckBox = document.getElementById("noneTheme-Check");
+
+var eventDateTitle = document.getElementById("eventDate-label");
+var eventDate = document.getElementById("eventDate");
+var taskName = document.getElementById("taskName");
+
+eventDateTitle.style.display = "none";
+eventDate.style.display = "none";
 
 var featureSelectedString;
 var themeSelectedString;
@@ -34,6 +40,35 @@ function featureSelected() {
     console.log(featureSelectedString);
 }
 
-function themeSelected(){
-    alert(weatherValue.value);
+function themeSelected() {
+    var selectedTheme = document.querySelector('input[name="theme"]:checked');
+    
+    if (selectedTheme) {
+        var themeSelectedValue = selectedTheme.value;
+        console.log(themeSelectedValue);
+    }
+}
+
+function showDateBox(){
+    var selectedDateOrDaily = document.querySelector('input[name="date"]:checked');
+    var valueDateorDaily = selectedDateOrDaily.value;
+
+    if (valueDateorDaily == 1) {
+        eventDateTitle.style.display = "inline";
+        eventDate.style.display = "inline";
+
+    }else{
+        eventDateTitle.style.display = "none";
+        eventDate.style.display = "none";
+    }
+
+}
+function getTask() {
+    if(eventDate.style.display == "inline"){
+        console.log(eventDate.value);
+    }
+    else{
+        console.log("daily");
+    }
+    console.log(taskName.value);
 }
