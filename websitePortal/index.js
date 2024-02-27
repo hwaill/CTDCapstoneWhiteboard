@@ -6,7 +6,7 @@ var gameCheckBox = document.getElementById("Game-Check");
 var moodCheckBox = document.getElementById("Mood-Check");
 var themeCheckBox = document.getElementById("Theme-Check");
 
-var theme = document.getElementById("noneTheme-Check");
+var theme = document.getElementById("themes-list");
 var spaceCheckBox = document.getElementById("spaceTheme-Check");
 var plantsCheckBox = document.getElementById("plantTheme-Check");
 var heartsCheckBox = document.getElementById("heartTheme-Check");
@@ -35,5 +35,5 @@ function featureSelected() {
 }
 
 function themeSelected(){
-    alert(spaceCheckBox.value);
+    alert(weatherValue.value);
 }
