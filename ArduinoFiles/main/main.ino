@@ -8,8 +8,8 @@
 #include "GCodeHandler.h"
 
 ///////Enter login data in the Secret tab/arduino_secrets.h
-char ssid[] = "network";  // network SSID
-char pass[] = "password";  // network password
+char ssid[] = "iPhone";  // network SSID
+char pass[] = "henryhenryhenry";  // network password
 
 int wifiStatus = WL_IDLE_STATUS;
 WiFiUDP Udp;  // A UDP instance to let us send and receive packets over UDP
@@ -18,6 +18,31 @@ NTPClient timeClient(Udp);
 RTCTime currentTime;
 
 unsigned long lastTimeUpdate;
+
+const char* MONTH_LONG[12] = {
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December"
+};
+
+const char* DAY[7] {
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday"
+};
 
 //Selectors choose which multiplexer channel to read
 const int MULTI_SELECT0 = 5;
@@ -77,7 +102,7 @@ void setup() {
   // Get the current time from NTP
   NTP();
 
-	myGCodeHandler.initialize();
+	//myGCodeHandler.initialize();
 
 	digitalWrite(SERVO_1_ENABLE, HIGH);
 	digitalWrite(SERVO_2_ENABLE, LOW);
@@ -88,22 +113,26 @@ void loop() {
 	RTC.getTime(currentTime);
 
 	// Print out date (DD/MM//YYYY)
-  // Serial.print(currentTime.getDayOfMonth());
-  // Serial.print("/");
-  // Serial.print(Month2int(currentTime.getMonth()));
-  // Serial.print("/");
-  // Serial.print(currentTime.getYear());
-  // Serial.print(" - ");
+  Serial.print(DAY[DayOfWeek2int(currentTime.getDayOfWeek(), true) - 1]);
+  Serial.print(", ");
+  Serial.print(MONTH_LONG[Month2int(currentTime.getMonth()) - 1]);
+  Serial.print(" ");
+  Serial.print(currentTime.getDayOfMonth());
+  Serial.print(", ");
+  Serial.print(currentTime.getYear());
+  Serial.print(" ");
 
   // Print time (HH/MM/SS)
-  // Serial.print(currentTime.getHour());
-  // Serial.print(":");
-  // Serial.print(currentTime.getMinutes());
-  // Serial.print(":");
-  // Serial.println(currentTime.getSeconds());
+  Serial.print(currentTime.getHour());
+  Serial.print(":");
+  Serial.print(currentTime.getMinutes());
+  Serial.print(":");
+  Serial.println(currentTime.getSeconds());
+
+  delay(500);
 
 	//update
-	if((unsigned long)(millis() - lastTimeUpdate) > 6000000) {
+	if((unsigned long)(millis() - lastTimeUpdate) > 600000) {
 		NTP();
 	}
 }
@@ -186,7 +215,7 @@ void connectToWiFi() {
 void NTP() {
   // Get the current date and time from an NTP server and convert
   // Time Zone offset for Cairns is 10 hours
-  auto timeZoneOffsetHours = 10;
+  auto timeZoneOffsetHours = -7;
   auto unixTime = timeClient.getEpochTime() + (timeZoneOffsetHours * 3600);
   RTCTime timeToSet = RTCTime(unixTime);
   RTC.setTime(timeToSet);
