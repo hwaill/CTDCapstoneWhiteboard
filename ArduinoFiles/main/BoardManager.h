@@ -10,7 +10,6 @@ class BoardManager {
 	public:
 		BoardManager();
 
-		void morningUpdate()
 };
 
 #endif
