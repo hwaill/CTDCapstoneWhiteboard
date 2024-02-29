@@ -9,6 +9,7 @@
 #include <SPI.h>
 #include <SD.h>
 #include "RTC.h"
+#include <ArduinoBLE.h>
 
 struct ToDoListItem {
 	char* name;
@@ -53,8 +54,9 @@ class BoardManager {
 		char* getWifiSSID();
 		char* getWifiPass();
 
-		void NTP();
+		void openBluetoothBLE();
 
+		void NTP();
 		unsigned long lastTimeUpdate;
 	private:
 		Stream* _consoleSerial;

@@ -24,6 +24,69 @@ void BoardManager::initialize() {
   NTP();
 }
 
+void BoardManager::openBluetoothBLE() {
+	BLEService whiteboardService("722cf000-6c3d-48ac-8180-64551d967680");
+	BLEDevice central;
+
+	BLECharacteristic toDoCharacteristic("722cf001-6c3d-48ac-8180-64551d967680", BLERead | BLEWrite | BLENotify, "0000010000");
+	BLEBoolCharacteristic ledCharacteristic("722cf002-6c3d-48ac-8180-64551d967680", BLERead | BLEWrite);
+	
+
+	//these will be marked true by the web portal when updates are ready to be read.
+	BLEBoolCharacteristic updateThemeCharacteristic("722cz000-6c3d-48ac-8180-64551d967680", BLEWrite);
+	
+
+	if(!BLE.begin()) {
+		_consoleSerial->println("Starting BLE failed!");
+	}
+
+	BLE.setLocalName("WhiteboardConfig");
+	BLE.setAdvertisedService(whiteboardService);
+
+	whiteboardService.addCharacteristic(toDoCharacteristic);
+	whiteboardService.addCharacteristic(ledCharacteristic);
+
+	BLE.addService(whiteboardService);
+
+	//this is where the current configurations are advertised
+	ledCharacteristic.setValue(0);
+
+	BLE.setEventHandler(BLEConnected, connectHandler);
+	BLE.setEventHandler(BLEDisconnected, disconnectHandler);
+
+	BLE.advertise();
+
+	_consoleSerial->println("Begin Bluetooth communication...");
+
+	unsigned long lastCheck = 0;
+
+	while(true) {
+		BLE.poll();
+
+		unsigned long t = millis();
+		
+		if(central.connected()) {
+			//this is where most of the reading of changes happens.
+			if(toDoCharacteristic.written)
+		} else if((unsigned long)(t - lastCheck) > 100) {
+			central = BLE.central();
+			lastCheck = t;
+		}
+	}
+
+	BLE.end();
+}
+
+void connectHandler(BLEDevice central) {
+	Serial.print("Connected to: ");
+	Serial.println(central.address());
+}
+
+void disconnectHandler(BLEDevice central) {
+	Serial.print("Disconnected from: ");
+	Serial.println(central.address());
+}
+
 void BoardManager::_checkForWifiInfo() {
 	_wifiSSID = "iPhone";
 	_wifiPass = "henryhenryhenry";

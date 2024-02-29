@@ -70,26 +70,24 @@ void setup() {
 }
 
 void loop() {
-	RTC.getTime(currentTime);
+	// RTC.getTime(currentTime);
 
-	// Print out date (DD/MM//YYYY)
-  Serial.print(DAY[DayOfWeek2int(currentTime.getDayOfWeek(), true) - 1]);
-  Serial.print(", ");
-  Serial.print(MONTH_LONG[Month2int(currentTime.getMonth()) - 1]);
-  Serial.print(" ");
-  Serial.print(currentTime.getDayOfMonth());
-  Serial.print(", ");
-  Serial.print(currentTime.getYear());
-  Serial.print(" ");
+  // Serial.print(DAY[DayOfWeek2int(currentTime.getDayOfWeek(), true) - 1]);
+  // Serial.print(", ");
+  // Serial.print(MONTH_LONG[Month2int(currentTime.getMonth()) - 1]);
+  // Serial.print(" ");
+  // Serial.print(currentTime.getDayOfMonth());
+  // Serial.print(", ");
+  // Serial.print(currentTime.getYear());
+  // Serial.print(" ");
 
-  // Print time (HH/MM/SS)
-  Serial.print(currentTime.getHour());
-  Serial.print(":");
-  Serial.print(currentTime.getMinutes());
-  Serial.print(":");
-  Serial.println(currentTime.getSeconds());
+  // Serial.print(currentTime.getHour());
+  // Serial.print(":");
+  // Serial.print(currentTime.getMinutes());
+  // Serial.print(":");
+  // Serial.println(currentTime.getSeconds());
 
-  delay(500);
+  // delay(500);
 
 	//update RTC from internet
 	if((unsigned long)(millis() - myBoardManager.lastTimeUpdate) > 600000) {

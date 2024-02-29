@@ -1,10 +1,10 @@
 #include <ArduinoBLE.h>
 
-BLEService whiteboardService("19b10000-e8f2-537e-4f6c-d104768a1214");
+BLEService whiteboardService("722cf000-6c3d-48ac-8180-64551d967680");
 
-BLECharacteristic toDoCharacteristic("19b10001-e8f2-537e-4f6c-d104768a1214", BLERead | BLEWrite | BLENotify, "0000010000");
+BLECharacteristic toDoCharacteristic("722cf001-6c3d-48ac-8180-64551d967680", BLERead | BLEWrite | BLENotify, "0000010000");
 
-BLEBoolCharacteristic ledCharacteristic("19b10004-e8f2-537e-4f6c-d104768a1214", BLERead | BLEWrite);
+BLEBoolCharacteristic ledCharacteristic("722cf002-6c3d-48ac-8180-64551d967680", BLERead | BLEWrite);
 
 BLEDevice central;
 
