@@ -4,6 +4,10 @@
 #include "Arduino.h"
 #include "GCodeLibrary.cpp"
 
+inline const int WRAP_WRAP = 0;
+inline const int WRAP_TRUNCATE = 1;
+inline const int WRAP_ELLIPSES = 2;
+
 class GCodeHandler {
 	public:
 		GCodeHandler(Stream &gcodeSerial, Stream &consoleSerial);
@@ -24,6 +28,7 @@ class GCodeHandler {
 		void drawLine(double startX, double startY, double endX, double endY);
 		void drawRect(double startX, double startY, double endX, double endY);
 		void drawCircle(double centerX, double centerY, double radius);
+		void boxZigZag(double startX, double startY, double endX, double endY, double rowHeight);
 
 		static double CANVAS_START_X;
 		static double CANVAS_START_Y;
@@ -57,8 +62,10 @@ class GCodeHandler {
 		double _calculateWordWidth(const char* word);
 		double _calculateWordWidth(String word);
 		void _drawLine(double startX, double startY, double endX, double endY);
+		void _drawLineNoLift(double endX, double endY);
 		void _drawRect(double startX, double startY, double endX, double endY);
 		void _drawCircle(double centerX, double centerY, double radius);
+		void _boxZigZag(double startX, double startY, double endX, double endY, double rowHeight);
 
 		String _waitGRBLSerial();
 		void _emptyGRBLSerialBuffer();

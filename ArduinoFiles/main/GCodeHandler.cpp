@@ -112,16 +112,37 @@ void GCodeHandler::write(const char* text, int wrapBehavior, bool obeyConstraint
 	for(int i = 0; i < numWords; i++) {
 		if((i < numWords - 1 && (_cursorX + _calculateWordWidth(textToWrite.substring(0, textToWrite.indexOf(' '))) > xMax)) || (i == numWords - 1 && (_cursorX + _calculateWordWidth(textToWrite.substring(0)) > xMax))) {
 			//word needs to wrap
-			if(_cursorY - (LINE_HEIGHT * _fontScale) < yMin) {
+			if(wrapBehavior == WRAP_WRAP) {
+				if(_cursorY - (LINE_HEIGHT * _fontScale) < yMin) {
+					return;
+				}
+
+				_cursorY -= (LINE_HEIGHT * _fontScale);
+				_cursorX = xStart;
+			} else if(wrapBehavior == WRAP_TRUNCATE) {
+				int lettersToInclude = 0;
+				while(_cursorX + _calculateWordWidth(textToWrite.substring(0, lettersToInclude + 1)) < xMax) {
+					lettersToInclude++;
+				}
+				_sendWord(textToWrite.substring(0, lettersToInclude));
+				return;
+			} else if(wrapBehavior == WRAP_ELLIPSES) {
+				double ellipsesLength = _calculateWordWidth("...");
+				int lettersToInclude = 0;
+				while(_cursorX + ellipsesLength + _calculateWordWidth(textToWrite.substring(0, lettersToInclude + 1)) < xMax) {
+					lettersToInclude++;
+				}
+				if(lettersToInclude == 0) {
+					_cursorX -= _calculateWordWidth(" ");
+				}
+				String toSend = textToWrite.substring(0, lettersToInclude) + "...";
+				_sendWord(toSend);
 				return;
 			}
-
-			_cursorY -= (LINE_HEIGHT * _fontScale);
-			_cursorX = xStart;
 		}
 
 		if(i < numWords - 1) {
-			_sendWord(textToWrite.substring(0, textToWrite.indexOf(' ')));
+			_sendWord(textToWrite.substring(0, textToWrite.indexOf(' ') + 1));
 			textToWrite = textToWrite.substring(textToWrite.indexOf(' ') + 1);
 		} else {
 			_sendWord(textToWrite.substring(0));
@@ -142,6 +163,11 @@ void GCodeHandler::drawRect(double startX, double startY, double endX, double en
 void GCodeHandler::drawCircle(double centerX, double centerY, double radius) {
 	_wakeGRBLSerial();
 	_drawCircle(centerX, centerY, radius);
+}
+
+void GCodeHandler::boxZigZag(double startX, double startY, double endX, double endY, double rowHeight) {
+	_wakeGRBLSerial();
+	_boxZigZag(startX, startY, endX, endY, rowHeight);
 }
 
 /*
@@ -329,8 +355,16 @@ void GCodeHandler::_drawLine(double startX, double startY, double endX, double e
 
 	_sendSingleCommand(lineCommand);
 	_sendSingleCommand("G00 Z0.2");
+}
 
-	return;
+void GCodeHandler::_drawLineNoLift(double endX, double endY) {
+	String lineCommand = "G01 X";
+	lineCommand += endX;
+	lineCommand += " Y";
+	lineCommand += endY;
+	lineCommand += " F15000";
+
+	_sendSingleCommand(lineCommand);
 }
 
 void GCodeHandler::_drawRect(double startX, double startY, double endX, double endY) {
@@ -400,6 +434,36 @@ void GCodeHandler::_drawCircle(double centerX, double centerY, double radius) {
 	circleCommand += " F15000";
 
 	_sendSingleCommand(circleCommand);
+	_sendSingleCommand("G00 Z0.2");
+}
+
+void GCodeHandler::_boxZigZag(double startX, double startY, double endX, double endY, double rowHeight) {
+	String lineCommand = "G00 X";
+	lineCommand += startX;
+	lineCommand += " Y";
+	lineCommand += startY;
+
+	_sendSingleCommand(lineCommand);
+	_sendSingleCommand("G00 Z-0.2");
+
+	bool lowToHigh = startY < endY;
+	
+	double currentY = startY;
+	bool forward = true;
+
+	while((lowToHigh && currentY <= endY) || (!lowToHigh && currentY >= endY)) {
+		if(forward) {
+			_drawLineNoLift(startX, currentY);
+			_drawLineNoLift(endX, currentY);
+		} else {
+			_drawLineNoLift(endX, currentY);
+			_drawLineNoLift(startX, currentY);
+		}
+
+		currentY += rowHeight;
+		forward = !forward;
+	}
+
 	_sendSingleCommand("G00 Z0.2");
 }
 
