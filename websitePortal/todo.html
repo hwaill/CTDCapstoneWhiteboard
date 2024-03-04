@@ -14,25 +14,27 @@
         <a href="Profile.html">Profile</a>
     </div>
     <h2>todos</h2>
+    
     <form action="">
-        <label for="taskName">Task:</label>
-        <input type="text" id="taskName" name="taskName"><br><br>
+        <label for="todoName">Task:</label>
+        <input type="text" id="todoName" name="todoName"><br><br>
+    </form>
+    
+    <form id="todo-date-or-daily" value="">
+        <input type="radio" id="date-Check" name="date" value="1" onchange="showDateBoxTodo()">
+        <label for="date-Check">Date</label><br>
 
-        <form id="todo-date-or-daily" value="">
-            <input type="radio" id="date-Check" name="date" value="1" onchange="showDateBox()">
-            <label for="date-Check">Date</label><br>
+        <label id="todoDate-label" for="todoDate">Date:</label>
+        <input type="text" id="todoDate" name="todoDate"><br><br>
 
-            <label id="eventDate-label" for="eventDate">Date:</label>
-            <input type="text" id="eventDate" name="eventDate"><br><br>
-
-            <input type="radio" id="daily-Check" name="date" value="2" onchange="showDateBox()">
-            <label for="daily-Check">Daily</label><br>
-
-        </form>
-
-        <input type="submit" value="Submit" onclick="getTask()">
+        <input type="radio" id="daily-Check" name="date" value="2" onchange="showDateBoxTodo()">
+        <label for="daily-Check">Daily</label><br>
 
     </form>
+
+    <input type="submit" value="Submit" onclick="getTask()">
+
+
     <script src="index.js"></script>
 </body>
 </html>

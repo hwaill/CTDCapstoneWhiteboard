@@ -1,3 +1,4 @@
+
 var todoCheckBox = document.getElementById("Todo-Check");
 var weeklyCalCheckBox = document.getElementById("WeeklyCal-Check");
 var quotesCheckBox = document.getElementById("Quotes-Check");
@@ -14,7 +15,15 @@ var blankCheckBox = document.getElementById("noneTheme-Check");
 
 var eventDateTitle = document.getElementById("eventDate-label");
 var eventDate = document.getElementById("eventDate");
-var taskName = document.getElementById("taskName");
+var eventName = document.getElementById("eventName");
+
+var todoDateTitle = document.getElementById("todoDate-label");
+var todoDate = document.getElementById("todoDate");
+var todoName = document.getElementById("todoName");
+
+
+todoDateTitle.style.display = "none";
+todoDate.style.display = "none";
 
 eventDateTitle.style.display = "none";
 eventDate.style.display = "none";
@@ -26,7 +35,7 @@ var themeSelectedString;
 // order: Todo[1], WeeklyCalendar[2], Quotes[3], Weather[4], Game[5], Mood[6], Theme[7]
 
 function featureSelected() {
-  
+
     var todoValue = todoCheckBox.checked ? "1" : "0";
     var weeklyCalValue = weeklyCalCheckBox.checked ? "1" : "0";
     var quotesValue = quotesCheckBox.checked ? "1" : "0";
@@ -49,26 +58,54 @@ function themeSelected() {
     }
 }
 
-function showDateBox(){
+function showDateBoxTodo(){
     var selectedDateOrDaily = document.querySelector('input[name="date"]:checked');
     var valueDateorDaily = selectedDateOrDaily.value;
 
     if (valueDateorDaily == 1) {
-        eventDateTitle.style.display = "inline";
-        eventDate.style.display = "inline";
+        todoDateTitle.style.display = "inline";
+        todoDate.style.display = "inline";
 
     }else{
-        eventDateTitle.style.display = "none";
-        eventDate.style.display = "none";
+        todoDateTitle.style.display = "none";
+        todoDate.style.display = "none";
     }
 
 }
+
 function getTask() {
-    if(eventDate.style.display == "inline"){
-        console.log(eventDate.value);
+    if(todoDate.style.display == "inline"){
+        console.log(todoDate.value);
     }
     else{
         console.log("daily");
     }
-    console.log(taskName.value);
+    console.log(todoName.value);
 }
+
+function showDateBox() {
+    var selectedDateOrDaily = document.querySelector('input[name="date"]:checked');
+    var valueDateOrDaily = selectedDateOrDaily.value;
+
+    if (valueDateOrDaily == 1) {
+        eventDateTitle.style.display = "inline";
+        eventDate.style.display = "inline";
+    } else {
+        eventDateTitle.style.display = "none";
+        eventDate.style.display = "none";
+    }
+   
+}
+
+function getEvent() {
+    var selectedDateOrDaily = document.querySelector('input[name="date"]:checked');
+    var valueDateOrDaily = selectedDateOrDaily.value;
+
+    console.log(eventName);
+    if (valueDateOrDaily == 1) {
+        console.log(eventDate);
+    } else {
+        console.log("daily");
+    }
+}
+    
