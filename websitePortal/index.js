@@ -1,5 +1,20 @@
 // Your JavaScript code here
 // Make sure to access the elements after the DOM is fully loaded
+var editFeaturesPage = document.getElementById("dot-container");
+var todoPage = document.getElementById("todoPage");
+var eventsPage = document.getElementById("eventsPage");
+var themePage = document.getElementById("themePage");
+var boardDisplayPage = document.getElementById("boardDisplayPage");
+var homePage = document.getElementById("homePage");
+var profilePage = document.getElementById("profilePage");
+
+editFeaturesPage.style.display= "none";
+todoPage.style.display = "none";
+eventsPage.style.display = "none";
+themePage.style.display = "none";
+boardDisplayPage.style.display = "none";
+homePage.style.display = "none";
+profilePage.style.display = "none";
 
 var todoCheckBox = document.getElementById("Todo-Check");
 var weeklyCalCheckBox = document.getElementById("WeeklyCal-Check");
@@ -21,7 +36,6 @@ var todoName = document.getElementById("todoName");
 
 var eventDateTitle = document.getElementById("eventDate-label");
 var eventDate = document.getElementById("eventDate");
-
 var eventName = document.getElementById("eventName");
 
 todoDateTitle.style.display = "none";
