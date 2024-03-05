@@ -8,13 +8,13 @@ var boardDisplayPage = document.getElementById("boardDisplayPage");
 var homePage = document.getElementById("homePage");
 var profilePage = document.getElementById("profilePage");
 
-editFeaturesPage.style.display= "none";
-todoPage.style.display = "none";
-eventsPage.style.display = "none";
-themePage.style.display = "none";
-boardDisplayPage.style.display = "none";
-homePage.style.display = "none";
-profilePage.style.display = "none";
+// editFeaturesPage.style.display= "none";
+// todoPage.style.display = "none";
+// eventsPage.style.display = "none";
+// themePage.style.display = "none";
+// boardDisplayPage.style.display = "none";
+// homePage.style.display = "none";
+// profilePage.style.display = "none";
 
 var todoCheckBox = document.getElementById("Todo-Check");
 var weeklyCalCheckBox = document.getElementById("WeeklyCal-Check");

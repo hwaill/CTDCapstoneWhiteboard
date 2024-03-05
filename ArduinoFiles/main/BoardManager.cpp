@@ -1,5 +1,8 @@
 #include "BoardManager.h"
 
+void bleConnectHandler(BLEDevice central);
+void bleDisconnectHandler(BLEDevice central);
+
 BoardManager::BoardManager(Stream &consoleSerial, GCodeHandler &myGCodeHandler, NTPClient &timeClient, RTCTime &currentTime, bool *buttonStates, int *hallSensorValues) {
 	_consoleSerial = &consoleSerial;
 	_myGCodeHandler = &myGCodeHandler;
@@ -12,9 +15,9 @@ BoardManager::BoardManager(Stream &consoleSerial, GCodeHandler &myGCodeHandler, 
 void BoardManager::initialize() {
 	//_myGCodeHandler->initialize();
 	updateFromConfig();
-	_checkForWifiInfo();
+	//_checkForWifiInfo();
 	if(_hasWiFiInfo) {
-		_connectToWifi();
+		//_connectToWifi();
 	}
 	RTC.begin();
 	_consoleSerial->println("\nStarting connection to server...");
@@ -86,6 +89,8 @@ void BoardManager::updateFromConfig() {
 }
 
 void BoardManager::openBluetoothBLE() {
+	bool stayConnected = true;
+
 	BLEService whiteboardService("722cf000-6c3d-48ac-8180-64551d967680");
 	BLEDevice central;
 
@@ -95,6 +100,11 @@ void BoardManager::openBluetoothBLE() {
 
 	//these will be marked true by the web portal when updates are ready to be read.
 	BLEBoolCharacteristic updateThemeCharacteristic("722cz000-6c3d-48ac-8180-64551d967680", BLEWrite);
+	BLEBoolCharacteristic updateTodosCharacteristic("722cz001-6c3d-48ac-8180-64551d967680", BLEWrite);
+	BLEBoolCharacteristic updateFeaturesCharacteristic("722cz002-6c3d-48ac-8180-64551d967680", BLEWrite);
+	BLEBoolCharacteristic updateNameCharacteristic("722cz003-6c3d-48ac-8180-64551d967680", BLEWrite);
+	BLEBoolCharacteristic updateTimeZoneCharacteristic("722cz004-6c3d-48ac-8180-64551d967680", BLEWrite);
+	BLEBoolCharacteristic disconnectBluetoothCharacteristic("722cz005-6c3d-48ac-8180-64551d967680", BLEWrite);
 
 
 	if(!BLE.begin()) {
@@ -112,8 +122,8 @@ void BoardManager::openBluetoothBLE() {
 	//this is where the current configurations are advertised
 	ledCharacteristic.setValue(0);
 
-	BLE.setEventHandler(BLEConnected, connectHandler);
-	BLE.setEventHandler(BLEDisconnected, disconnectHandler);
+	BLE.setEventHandler(BLEConnected, bleConnectHandler);
+	BLE.setEventHandler(BLEDisconnected, bleDisconnectHandler);
 
 	BLE.advertise();
 
@@ -121,14 +131,13 @@ void BoardManager::openBluetoothBLE() {
 
 	unsigned long lastCheck = 0;
 
-	while(true) {
+	while(stayConnected) {
 		BLE.poll();
 
 		unsigned long t = millis();
 		
 		if(central.connected()) {
 			//this is where most of the reading of changes happens.
-			if(toDoCharacteristic.written)
 		} else if((unsigned long)(t - lastCheck) > 100) {
 			central = BLE.central();
 			lastCheck = t;
@@ -138,12 +147,12 @@ void BoardManager::openBluetoothBLE() {
 	BLE.end();
 }
 
-void connectHandler(BLEDevice central) {
+void bleConnectHandler(BLEDevice central) {
 	Serial.print("Connected to: ");
 	Serial.println(central.address());
 }
 
-void disconnectHandler(BLEDevice central) {
+void bleDisconnectHandler(BLEDevice central) {
 	Serial.print("Disconnected from: ");
 	Serial.println(central.address());
 }

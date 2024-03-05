@@ -108,6 +108,8 @@ class BoardManager {
 		
 		int _theme;
 
+		int _numFeatures;
+		bool _features[20];
 		bool _featureToDo;
 		bool _featureWeeklyCalendar;
 		bool _featureDailyQuote;
