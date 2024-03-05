@@ -55,6 +55,10 @@ void GCodeHandler::setFontScale(double scale) {
 	_fontScale = scale;
 }
 
+double GCodeHandler::getFontScale() {
+	return _fontScale;
+}
+
 void GCodeHandler::setTextConstraints(double startX, double startY, double endX, double endY) {
 	_textConstraintStartX = startX;
 	_textConstraintStartY = startY;

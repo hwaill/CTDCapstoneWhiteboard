@@ -16,6 +16,7 @@ class GCodeHandler {
 
 		void setCursor(double x, double y);
 		void setFontScale(double scale);
+		double getFontScale();
 		void setTextConstraints(double startX, double startY, double endX, double endY);
 
 		void sendSingleCommand(String command);

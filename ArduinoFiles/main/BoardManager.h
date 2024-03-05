@@ -13,12 +13,25 @@
 
 struct ToDoListItem {
 	char* name;
+	char* label;
 };
 
 struct CalendarEvent {
 	char* name;
 	unsigned long epochTime;
 };
+
+inline const double TODO_LINE_HEIGHT = 37;
+inline const double TODO_ITEM_FONT_SCALE = 0.8;
+inline const double TODO_LABEL_FONT_SCALE = 0.5;
+inline const double TODO_CURSOR_OFFSET_X = 9;
+inline const double TODO_ITEM_WIDTH = 286;
+inline const double TODO_LEFT_LABEL_SPACE = 40;
+inline const double TODO_CHECKBOX_SPACE = 37;
+
+inline const double TODO_Y_START = 487.727;
+inline const double TODO_LEFT_X_START = 33.282;
+inline const double TODO_RIGHT_X_START = 348.207;
 
 inline const char* MONTH_LONG[12] = {
   "January",
@@ -58,15 +71,14 @@ class BoardManager {
 
 		void NTP();
 		unsigned long lastTimeUpdate;
+
+		void drawListSection(double startY, double startX, int numItems, char* listName, ToDoListItem *itemList, bool hasCheckboxes, bool hasLeftLabel);
 	private:
 		Stream* _consoleSerial;
 		GCodeHandler* _myGCodeHandler;
 
 		bool* _buttonStates;
 		int* _hallSensorValues;
-
-		char* _userFirstName;
-		char* _userLastName;
 
 		bool _needsBluetoothConfig = false;
 
@@ -90,6 +102,9 @@ class BoardManager {
 		int _numMorningToDos;
 		int _numDayToDos;
 		int _numEveningToDos;
+
+		char _userFirstName[20];
+		char _userLastName[20];
 		
 		int _theme;
 

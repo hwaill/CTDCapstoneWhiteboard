@@ -3,12 +3,13 @@ let ledState = false;
 
 let xCharacteristic, yCharacteristic, zCharacteristic, ledCharacteristic;
 
-const serviceUUID = "19b10000-e8f2-537e-4f6c-d104768a1214";
+const serviceUUID = "722cf000-6c3d-48ac-8180-64551d967680";
 
-const toDoCharacteristicUUID = "19b10001-e8f2-537e-4f6c-d104768a1214";
-const ledCharacteristicUUID = "19b10004-e8f2-537e-4f6c-d104768a1214";
+const toDoCharacteristicUUID = "722cf001-6c3d-48ac-8180-64551d967680";
+const ledCharacteristicUUID = "722cf002-6c3d-48ac-8180-64551d967680";
 
 let decoder = new TextDecoder("utf-8");
+let encoder = new TextEncoder('utf-8');
 
 async function connect(){
 
@@ -34,10 +35,11 @@ function readToDo(event) {
 }
 
 async function toggleLED(){
-    let encoder = new TextEncoder('utf-8');
-    let sendMsg = encoder.encode("1000100010");
-
-    await toDoCharacteristic.writeValue(sendMsg);
+    let sendMsg = encoder.encode("Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis,.");
+    
+    await toDoCharacteristic.writeValueWithResponse(sendMsg);
+    
+    //any time you read a value
     toDoCharacteristic.readValue().then((result) => {
         document.getElementById('x').textContent = decoder.decode(result);
     });

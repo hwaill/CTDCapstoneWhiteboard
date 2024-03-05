@@ -26,6 +26,9 @@ const int SERVO_2_ENABLE = 7;
 const int SERVO_3_ENABLE = 8;
 const int SERVO_SIGNAL = 9;
 
+//SD Chip Select Pin
+const int SD_CS_PIN = 10;
+
 //holds button states
 bool buttonStates[16];
 //holds hall effect sensor values
@@ -61,6 +64,8 @@ void setup() {
 	pinMode(SERVO_2_ENABLE, OUTPUT);
 	pinMode(SERVO_3_ENABLE, OUTPUT);
 	pinMode(SERVO_SIGNAL, OUTPUT);
+
+	pinMode(SD_CS_PIN, OUTPUT);
 
   myBoardManager.initialize();
 

@@ -2,7 +2,7 @@
 
 BLEService whiteboardService("722cf000-6c3d-48ac-8180-64551d967680");
 
-BLECharacteristic toDoCharacteristic("722cf001-6c3d-48ac-8180-64551d967680", BLERead | BLEWrite | BLENotify, "0000010000");
+BLECharacteristic toDoCharacteristic("722cf001-6c3d-48ac-8180-64551d967680", BLERead | BLEWrite | BLENotify, 256, false);
 
 BLEBoolCharacteristic ledCharacteristic("722cf002-6c3d-48ac-8180-64551d967680", BLERead | BLEWrite);
 
@@ -29,6 +29,7 @@ void setup(){
   BLE.addService(whiteboardService);
 
   ledCharacteristic.setValue(0);
+  toDoCharacteristic.writeValue("010100010010");
 
   BLE.setEventHandler(BLEConnected, connectHandler);
   BLE.setEventHandler(BLEDisconnected, disconnectHandler);
