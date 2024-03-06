@@ -40,8 +40,11 @@ void GCodeHandler::initialize() {
 	_consoleSerial->println("Initializing Plotter and GRBL Configuration");
 	_wakeGRBLSerial();
 	_sendMultipleCommands(GRBL_SETTINGS, 33);
+	_sendSingleCommand("$X");
+	_sendSingleCommand("G10 P0 L20 X-24 Y-70 Z0.2");
 	_sendSingleCommand("$H");
-	_sendSingleCommand("G10 P0 L20 X0 Y0 Z0.2");
+	_sendSingleCommand("G10 P0 L20 X-24 Y-70 Z0.2");
+	_sendSingleCommand("G00 X0 Y0");
 }
 
 void GCodeHandler::setCursor(double x, double y) {
@@ -124,10 +127,12 @@ void GCodeHandler::write(const char* text, int wrapBehavior, bool obeyConstraint
 				_cursorY -= (LINE_HEIGHT * _fontScale);
 				_cursorX = xStart;
 			} else if(wrapBehavior == WRAP_TRUNCATE) {
+				_consoleSerial->println("wrapHere");
 				int lettersToInclude = 0;
 				while(_cursorX + _calculateWordWidth(textToWrite.substring(0, lettersToInclude + 1)) < xMax) {
 					lettersToInclude++;
 				}
+				_consoleSerial->println(textToWrite.substring(0, lettersToInclude));
 				_sendWord(textToWrite.substring(0, lettersToInclude));
 				return;
 			} else if(wrapBehavior == WRAP_ELLIPSES) {
@@ -149,6 +154,7 @@ void GCodeHandler::write(const char* text, int wrapBehavior, bool obeyConstraint
 			_sendWord(textToWrite.substring(0, textToWrite.indexOf(' ') + 1));
 			textToWrite = textToWrite.substring(textToWrite.indexOf(' ') + 1);
 		} else {
+			_consoleSerial->println(textToWrite.substring(0));
 			_sendWord(textToWrite.substring(0));
 		}
 	}
@@ -253,9 +259,8 @@ double GCodeHandler::_calculateWordWidth(const char* word) {
 	double width = 0;
 	const char* c = &word[0];
 	while(*c != '\0') {
-		width += CHARACTER_WIDTHS[*c] * _fontScale;
+		width += CHARACTER_WIDTHS[*c++] * _fontScale;
 	}
-
 	return width;
 }
 

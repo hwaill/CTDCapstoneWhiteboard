@@ -15,17 +15,19 @@ BoardManager::BoardManager(Stream &consoleSerial, GCodeHandler &myGCodeHandler, 
 void BoardManager::initialize() {
 	//_myGCodeHandler->initialize();
 	updateFromConfig();
-	//_checkForWifiInfo();
-	if(_hasWiFiInfo) {
-		//_connectToWifi();
-	}
-	RTC.begin();
-	_consoleSerial->println("\nStarting connection to server...");
-	_timeClient->begin();
-	_timeClient->update();
 
-	// Get the current time from NTP
-  NTP();
+	openBluetoothBLE();
+	//_checkForWifiInfo();
+	// if(_hasWiFiInfo) {
+	// 	//_connectToWifi();
+	// }
+	// RTC.begin();
+	// _consoleSerial->println("\nStarting connection to server...");
+	// _timeClient->begin();
+	// _timeClient->update();
+
+	// // Get the current time from NTP
+  // NTP();
 }
 
 void BoardManager::updateFromConfig() {
@@ -47,15 +49,12 @@ void BoardManager::updateFromConfig() {
 	//expects file format one line: "firstname:lastname"
 	if(myFile) {
 		input = "";
-		_consoleSerial->println("name.txt:");
 		while(myFile.available()) {
 			next = myFile.read();
 			if(next == ':') break;
 			input.concat(next);
 		}
 		input.toCharArray(_userFirstName, 20);
-		_consoleSerial->print("First name: ");
-		_consoleSerial->println(_userFirstName);
 
 		input = "";
 		while(myFile.available()) {
@@ -65,8 +64,6 @@ void BoardManager::updateFromConfig() {
 		}
 
 		input.toCharArray(_userLastName, 20);
-		_consoleSerial->print("Last name: ");
-		_consoleSerial->println(_userLastName);
 
 		myFile.close();
 	} else {
@@ -86,25 +83,195 @@ void BoardManager::updateFromConfig() {
 	} else {
 		_consoleSerial->println("error opening theme.txt!");
 	}
+
+	myFile = SD.open("wifi.txt");
+	if(myFile) {
+		input = "";
+		while(myFile.available()) {
+			next = myFile.read();
+			if(next == '\n') break;
+			input.concat(next);
+		}
+		input.toCharArray(_wifiSSID, 30);
+
+		input = "";
+		while(myFile.available()) {
+			next = myFile.read();
+			if(next == '\n') break;
+			input.concat(next);
+		}
+
+		input.toCharArray(_wifiPass, 30);
+
+		myFile.close();
+	} else {
+		_consoleSerial->println("error opening wifi.txt!");
+	}
+
+	myFile = SD.open("features.txt");
+	if(myFile) {
+		input = "";
+		while(myFile.available()) {
+			next = myFile.read();
+			if(next == '\n') break;
+			input.concat(next);
+		}
+		_numFeatures = input.toInt();
+
+		for(int i = 0; i < 20; i++) {
+			_features[i] = false;
+			if(myFile.available()) {
+				next = myFile.read();
+				if(next == '1') {
+					_features[i] = true;
+				}
+			}
+		}
+		myFile.close();
+	} else {
+		_consoleSerial->println("error opening features.txt!");
+	}
+
+	myFile = SD.open("moodqs.txt");
+	if(myFile) {
+		input = "";
+		while(myFile.available()) {
+			next = myFile.read();
+			if(next == '\n') break;
+			input.concat(next);
+		}
+		_numMoodQuestions = input.toInt();
+
+		for(int i = 0; i < 10; i++) {
+			_moodQuestions[i] = false;
+			if(myFile.available()) {
+				next = myFile.read();
+				if(next == '1') {
+					_moodQuestions[i] = true;
+				}
+			}
+		}
+		myFile.close();
+	} else {
+		_consoleSerial->println("error opening moodqs.txt!");
+	}
+
+	myFile = SD.open("timezone.txt");
+	if(myFile) {
+		input = "";
+		while(myFile.available()) {
+			next = myFile.read();
+			if(next == '\n') break;
+			input.concat(next);
+		}
+		if(input.charAt(0) == '-') {
+			_timeZoneOffsetHours = -1 * input.substring(1).toInt();
+		} else {
+			_timeZoneOffsetHours = input.toInt();
+		}
+		myFile.close();
+	} else {
+		_consoleSerial->println("error opening timezone.txt!");
+	}
+
+	myFile = SD.open("zip.txt");
+	if(myFile) {
+		input = "";
+		while(myFile.available()) {
+			next = myFile.read();
+			if(next == '\n') break;
+			input.concat(next);
+		}
+		input.toCharArray(_zipcode, 6);
+
+		myFile.close();
+	} else {
+		_consoleSerial->println("error opening zip.txt!");
+	}
+
+	myFile = SD.open("todo1.txt");
+	if(myFile) {
+		input = "";
+		while(myFile.available()) {
+			next = myFile.read();
+			if(next == '\n') break;
+			input.concat(next);
+		}
+		_numMorningToDos = input.toInt();
+
+		for(int i = 0; i < _numMorningToDos; i++) {
+			input = "";
+			while(myFile.available()) {
+				next = myFile.read();
+				if(next == '\n') break;
+				input.concat(next);
+			}
+			input.toCharArray(_morningToDoList[i].name, 50);
+		}
+		myFile.close();
+	} else {
+		_consoleSerial->println("error opening todo1.txt!");
+	}
+
+	myFile = SD.open("todo2.txt");
+	if(myFile) {
+		input = "";
+		while(myFile.available()) {
+			next = myFile.read();
+			if(next == '\n') break;
+			input.concat(next);
+		}
+		_numDayToDos = input.toInt();
+
+		for(int i = 0; i < _numDayToDos; i++) {
+			input = "";
+			while(myFile.available()) {
+				next = myFile.read();
+				if(next == '\n') break;
+				input.concat(next);
+			}
+			input.toCharArray(_dayToDoList[i].name, 50);
+		}
+		myFile.close();
+	} else {
+		_consoleSerial->println("error opening todo2.txt!");
+	}
+
+	myFile = SD.open("todo3.txt");
+	if(myFile) {
+		input = "";
+		while(myFile.available()) {
+			next = myFile.read();
+			if(next == '\n') break;
+			input.concat(next);
+		}
+		_numEveningToDos = input.toInt();
+
+		for(int i = 0; i < _numEveningToDos; i++) {
+			input = "";
+			while(myFile.available()) {
+				next = myFile.read();
+				if(next == '\n') break;
+				input.concat(next);
+			}
+			input.toCharArray(_eveningToDoList[i].name, 50);
+		}
+		myFile.close();
+	} else {
+		_consoleSerial->println("error opening todo2.txt!");
+	}
 }
 
 void BoardManager::openBluetoothBLE() {
-	bool stayConnected = true;
-
 	BLEService whiteboardService("722cf000-6c3d-48ac-8180-64551d967680");
 	BLEDevice central;
 
-	BLECharacteristic toDoCharacteristic("722cf001-6c3d-48ac-8180-64551d967680", BLERead | BLEWrite | BLENotify, "0000010000");
-	BLEBoolCharacteristic ledCharacteristic("722cf002-6c3d-48ac-8180-64551d967680", BLERead | BLEWrite);
-	
-
-	//these will be marked true by the web portal when updates are ready to be read.
-	BLEBoolCharacteristic updateThemeCharacteristic("722cz000-6c3d-48ac-8180-64551d967680", BLEWrite);
-	BLEBoolCharacteristic updateTodosCharacteristic("722cz001-6c3d-48ac-8180-64551d967680", BLEWrite);
-	BLEBoolCharacteristic updateFeaturesCharacteristic("722cz002-6c3d-48ac-8180-64551d967680", BLEWrite);
-	BLEBoolCharacteristic updateNameCharacteristic("722cz003-6c3d-48ac-8180-64551d967680", BLEWrite);
-	BLEBoolCharacteristic updateTimeZoneCharacteristic("722cz004-6c3d-48ac-8180-64551d967680", BLEWrite);
-	BLEBoolCharacteristic disconnectBluetoothCharacteristic("722cz005-6c3d-48ac-8180-64551d967680", BLEWrite);
+	BLECharacteristic dataCharacteristic("722cf001-6c3d-48ac-8180-64551d967680", BLERead | BLEWrite | BLENotify, 200, false);
+	BLECharacteristic requestNameCharacteristic("722cf002-6c3d-48ac-8180-64551d967680", BLERead | BLEWrite, 50, false);
+	BLEIntCharacteristic indexCharacteristic("722cf003-6c3d-48ac-8180-64551d967680", BLERead | BLEWrite);
+	BLEBoolCharacteristic portalSideRequestCharacteristic("722cf004-6c3d-48ac-8180-64551d967680", BLEWrite);
+	BLEBoolCharacteristic portalHasUpdateCharacteristic("722cf005-6c3d-48ac-8180-64551d967680", BLEWrite);
+	BLEBoolCharacteristic successResponseCharacteristic("722cf006-6c3d-48ac-8180-64551d967680", BLENotify);
 
 
 	if(!BLE.begin()) {
@@ -114,13 +281,17 @@ void BoardManager::openBluetoothBLE() {
 	BLE.setLocalName("WhiteboardConfig");
 	BLE.setAdvertisedService(whiteboardService);
 
-	whiteboardService.addCharacteristic(toDoCharacteristic);
-	whiteboardService.addCharacteristic(ledCharacteristic);
+	whiteboardService.addCharacteristic(dataCharacteristic);
+	whiteboardService.addCharacteristic(requestNameCharacteristic);
+	whiteboardService.addCharacteristic(indexCharacteristic);
+	whiteboardService.addCharacteristic(portalSideRequestCharacteristic);
+	whiteboardService.addCharacteristic(portalHasUpdateCharacteristic);
+	whiteboardService.addCharacteristic(successResponseCharacteristic);
 
 	BLE.addService(whiteboardService);
 
-	//this is where the current configurations are advertised
-	ledCharacteristic.setValue(0);
+	//this is where the current configurations are advertise
+	dataCharacteristic.writeValue("default");
 
 	BLE.setEventHandler(BLEConnected, bleConnectHandler);
 	BLE.setEventHandler(BLEDisconnected, bleDisconnectHandler);
@@ -130,14 +301,67 @@ void BoardManager::openBluetoothBLE() {
 	_consoleSerial->println("Begin Bluetooth communication...");
 
 	unsigned long lastCheck = 0;
-
-	while(stayConnected) {
+	char* requestType;
+	String tempString = "";
+	char temp[20];
+	while(true) {
 		BLE.poll();
 
 		unsigned long t = millis();
 		
 		if(central.connected()) {
 			//this is where most of the reading of changes happens.
+			if(portalSideRequestCharacteristic.written()){
+    		if(portalSideRequestCharacteristic.value()){
+      		requestType = (char*)requestNameCharacteristic.value();
+					if(strcmp(requestType, "firstName") == 0) {
+						dataCharacteristic.writeValue(_userFirstName);
+					} else if(strcmp(requestType, "lastName") == 0) {
+						dataCharacteristic.writeValue(_userLastName);
+					} else if(strcmp(requestType, "theme") == 0) {
+						dataCharacteristic.writeValue(itoa(_theme, temp, 10));
+					} else if(strcmp(requestType, "features") == 0) {
+						tempString = "";
+						for(int i = 0; i < _numFeatures; i++) {
+							tempString.concat(_features[i]);
+						}
+						tempString.toCharArray(temp, 20);
+						dataCharacteristic.writeValue(temp);
+					} else if(strcmp(requestType, "numFeatures") == 0) {
+						dataCharacteristic.writeValue(itoa(_numFeatures, temp, 10));
+					} else if(strcmp(requestType, "moodQuestions") == 0) {
+						tempString = "";
+						for(int i = 0; i < _numMoodQuestions; i++) {
+							tempString.concat(_moodQuestions[i]);
+						}
+						tempString.toCharArray(temp, 20);
+						dataCharacteristic.writeValue(temp);
+					} else if(strcmp(requestType, "numMoodQuestions") == 0) {
+						dataCharacteristic.writeValue(itoa(_numMoodQuestions, temp, 10));
+					} else if(strcmp(requestType, "wifiSSID") == 0) {
+						dataCharacteristic.writeValue(_wifiSSID);
+					} else if(strcmp(requestType, "wifiPass") == 0) {
+						dataCharacteristic.writeValue(_wifiPass);
+					} else if(strcmp(requestType, "timeZone") == 0) {
+						dataCharacteristic.writeValue(itoa(_timeZoneOffsetHours, temp, 10));
+					} else if(strcmp(requestType, "zipCode") == 0) {
+						dataCharacteristic.writeValue(_zipcode);
+					} else if(strcmp(requestType, "numMorningToDos") == 0) {
+						dataCharacteristic.writeValue(itoa(_numMorningToDos, temp, 10));
+					} else if(strcmp(requestType, "morningToDo") == 0) {
+						dataCharacteristic.writeValue(_morningToDoList[indexCharacteristic.value()].name);
+					} else if(strcmp(requestType, "numDaytimeToDos") == 0) {
+						dataCharacteristic.writeValue(itoa(_numDayToDos, temp, 10));
+					} else if(strcmp(requestType, "daytimeToDo") == 0) {
+						dataCharacteristic.writeValue(_dayToDoList[indexCharacteristic.value()].name);
+					} else if(strcmp(requestType, "numEveningToDos") == 0) {
+						dataCharacteristic.writeValue(itoa(_numEveningToDos, temp, 10));
+					} else if(strcmp(requestType, "eveningToDo") == 0) {
+						dataCharacteristic.writeValue(_eveningToDoList[indexCharacteristic.value()].name);
+					}
+					portalSideRequestCharacteristic.writeValue(false);
+    		}
+  		}
 		} else if((unsigned long)(t - lastCheck) > 100) {
 			central = BLE.central();
 			lastCheck = t;
@@ -158,8 +382,6 @@ void bleDisconnectHandler(BLEDevice central) {
 }
 
 void BoardManager::_checkForWifiInfo() {
-	_wifiSSID = "iPhone";
-	_wifiPass = "henryhenryhenry";
 	_hasWiFiInfo = true;
 }
 
@@ -222,7 +444,7 @@ void BoardManager::drawListSection(double startY, double startX, int numItems, c
 
 	_myGCodeHandler->drawLine(leftLineX, startY, leftLineX, endY);
 	for(int i = 1; i <= numItems; i++) {
-		_myGCodeHandler->drawLine(startX, startY - (i * TODO_LINE_HEIGHT), startX + TODO_ITEM_WIDTH, startY - (1 * TODO_LINE_HEIGHT));
+		_myGCodeHandler->drawLine(startX, startY - (i * TODO_LINE_HEIGHT), startX + TODO_ITEM_WIDTH, startY - (i * TODO_LINE_HEIGHT));
 	}
 	if(hasCheckboxes) {
 		endX -= TODO_CHECKBOX_SPACE;
@@ -236,7 +458,9 @@ void BoardManager::drawListSection(double startY, double startX, int numItems, c
 	double cursorOffsetY = (TODO_LINE_HEIGHT - LETTER_CAP_HEIGHT * _myGCodeHandler->getFontScale()) / 2.0;
 	
 	_myGCodeHandler->setCursor(leftLineX + cursorOffsetX, startY - TODO_LINE_HEIGHT + cursorOffsetY);
+
 	_myGCodeHandler->write(listName, WRAP_TRUNCATE, true);
+	_consoleSerial->println("d");
 
 	for(int i = 0; i < numItems; i++) {
 		_myGCodeHandler->setCursor(leftLineX + cursorOffsetX, startY - ((i + 2) * TODO_LINE_HEIGHT) + cursorOffsetY);

@@ -12,7 +12,7 @@
 #include <ArduinoBLE.h>
 
 struct ToDoListItem {
-	char* name;
+	char name[50];
 	char* label;
 };
 
@@ -22,7 +22,7 @@ struct CalendarEvent {
 };
 
 inline const double TODO_LINE_HEIGHT = 37;
-inline const double TODO_ITEM_FONT_SCALE = 0.8;
+inline const double TODO_ITEM_FONT_SCALE = 0.6;
 inline const double TODO_LABEL_FONT_SCALE = 0.5;
 inline const double TODO_CURSOR_OFFSET_X = 9;
 inline const double TODO_ITEM_WIDTH = 286;
@@ -72,6 +72,14 @@ class BoardManager {
 		void NTP();
 		unsigned long lastTimeUpdate;
 
+		ToDoListItem _morningToDoList[20];
+		ToDoListItem _dayToDoList[20];
+		ToDoListItem _eveningToDoList[20];
+
+		int _numMorningToDos;
+		int _numDayToDos;
+		int _numEveningToDos;
+
 		void drawListSection(double startY, double startX, int numItems, char* listName, ToDoListItem *itemList, bool hasCheckboxes, bool hasLeftLabel);
 	private:
 		Stream* _consoleSerial;
@@ -83,8 +91,8 @@ class BoardManager {
 		bool _needsBluetoothConfig = false;
 
 		bool _hasWiFiInfo = false;
-		char* _wifiSSID;
-		char* _wifiPass;
+		char _wifiSSID[30];
+		char _wifiPass[30];
 		int _wifiStatus = WL_IDLE_STATUS;
 
 		RTCTime* _currentTime;
@@ -95,14 +103,6 @@ class BoardManager {
 		void _checkForWifiInfo();
 		void _printWifiStatus();
 
-		ToDoListItem _morningToDoList[20];
-		ToDoListItem _dayToDoList[20];
-		ToDoListItem _eveningToDoList[20];
-
-		int _numMorningToDos;
-		int _numDayToDos;
-		int _numEveningToDos;
-
 		char _userFirstName[20];
 		char _userLastName[20];
 		
@@ -110,13 +110,11 @@ class BoardManager {
 
 		int _numFeatures;
 		bool _features[20];
-		bool _featureToDo;
-		bool _featureWeeklyCalendar;
-		bool _featureDailyQuote;
-		bool _featureWeather;
-		bool _featureTicTacToe;
-		bool _featureMoodTracker;
-		
+
+		int _numMoodQuestions;
+		bool _moodQuestions[10];
+
+		char _zipcode[6];
 };
 
 #endif
