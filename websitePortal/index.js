@@ -1,5 +1,4 @@
-// Your JavaScript code here
-// Make sure to access the elements after the DOM is fully loaded
+
 var editFeaturesPage = document.getElementById("dot-container");
 var todoPage = document.getElementById("todoPage");
 var eventsPage = document.getElementById("eventsPage");
@@ -65,53 +64,53 @@ featureSelectedString = todoValue + weeklyCalValue + quotesValue + weatherValue 
 console.log(featureSelectedString);
 }
 function themeSelected() {
-var selectedTheme = document.querySelector('input[name="theme"]:checked');
+    var selectedTheme = document.querySelector('input[name="theme"]:checked');
 
-if (selectedTheme) {
-    var themeSelectedValue = selectedTheme.value;
-    console.log(themeSelectedValue);
-}
+    if (selectedTheme) {
+        var themeSelectedValue = selectedTheme.value;
+        console.log(themeSelectedValue);
+    }
 }
 function showDateBoxTodo(){
-var selectedDateOrDaily = document.querySelector('input[name="date"]:checked');
-var valueDateorDaily = selectedDateOrDaily.value;
+    var selectedDateOrDaily = document.querySelector('input[name="date"]:checked');
+    var valueDateorDaily = selectedDateOrDaily.value;
 
-if (valueDateorDaily == 1) {
-    todoDateTitle.style.display = "inline";
-    todoDate.style.display = "inline";
+    if (valueDateorDaily == 1) {
+        todoDateTitle.style.display = "inline";
+        todoDate.style.display = "inline";
 
-}else{
-    todoDateTitle.style.display = "none";
-    todoDate.style.display = "none";
-}
+    }else{
+        todoDateTitle.style.display = "none";
+        todoDate.style.display = "none";
+    }
 
 }
 function getTask() {
-if(todoDate.style.display == "inline"){
-    console.log(todoDate.value);
-}
-else{
-    console.log("daily");
-}
-console.log(todoName.value);
+    if(todoDate.style.display == "inline"){
+        console.log(todoDate.value);
+    }
+    else{
+        console.log("daily");
+    }
+    console.log(todoName.value);
 }
 function showDateBoxEvent() {
-var selectedDateOrDaily = document.querySelector('input[name="date"]:checked');
-var valueDateorDaily = selectedDateOrDaily.value;
+    var selectedDateOrDaily = document.querySelector('input[name="date"]:checked');
+    var valueDateorDaily = selectedDateOrDaily.value;
 
-if (valueDateorDaily == 1) {
-    eventDateTitle.style.display = "inline";
-    eventDate.style.display = "inline";
-} else {
-    eventDateTitle.style.display = "none";
-    eventDate.style.display = "none";
-}
+    if (valueDateorDaily == 1) {
+        eventDateTitle.style.display = "inline";
+        eventDate.style.display = "inline";
+    } else {
+        eventDateTitle.style.display = "none";
+        eventDate.style.display = "none";
+    }
 }
 function getEvent() {
-if (eventDate.style.display == "inline") {
-    console.log(eventDate.value);
-} else {
-    console.log("daily");
-}
-console.log(eventName.value);
+    if (eventDate.style.display == "inline") {
+        console.log(eventDate.value);
+    } else {
+        console.log("daily");
+    }
+    console.log(eventName.value);
 }
