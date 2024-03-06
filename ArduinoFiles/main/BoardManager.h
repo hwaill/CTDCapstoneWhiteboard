@@ -22,7 +22,7 @@ struct CalendarEvent {
 };
 
 inline const double TODO_LINE_HEIGHT = 37;
-inline const double TODO_ITEM_FONT_SCALE = 0.8;
+inline const double TODO_ITEM_FONT_SCALE = 0.6;
 inline const double TODO_LABEL_FONT_SCALE = 0.5;
 inline const double TODO_CURSOR_OFFSET_X = 9;
 inline const double TODO_ITEM_WIDTH = 286;
@@ -72,6 +72,14 @@ class BoardManager {
 		void NTP();
 		unsigned long lastTimeUpdate;
 
+		ToDoListItem _morningToDoList[20];
+		ToDoListItem _dayToDoList[20];
+		ToDoListItem _eveningToDoList[20];
+
+		int _numMorningToDos;
+		int _numDayToDos;
+		int _numEveningToDos;
+
 		void drawListSection(double startY, double startX, int numItems, char* listName, ToDoListItem *itemList, bool hasCheckboxes, bool hasLeftLabel);
 	private:
 		Stream* _consoleSerial;
@@ -94,14 +102,6 @@ class BoardManager {
 		bool _connectToWifi();
 		void _checkForWifiInfo();
 		void _printWifiStatus();
-
-		ToDoListItem _morningToDoList[20];
-		ToDoListItem _dayToDoList[20];
-		ToDoListItem _eveningToDoList[20];
-
-		int _numMorningToDos;
-		int _numDayToDos;
-		int _numEveningToDos;
 
 		char _userFirstName[20];
 		char _userLastName[20];

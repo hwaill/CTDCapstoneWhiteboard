@@ -234,7 +234,7 @@ async function connectToBluetooth() {
 }
 
 function updateSiteFromValues() {
-
+    document.querySelector("input[name='theme'][value='" + config_theme + "'").checked = true;
 }
 
 

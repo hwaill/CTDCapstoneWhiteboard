@@ -18,16 +18,16 @@ void BoardManager::initialize() {
 
 	openBluetoothBLE();
 	//_checkForWifiInfo();
-	if(_hasWiFiInfo) {
-		//_connectToWifi();
-	}
-	RTC.begin();
-	_consoleSerial->println("\nStarting connection to server...");
-	_timeClient->begin();
-	_timeClient->update();
+	// if(_hasWiFiInfo) {
+	// 	//_connectToWifi();
+	// }
+	// RTC.begin();
+	// _consoleSerial->println("\nStarting connection to server...");
+	// _timeClient->begin();
+	// _timeClient->update();
 
-	// Get the current time from NTP
-  NTP();
+	// // Get the current time from NTP
+  // NTP();
 }
 
 void BoardManager::updateFromConfig() {
@@ -444,7 +444,7 @@ void BoardManager::drawListSection(double startY, double startX, int numItems, c
 
 	_myGCodeHandler->drawLine(leftLineX, startY, leftLineX, endY);
 	for(int i = 1; i <= numItems; i++) {
-		_myGCodeHandler->drawLine(startX, startY - (i * TODO_LINE_HEIGHT), startX + TODO_ITEM_WIDTH, startY - (1 * TODO_LINE_HEIGHT));
+		_myGCodeHandler->drawLine(startX, startY - (i * TODO_LINE_HEIGHT), startX + TODO_ITEM_WIDTH, startY - (i * TODO_LINE_HEIGHT));
 	}
 	if(hasCheckboxes) {
 		endX -= TODO_CHECKBOX_SPACE;
@@ -458,7 +458,9 @@ void BoardManager::drawListSection(double startY, double startX, int numItems, c
 	double cursorOffsetY = (TODO_LINE_HEIGHT - LETTER_CAP_HEIGHT * _myGCodeHandler->getFontScale()) / 2.0;
 	
 	_myGCodeHandler->setCursor(leftLineX + cursorOffsetX, startY - TODO_LINE_HEIGHT + cursorOffsetY);
+
 	_myGCodeHandler->write(listName, WRAP_TRUNCATE, true);
+	_consoleSerial->println("d");
 
 	for(int i = 0; i < numItems; i++) {
 		_myGCodeHandler->setCursor(leftLineX + cursorOffsetX, startY - ((i + 2) * TODO_LINE_HEIGHT) + cursorOffsetY);

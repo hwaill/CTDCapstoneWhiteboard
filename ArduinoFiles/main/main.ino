@@ -67,11 +67,11 @@ void setup() {
 
 	pinMode(SD_CS_PIN, OUTPUT);
 
-  myBoardManager.initialize();
-
 	digitalWrite(SERVO_1_ENABLE, HIGH);
 	digitalWrite(SERVO_2_ENABLE, LOW);
 	digitalWrite(SERVO_3_ENABLE, LOW);
+
+  myBoardManager.initialize();
 }
 
 void loop() {
@@ -91,8 +91,9 @@ void loop() {
   // Serial.print(currentTime.getMinutes());
   // Serial.print(":");
   // Serial.println(currentTime.getSeconds());
+	myBoardManager.drawListSection(400, 60, myBoardManager._numMorningToDos, "Morning Tasks", myBoardManager._morningToDoList, true, false);
 
-  // delay(500);
+  delay(1000000);
 
 	//update RTC from internet
 	if((unsigned long)(millis() - myBoardManager.lastTimeUpdate) > 600000) {
