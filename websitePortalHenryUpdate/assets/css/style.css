@@ -1,0 +1,148 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+*{
+    color:black;
+    font-family: "Montserrat", Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; /* test for css connected to html */
+}
+
+h1, h2, h3, h4, h5, h6, p {
+    margin: 0;
+    font-weight: 300;
+}
+
+.subtitle {
+    margin: 1em 0;
+}
+
+body {
+    background-color: white;
+    color:black;
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; /* test for css connected to html */
+    margin: 0;
+    padding: 0;
+    position: relative;
+    text-align: center;
+}
+
+#needsBluetoothConnection {
+    box-sizing: border-box;
+    padding: 2em;
+    margin-top: 6em;
+    background-color: #9396CB;
+    max-width: 700px;
+}
+
+.needsConnectionContent {
+    padding: 2em;
+    box-sizing: border-box;
+    background: white;
+    width: 100%;
+}
+
+#connectionResultMessage {
+    padding-top: 1em;
+}
+
+#navbar{
+    background-color: rgb(217, 232, 255);
+    position: relative;
+    overflow: hidden;
+    left: 0;
+    top: 0;
+    box-sizing: border-box;
+    width: 100vw;
+    padding: 20px;
+    box-shadow: rgba(0, 0, 0, 0.5) 0 0 10px;
+}
+
+#navbar .navItem {
+    padding: .5em 1em;
+    text-align: center;
+    text-decoration: none;
+    font-weight: 450;
+    margin: 0 2rem;
+    width: 10%; 
+    margin: 0 1%;
+    font-size:larger;
+}
+#navbar .navItem:hover{
+    color:rgb(55, 59, 171);
+}
+
+.pageContent {
+    overflow: hidden;
+    padding-top: 5em;
+    text-align: left;
+    width: 80%;
+    margin: auto;
+}
+
+#mainLogo {
+    max-height: 4.5em;
+}
+
+.featuresSection {
+
+}
+/* -----------Board Display Tab)---------- */
+#page-container{
+    display: flex;
+    flex-direction: row;
+    text-align: center;
+    margin-left: 250px;
+    margin-top: 100px;
+}
+#features-title{
+    font-size: 30px;
+    font-weight: 300;
+}
+#features-list {
+    text-align: left;
+    padding-right: 200px;
+}
+#whiteboard{
+    width: 600px;
+}
+/* -----------End of Board Display Tab ---------- */
+/* ---------Edit Features Tab---------- */
+#dot-container{
+    max-width: 770px;
+    margin: 80px auto 0; 
+    text-align: center;
+}
+.dot{
+    height: 250px;
+    width: 250px;
+    border-radius: 50%;
+    display: inline-block;
+    border: none;
+    font-size: 30px;
+    font-weight: 500;
+}
+
+#dot1 {
+    margin-right: 30px;
+    background-color: #7ec0b0;
+}
+
+#dot2 {
+    background-color: #9c89cf;
+}
+
+#dot3 {
+    background-color: #6386ec;
+}
+
+button#dot1:hover{
+    background-color: #4b7b6f;
+}
+
+button#dot2:hover{
+    background-color: #6f5f9b;
+}
+
+button#dot3:hover{
+    background-color: #405bac;
+}
+
+/* ---------End of Edit Features Tab---------- */

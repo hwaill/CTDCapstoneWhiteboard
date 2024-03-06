@@ -12,7 +12,7 @@
 #include <ArduinoBLE.h>
 
 struct ToDoListItem {
-	char* name;
+	char name[50];
 	char* label;
 };
 
@@ -83,8 +83,8 @@ class BoardManager {
 		bool _needsBluetoothConfig = false;
 
 		bool _hasWiFiInfo = false;
-		char* _wifiSSID;
-		char* _wifiPass;
+		char _wifiSSID[30];
+		char _wifiPass[30];
 		int _wifiStatus = WL_IDLE_STATUS;
 
 		RTCTime* _currentTime;
@@ -110,13 +110,11 @@ class BoardManager {
 
 		int _numFeatures;
 		bool _features[20];
-		bool _featureToDo;
-		bool _featureWeeklyCalendar;
-		bool _featureDailyQuote;
-		bool _featureWeather;
-		bool _featureTicTacToe;
-		bool _featureMoodTracker;
-		
+
+		int _numMoodQuestions;
+		bool _moodQuestions[10];
+
+		char _zipcode[6];
 };
 
 #endif
