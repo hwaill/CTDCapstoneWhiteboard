@@ -1,0 +1,15 @@
+Website: https://randomnerdtutorials.com/esp32-http-get-open-weather-map-thingspeak-arduino/
+
+Api Key:
+fe9ad3ff8ef0d713008f026a6c97706c
+
+API URL:
+http://api.openweathermap.org/data/2.5/weather?q=yourCityName,yourCountryCode&APPID=yourUniqueAPIkey
+
+
+https://api.openweathermap.org/data/2.5/weather?q=Boulder,80302&APPID=fe9ad3ff8ef0d713008f026a6c97706c
+
+inputs:
+    - City Name (yourCityName)
+    - Zipcode (yourCountryCode)
+    - Api Key (yourUniqueAPIkey) = fe9ad3ff8ef0d713008f026a6c97706c
