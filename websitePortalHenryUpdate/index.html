@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="assets/css/style.css">
+    
+    <title>Todos Config - Home</title>
+</head>
+<body>
+    <!--Navigation bar for after dot menu-->
+    <!-- <div id="navbar">
+        <span class="navItem" onclick="goDOT()">Home</span>
+        <span class="navItem" onclick="goBoardDisplay()">Board Display</span>
+        <span class="navItem" onclick="goFeatures()">Features</span>
+        <span class="navItem" onclick="goProfile()">Profile</span>
+    </div> -->
+    <!--Holds all page content-->
+    <div class="pageContent">
+        <!--Landing page logo-->
+        <img id="mainLogo" src="images/newLogo.svg" alt="" />
+        <!--Waiting screen to prompt for bluetooth connections-->
+        <div id="needsBluetoothConnection">
+            <div class="needsConnectionContent">
+                <h1 class="title">Welcome to your todos whiteboard configuration portal.</h1>
+                <h2 class="subtitle">Please connect to your board.</h2>
+                <button onclick="connectToBluetooth()">Connect</button>
+                <button onclick="goMain()">Go to Main (So We Can Test :)</button>
+                <p id="connectionResultMessage"></p>
+            </div>
+        </div>
+        <div id="featuresSection">
+            <div class="leftContainer">
+                <div class="featuresListContainer">
+                <form id="features-list">
+                    <h1 class="title">Features</h1>
+                    <div class="featureItem">
+                        <input type="checkbox" id="Todo-Check" name="Todo-Check" onchange="updateFeatures()">
+                        <label for="Todo-Check">To-Do List</label><br>
+                    </div>
+                    <div class="featureItem">
+                        <input type="checkbox" id="WeeklyCal-Check" name="WeeklyCal-Check" onchange="updateFeatures()">
+                        <label for="WeeklyCal-Check">Weekly Calendar</label><br>
+                    </div>
+                    <div class="featureItem">
+                        <input type="checkbox" id="Mood-Check" name="Mood-Check" onchange="updateFeatures()">
+                        <label for="Mood-Check">Mood Tracker</label><br>
+                    </div>
+                    <div class="featureItem">
+                        <input type="checkbox" id="Weather-Check" name="Weather-Check" onchange="updateFeatures()">
+                        <label for="Weather-Check">Weather</label><br>
+                    </div>
+                    <div class="featureItem">
+                        <input type="checkbox" id="Game-Check" name="Game-Check" onchange="updateFeatures()">
+                        <label for="Game-Check">Tic-Tac-Toe</label><br>
+                    </div>
+                    <div class="featureItem">
+                        <input type="checkbox" id="Quotes-Check" name="Quotes-Check" onchange="updateFeatures()">
+                        <label for="Quotes-Check">Daily Quote</label><br>
+                    </div>
+                    <div class="featureItem">
+                        <input type="checkbox" id="Theme-Check" name="Theme-Check" onchange="updateFeatures()">
+                        <label for="Theme-Check">Theme</label><br>
+                    </div>
+                </form>
+            </div>
+            <div id="profileContainer">
+                <div id="profileContent">
+                    <h1 class="title">Profile</h1>
+                    <div class="nameHolder">
+                        <h3>First name:</h3>
+                        <div class="nameEdit">
+                            <span id="firstName"></span>
+                            <div class="editIcon"></div>
+                        </div>
+                    </div>
+                    <div class="nameHolder">
+                        <h3>Last name:</h3>
+                        <div class="nameEdit">
+                            <span id="lastName"></span>
+                            <div class="editIcon"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+            <div class="featuresConfigurationSection">
+                <div class="featureConfig" id="featurePageDescription">
+                    <div class="featureConfigContent">
+                        <h1>Select and configure your features</h2>
+                        <p> asdjhf ladsjfh lasdjhf laksjdh flkasjdh flajsdhf lkajsdh flkjashd flkjasdh flkajsdh flkajsdh flkjasdhfljkhoeriufhkdjshb fvkj sdnb ehbf kahebw f</p>
+                    </div>
+                </div>
+                <div class="featureConfig" id="todoPage">
+                    <div class="featureConfigContent">
+                    <h2>Todos</h2>
+                    <div id="toDoLists">
+                        <div class="toDoList" id="morningToDo"><p>Morning To-Do List</p></div>
+                        <div class="toDoList" id="daytimeToDo"><p>Daytime To-Do List</p></div>
+                        <div class="toDoList" id="eveningToDo"><p>Evening To-Do List</p></div>
+                    </div>
+                    <input type="submit" value="Submit" onclick="getTask()">
+                    </div>
+                </div>
+                <div class="featureConfig" id="eventsPage">
+                    <div class="featureConfigContent">
+                    <h2>Events</h2>
+                
+                    <form action="">
+                        <label for="eventName">Event:</label>
+                        <input type="text" id="eventName" name="eventName"><br><br>
+                    </form>
+                    
+                    <form id="event-date-or-daily" value="">
+                        <input type="radio" id="event-date-Check" name="date" value="1" onchange="showDateBoxEvent()">
+                        <label for="event-date-Check">Date</label><br>
+                
+                        <label id="eventDate-label" for="eventDate">Date:</label>
+                        <input type="text" id="eventDate" name="eventDate"><br><br>
+                
+                        <input type="radio" id="daily-Check-Event" name="date" value="2" onchange="showDateBoxEvent()">
+                        <label for="daily-Check-Event">Daily</label><br>
+                    </form>
+                
+                    <input type="submit" value="Submit" onclick="getEvent()">
+                    </div>
+                </div>
+                <div class="featureConfig" id="moodTrackerPage">
+                    <div class="featureConfigContent"></div>
+                </div>
+                <div class="featureConfig" id="weatherPage">
+                    <div class="featureConfigContent"></div>
+                    </div>
+                <div class="featureConfig" id="ticTacToePage">
+                    <div class="featureConfigContent"></div>
+                </div>
+                <div class="featureConfig" id="dailyQuotePage">
+                    <div class="featureConfigContent"></div>
+                </div>
+                <div class="featureConfig" id="themePage">
+                    <div class="featureConfigContent">
+                    <h1>Themes</h1>
+                    <p>Themes change the aesthetic design of the board. The default is <em>Blank</em>, but feel free to experiment with others!</p>
+                    <form id="themes-list" value="">
+                        <input type="radio" id="spaceTheme-Check" name="theme" value="1">
+                        <label for="spaceTheme-Check">Space</label><br>
+                    
+                        <input type="radio" id="plantTheme-Check" name="theme" value="2">
+                        <label for="plantTheme-Check">Plants</label><br>
+                    
+                        <input type="radio" id="heartTheme-Check" name="theme" value="3">
+                        <label for="heartTheme-Check">Hearts</label><br>
+                    
+                        <input type="radio" id="swirlTheme-Check" name="theme" value="4">
+                        <label for="swirlTheme-Check">Swirls</label><br>
+                    
+                        <input type="radio" id="noneTheme-Check" name="theme" value="5">
+                        <label for="noneTheme-Check">Blank</label><br>
+                        <br />
+                        <input class="configButton" type="button" value="Update Theme" onclick="updateTheme()">
+                    </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="boardDisplayPage">
+        
+        </div>
+        <div id="profilePage">
+            <h1>Profile</h1>
+        </div>
+    </div>
+</body>
+<script src="index.js"></script>
+</html>
