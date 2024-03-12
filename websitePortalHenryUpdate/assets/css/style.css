@@ -5,9 +5,13 @@
     font-family: "Montserrat", Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; /* test for css connected to html */
 }
 
-h1, h2, h3, h4, h5, h6, p {
+h1, h2, h3, h4, h5, h6 {
     margin: 0;
     font-weight: 300;
+}
+
+.title {
+    margin-bottom: 1em;
 }
 
 .subtitle {
@@ -70,7 +74,6 @@ body {
 }
 
 .pageContent {
-    overflow: hidden;
     padding-top: 5em;
     text-align: left;
     width: 80%;
@@ -81,8 +84,105 @@ body {
     max-height: 4.5em;
 }
 
-.featuresSection {
+#featuresSection {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: flex-start;
+    gap: 2em;
+    margin-top: 6em;
+}
 
+.leftContainer {
+    flex-shrink: 0;
+}
+
+.featuresListContainer {
+    box-sizing: border-box;
+    padding: 2em;
+    margin-bottom: 2em;
+    background-color: #9396CB;
+    box-shadow: rgba(0, 0, 0, 0.5) 0 0 10px;
+    width: 19.2em;
+}
+
+#profileContainer {
+    box-sizing: border-box;
+    padding: 2em;
+    background-color: #9396CB;
+    box-shadow: rgba(0, 0, 0, 0.5) 0 0 10px;
+    width: 19.2em;
+}
+
+#profileContent {
+    background-color: white;
+    padding: 2em;
+    box-sizing: border-box;
+}
+
+.nameEdit {
+    background-color: rgb(217, 232, 255);
+    padding: 0.5em;
+    margin: 0.1em 0;
+}
+
+.editIcon {
+    background-image: url("../../images/editLogo.svg");
+    width: 1em;
+    height: 1em;
+    background-size: contain;
+    float: right;
+}
+
+#features-list {
+    background-color: white;
+    padding: 2em;
+    box-sizing: border-box;
+}
+
+.featureItem {
+    background-color: rgb(217, 232, 255);
+    padding: 0.5em;
+    margin: 0.1em 0;
+}
+
+.featuresConfigurationSection {
+    flex-grow: 1;
+    box-sizing: border-box;
+}
+
+.featureConfig {
+    box-sizing: border-box;
+    padding: 2em;
+    margin-bottom: 2em;
+    background-color: #9396CB;
+    box-shadow: rgba(0, 0, 0, 0.5) 0 0 10px;
+}
+
+.featureConfigContent {
+    background-color: white;
+    padding: 2em;
+    box-sizing: border-box;
+}
+
+#toDoLists {
+    display: flex;
+    flex-flow: row nowrap;
+    gap: 2em;
+}
+
+.toDoList {
+    box-sizing: border-box;
+    flex-grow: 1;
+}
+
+.configButton {
+    background-color: rgb(217, 232, 255); /* Green */
+  border: none;
+  padding: 1em 2em;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: inherit;
 }
 /* -----------Board Display Tab)---------- */
 #page-container{
@@ -98,7 +198,6 @@ body {
 }
 #features-list {
     text-align: left;
-    padding-right: 200px;
 }
 #whiteboard{
     width: 600px;

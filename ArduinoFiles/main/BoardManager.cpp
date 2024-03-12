@@ -27,7 +27,7 @@ void BoardManager::initialize() {
 	// _timeClient->update();
 
 	// // Get the current time from NTP
-  // NTP();
+	// NTP();
 }
 
 void BoardManager::updateFromConfig() {
@@ -38,28 +38,28 @@ void BoardManager::updateFromConfig() {
 	_consoleSerial->print("Initializing SD card...");
 	digitalWrite(10, HIGH);
 
-	if(!SD.begin(10)) {
+	if (!SD.begin(10)) {
 		_consoleSerial->println("initialization failed!");
 		return;
 	}
 	_consoleSerial->println("initialization success!");
 
-	//go through all the files and update class variables
+	// go through all the files and update class variables
 	myFile = SD.open("name.txt");
-	//expects file format one line: "firstname:lastname"
-	if(myFile) {
+	// expects file format one line: "firstname:lastname"
+	if (myFile) {
 		input = "";
-		while(myFile.available()) {
+		while (myFile.available()) {
 			next = myFile.read();
-			if(next == ':') break;
+			if (next == ':') break;
 			input.concat(next);
 		}
 		input.toCharArray(_userFirstName, 20);
 
 		input = "";
-		while(myFile.available()) {
+		while (myFile.available()) {
 			next = myFile.read();
-			if(next == '\n') break;
+			if (next == '\n') break;
 			input.concat(next);
 		}
 
@@ -71,9 +71,9 @@ void BoardManager::updateFromConfig() {
 	}
 
 	myFile = SD.open("theme.txt");
-	if(myFile) {
+	if (myFile) {
 		_consoleSerial->println("theme.txt:");
-		if(myFile.available()) {
+		if (myFile.available()) {
 			next = myFile.read();
 			_theme = next - '0';
 			_consoleSerial->print("Theme: ");
@@ -85,19 +85,19 @@ void BoardManager::updateFromConfig() {
 	}
 
 	myFile = SD.open("wifi.txt");
-	if(myFile) {
+	if (myFile) {
 		input = "";
-		while(myFile.available()) {
+		while (myFile.available()) {
 			next = myFile.read();
-			if(next == '\n') break;
+			if (next == '\n') break;
 			input.concat(next);
 		}
 		input.toCharArray(_wifiSSID, 30);
 
 		input = "";
-		while(myFile.available()) {
+		while (myFile.available()) {
 			next = myFile.read();
-			if(next == '\n') break;
+			if (next == '\n') break;
 			input.concat(next);
 		}
 
@@ -109,20 +109,20 @@ void BoardManager::updateFromConfig() {
 	}
 
 	myFile = SD.open("features.txt");
-	if(myFile) {
+	if (myFile) {
 		input = "";
-		while(myFile.available()) {
+		while (myFile.available()) {
 			next = myFile.read();
-			if(next == '\n') break;
+			if (next == '\n') break;
 			input.concat(next);
 		}
 		_numFeatures = input.toInt();
 
-		for(int i = 0; i < 20; i++) {
+		for (int i = 0; i < 20; i++) {
 			_features[i] = false;
-			if(myFile.available()) {
+			if (myFile.available()) {
 				next = myFile.read();
-				if(next == '1') {
+				if (next == '1') {
 					_features[i] = true;
 				}
 			}
@@ -133,20 +133,20 @@ void BoardManager::updateFromConfig() {
 	}
 
 	myFile = SD.open("moodqs.txt");
-	if(myFile) {
+	if (myFile) {
 		input = "";
-		while(myFile.available()) {
+		while (myFile.available()) {
 			next = myFile.read();
-			if(next == '\n') break;
+			if (next == '\n') break;
 			input.concat(next);
 		}
 		_numMoodQuestions = input.toInt();
 
-		for(int i = 0; i < 10; i++) {
+		for (int i = 0; i < 10; i++) {
 			_moodQuestions[i] = false;
-			if(myFile.available()) {
+			if (myFile.available()) {
 				next = myFile.read();
-				if(next == '1') {
+				if (next == '1') {
 					_moodQuestions[i] = true;
 				}
 			}
@@ -157,14 +157,14 @@ void BoardManager::updateFromConfig() {
 	}
 
 	myFile = SD.open("timezone.txt");
-	if(myFile) {
+	if (myFile) {
 		input = "";
-		while(myFile.available()) {
-			next = myFile.read();
-			if(next == '\n') break;
+		while (myFile.available()) {
+			next = myFile.read(); break;
 			input.concat(next);
 		}
-		if(input.charAt(0) == '-') {
+
+		if (input.charAt(0) == '-') {
 			_timeZoneOffsetHours = -1 * input.substring(1).toInt();
 		} else {
 			_timeZoneOffsetHours = input.toInt();
@@ -175,11 +175,11 @@ void BoardManager::updateFromConfig() {
 	}
 
 	myFile = SD.open("zip.txt");
-	if(myFile) {
+	if (myFile) {
 		input = "";
-		while(myFile.available()) {
+		while (myFile.available()) {
 			next = myFile.read();
-			if(next == '\n') break;
+			if (next == '\n') break;
 			input.concat(next);
 		}
 		input.toCharArray(_zipcode, 6);
@@ -190,20 +190,20 @@ void BoardManager::updateFromConfig() {
 	}
 
 	myFile = SD.open("todo1.txt");
-	if(myFile) {
+	if (myFile) {
 		input = "";
-		while(myFile.available()) {
+		while (myFile.available()) {
 			next = myFile.read();
-			if(next == '\n') break;
+			if (next == '\n') break;
 			input.concat(next);
 		}
 		_numMorningToDos = input.toInt();
 
-		for(int i = 0; i < _numMorningToDos; i++) {
+		for (int i = 0; i < _numMorningToDos; i++) {
 			input = "";
-			while(myFile.available()) {
+			while (myFile.available()) {
 				next = myFile.read();
-				if(next == '\n') break;
+				if (next == '\n') break;
 				input.concat(next);
 			}
 			input.toCharArray(_morningToDoList[i].name, 50);
@@ -214,20 +214,20 @@ void BoardManager::updateFromConfig() {
 	}
 
 	myFile = SD.open("todo2.txt");
-	if(myFile) {
+	if (myFile) {
 		input = "";
-		while(myFile.available()) {
+		while (myFile.available()) {
 			next = myFile.read();
-			if(next == '\n') break;
+			if (next == '\n') break;
 			input.concat(next);
 		}
 		_numDayToDos = input.toInt();
 
-		for(int i = 0; i < _numDayToDos; i++) {
+		for (int i = 0; i < _numDayToDos; i++) {
 			input = "";
-			while(myFile.available()) {
+			while (myFile.available()) {
 				next = myFile.read();
-				if(next == '\n') break;
+				if (next == '\n') break;
 				input.concat(next);
 			}
 			input.toCharArray(_dayToDoList[i].name, 50);
@@ -238,20 +238,21 @@ void BoardManager::updateFromConfig() {
 	}
 
 	myFile = SD.open("todo3.txt");
-	if(myFile) {
+	if (myFile) {
 		input = "";
-		while(myFile.available()) {
+		while (myFile.available()) {
 			next = myFile.read();
-			if(next == '\n') break;
+			if (next == '\n') break;
 			input.concat(next);
 		}
 		_numEveningToDos = input.toInt();
 
-		for(int i = 0; i < _numEveningToDos; i++) {
+		for (int i = 0; i < _numEveningToDos; i++) {
 			input = "";
-			while(myFile.available()) {
+			while (myFile.available()) {
 				next = myFile.read();
-				if(next == '\n') break;
+				if (next == '\n')
+					break;
 				input.concat(next);
 			}
 			input.toCharArray(_eveningToDoList[i].name, 50);
@@ -273,8 +274,7 @@ void BoardManager::openBluetoothBLE() {
 	BLEBoolCharacteristic portalHasUpdateCharacteristic("722cf005-6c3d-48ac-8180-64551d967680", BLEWrite);
 	BLEBoolCharacteristic successResponseCharacteristic("722cf006-6c3d-48ac-8180-64551d967680", BLENotify);
 
-
-	if(!BLE.begin()) {
+	if (!BLE.begin()) {
 		_consoleSerial->println("Starting BLE failed!");
 	}
 
@@ -290,7 +290,7 @@ void BoardManager::openBluetoothBLE() {
 
 	BLE.addService(whiteboardService);
 
-	//this is where the current configurations are advertise
+	// this is where the current configurations are advertise
 	dataCharacteristic.writeValue("default");
 
 	BLE.setEventHandler(BLEConnected, bleConnectHandler);
@@ -301,68 +301,119 @@ void BoardManager::openBluetoothBLE() {
 	_consoleSerial->println("Begin Bluetooth communication...");
 
 	unsigned long lastCheck = 0;
-	char* requestType;
+	char *requestType;
+	char *updateType;
 	String tempString = "";
 	char temp[20];
-	while(true) {
+	while (true) {
 		BLE.poll();
 
 		unsigned long t = millis();
-		
-		if(central.connected()) {
-			//this is where most of the reading of changes happens.
-			if(portalSideRequestCharacteristic.written()){
-    		if(portalSideRequestCharacteristic.value()){
-      		requestType = (char*)requestNameCharacteristic.value();
-					if(strcmp(requestType, "firstName") == 0) {
+
+		if (central.connected()) {
+			// this is where most of the reading of changes happens.
+			if (portalSideRequestCharacteristic.written()) {
+				if (portalSideRequestCharacteristic.value()) {
+					requestType = (char *)requestNameCharacteristic.value();
+					if (strcmp(requestType, "firstName") == 0) {
 						dataCharacteristic.writeValue(_userFirstName);
-					} else if(strcmp(requestType, "lastName") == 0) {
+					} else if (strcmp(requestType, "lastName") == 0) {
 						dataCharacteristic.writeValue(_userLastName);
-					} else if(strcmp(requestType, "theme") == 0) {
+					} else if (strcmp(requestType, "theme") == 0) {
 						dataCharacteristic.writeValue(itoa(_theme, temp, 10));
-					} else if(strcmp(requestType, "features") == 0) {
+					} else if (strcmp(requestType, "features") == 0) {
 						tempString = "";
-						for(int i = 0; i < _numFeatures; i++) {
+						for (int i = 0; i < _numFeatures; i++) {
 							tempString.concat(_features[i]);
 						}
 						tempString.toCharArray(temp, 20);
 						dataCharacteristic.writeValue(temp);
-					} else if(strcmp(requestType, "numFeatures") == 0) {
+					} else if (strcmp(requestType, "numFeatures") == 0) {
 						dataCharacteristic.writeValue(itoa(_numFeatures, temp, 10));
-					} else if(strcmp(requestType, "moodQuestions") == 0) {
+					} else if (strcmp(requestType, "moodQuestions") == 0) {
 						tempString = "";
-						for(int i = 0; i < _numMoodQuestions; i++) {
+						for (int i = 0; i < _numMoodQuestions; i++) {
 							tempString.concat(_moodQuestions[i]);
 						}
 						tempString.toCharArray(temp, 20);
 						dataCharacteristic.writeValue(temp);
-					} else if(strcmp(requestType, "numMoodQuestions") == 0) {
+					} else if (strcmp(requestType, "numMoodQuestions") == 0) {
 						dataCharacteristic.writeValue(itoa(_numMoodQuestions, temp, 10));
-					} else if(strcmp(requestType, "wifiSSID") == 0) {
+					} else if (strcmp(requestType, "wifiSSID") == 0) {
 						dataCharacteristic.writeValue(_wifiSSID);
-					} else if(strcmp(requestType, "wifiPass") == 0) {
+					} else if (strcmp(requestType, "wifiPass") == 0) {
 						dataCharacteristic.writeValue(_wifiPass);
-					} else if(strcmp(requestType, "timeZone") == 0) {
+					} else if (strcmp(requestType, "timeZone") == 0) {
 						dataCharacteristic.writeValue(itoa(_timeZoneOffsetHours, temp, 10));
-					} else if(strcmp(requestType, "zipCode") == 0) {
+					} else if (strcmp(requestType, "zipCode") == 0) {
 						dataCharacteristic.writeValue(_zipcode);
-					} else if(strcmp(requestType, "numMorningToDos") == 0) {
+					} else if (strcmp(requestType, "numMorningToDos") == 0) {
 						dataCharacteristic.writeValue(itoa(_numMorningToDos, temp, 10));
-					} else if(strcmp(requestType, "morningToDo") == 0) {
+					} else if (strcmp(requestType, "morningToDo") == 0) {
 						dataCharacteristic.writeValue(_morningToDoList[indexCharacteristic.value()].name);
-					} else if(strcmp(requestType, "numDaytimeToDos") == 0) {
+					} else if (strcmp(requestType, "numDaytimeToDos") == 0) {
 						dataCharacteristic.writeValue(itoa(_numDayToDos, temp, 10));
-					} else if(strcmp(requestType, "daytimeToDo") == 0) {
+					} else if (strcmp(requestType, "daytimeToDo") == 0) {
 						dataCharacteristic.writeValue(_dayToDoList[indexCharacteristic.value()].name);
-					} else if(strcmp(requestType, "numEveningToDos") == 0) {
+					} else if (strcmp(requestType, "numEveningToDos") == 0) {
 						dataCharacteristic.writeValue(itoa(_numEveningToDos, temp, 10));
-					} else if(strcmp(requestType, "eveningToDo") == 0) {
+					} else if (strcmp(requestType, "eveningToDo") == 0) {
 						dataCharacteristic.writeValue(_eveningToDoList[indexCharacteristic.value()].name);
 					}
 					portalSideRequestCharacteristic.writeValue(false);
-    		}
-  		}
-		} else if((unsigned long)(t - lastCheck) > 100) {
+				}
+			}
+
+			if (portalHasUpdateCharacteristic.written()) {
+				if (portalHasUpdateCharacteristic.value()) {
+					File myFile;
+					updateType = (char *)requestNameCharacteristic.value();
+					tempString = (char *)dataCharacteristic.value();
+
+					if (strcmp(updateType, "theme") == 0) {
+						_consoleSerial->println(tempString);
+						_theme = tempString.toInt();
+						myFile = SD.open("theme.txt", FILE_WRITE | O_TRUNC);
+						myFile.print(tempString);
+						myFile.close();
+					} else if(strcmp(updateType, "firstName") == 0) {
+						
+					} else if(strcmp(updateType, "lastName") == 0) {
+						
+					} else if(strcmp(updateType, "features") == 0) {
+						
+					} else if(strcmp(updateType, "numFeatures") == 0) {
+						
+					} else if(strcmp(updateType, "moodQuestions") == 0) {
+						
+					} else if(strcmp(updateType, "numMoodQuestions") == 0) {
+						
+					} else if(strcmp(updateType, "wifiSSID") == 0) {
+						
+					} else if(strcmp(updateType, "wifiPass") == 0) {
+						
+					} else if(strcmp(updateType, "timeZone") == 0) {
+						
+					} else if(strcmp(updateType, "zipCode") == 0) {
+						
+					} else if(strcmp(updateType, "numMorningToDos") == 0) {
+						
+					} else if(strcmp(updateType, "morningToDo") == 0) {
+						
+					} else if(strcmp(updateType, "numDaytimeToDos") == 0) {
+						
+					} else if(strcmp(updateType, "daytimeToDo") == 0) {
+						
+					} else if(strcmp(updateType, "numEveningToDos") == 0) {
+						
+					} else if(strcmp(updateType, "eveningToDo") == 0) {
+						
+					}
+
+					portalHasUpdateCharacteristic.writeValue(false);
+				}
+			}
+		} else if ((unsigned long)(t - lastCheck) > 100) {
 			central = BLE.central();
 			lastCheck = t;
 		}
@@ -387,18 +438,18 @@ void BoardManager::_checkForWifiInfo() {
 
 bool BoardManager::_connectToWifi() {
 	// check for the WiFi module:
-	if(WiFi.status() == WL_NO_MODULE) {
+	if (WiFi.status() == WL_NO_MODULE) {
 		_consoleSerial->println("Communication with WiFi module failed!");
 		return false;
 	}
 
 	String fv = WiFi.firmwareVersion();
-	if(fv < WIFI_FIRMWARE_LATEST_VERSION) {
+	if (fv < WIFI_FIRMWARE_LATEST_VERSION) {
 		_consoleSerial->println("Please upgrade the firmware!");
 	}
 
 	// attempt to connect to WiFi network:
-	while(_wifiStatus != WL_CONNECTED) {
+	while (_wifiStatus != WL_CONNECTED) {
 		_consoleSerial->print("Attempting to connect to SSID: ");
 		_consoleSerial->println(_wifiSSID);
 		_wifiStatus = WiFi.begin(_wifiSSID, _wifiPass);
@@ -411,19 +462,19 @@ bool BoardManager::_connectToWifi() {
 
 void BoardManager::_printWifiStatus() {
 	// print the SSID of the network you're attached to:
-  _consoleSerial->print("SSID: ");
-  _consoleSerial->println(WiFi.SSID());
+	_consoleSerial->print("SSID: ");
+	_consoleSerial->println(WiFi.SSID());
 
-  // print your board's IP address:
-  IPAddress ip = WiFi.localIP();
-  _consoleSerial->print("IP Address: ");
-  _consoleSerial->println(ip);
+	// print your board's IP address:
+	IPAddress ip = WiFi.localIP();
+	_consoleSerial->print("IP Address: ");
+	_consoleSerial->println(ip);
 
-  // print the received signal strength:
-  long rssi = WiFi.RSSI();
-  _consoleSerial->print("signal strength (RSSI):");
-  _consoleSerial->print(rssi);
-  _consoleSerial->println(" dBm");
+	// print the received signal strength:
+	long rssi = WiFi.RSSI();
+	_consoleSerial->print("signal strength (RSSI):");
+	_consoleSerial->print(rssi);
+	_consoleSerial->println(" dBm");
 }
 
 void BoardManager::NTP() {
@@ -433,20 +484,21 @@ void BoardManager::NTP() {
 	lastTimeUpdate = millis();
 }
 
-void BoardManager::drawListSection(double startY, double startX, int numItems, char* listName, ToDoListItem *itemList, bool hasCheckboxes, bool hasLeftLabel) {
+void BoardManager::drawListSection(double startY, double startX, int numItems, char *listName, ToDoListItem *itemList, bool hasCheckboxes, bool hasLeftLabel) {
 	double leftLineX = startX;
 	double endX = startX + TODO_ITEM_WIDTH;
-	if(hasLeftLabel) {
+	if (hasLeftLabel) {
 		leftLineX += TODO_LEFT_LABEL_SPACE;
 	}
 
 	double endY = startY - ((numItems + 1) * TODO_LINE_HEIGHT);
 
 	_myGCodeHandler->drawLine(leftLineX, startY, leftLineX, endY);
-	for(int i = 1; i <= numItems; i++) {
+	for (int i = 1; i <= numItems; i++) {
 		_myGCodeHandler->drawLine(startX, startY - (i * TODO_LINE_HEIGHT), startX + TODO_ITEM_WIDTH, startY - (i * TODO_LINE_HEIGHT));
 	}
-	if(hasCheckboxes) {
+
+	if (hasCheckboxes) {
 		endX -= TODO_CHECKBOX_SPACE;
 		_myGCodeHandler->drawLine(startX + TODO_ITEM_WIDTH - TODO_CHECKBOX_SPACE, startY, startX + TODO_ITEM_WIDTH - TODO_CHECKBOX_SPACE, endY);
 	}
@@ -456,24 +508,24 @@ void BoardManager::drawListSection(double startY, double startX, int numItems, c
 
 	double cursorOffsetX = TODO_CURSOR_OFFSET_X;
 	double cursorOffsetY = (TODO_LINE_HEIGHT - LETTER_CAP_HEIGHT * _myGCodeHandler->getFontScale()) / 2.0;
-	
+
 	_myGCodeHandler->setCursor(leftLineX + cursorOffsetX, startY - TODO_LINE_HEIGHT + cursorOffsetY);
 
 	_myGCodeHandler->write(listName, WRAP_TRUNCATE, true);
 	_consoleSerial->println("d");
 
-	for(int i = 0; i < numItems; i++) {
+	for (int i = 0; i < numItems; i++) {
 		_myGCodeHandler->setCursor(leftLineX + cursorOffsetX, startY - ((i + 2) * TODO_LINE_HEIGHT) + cursorOffsetY);
 		_myGCodeHandler->write(itemList[i].name, WRAP_TRUNCATE, true);
 	}
 
-	if(hasLeftLabel) {
+	if (hasLeftLabel) {
 		_myGCodeHandler->setFontScale(TODO_LABEL_FONT_SCALE);
 		_myGCodeHandler->setTextConstraints(startX, startY, startX + TODO_LEFT_LABEL_SPACE, endY);
 
 		cursorOffsetY = (TODO_LINE_HEIGHT - LETTER_CAP_HEIGHT * _myGCodeHandler->getFontScale()) / 2.0;
-		
-		for(int i = 0; i < numItems; i++) {
+
+		for (int i = 0; i < numItems; i++) {
 			_myGCodeHandler->setCursor(startX, startY - ((i + 2) * TODO_LINE_HEIGHT) + cursorOffsetY);
 			_myGCodeHandler->write(itemList[i].label, WRAP_TRUNCATE, true);
 		}

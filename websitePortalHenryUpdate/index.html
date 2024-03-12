@@ -9,12 +9,12 @@
 </head>
 <body>
     <!--Navigation bar for after dot menu-->
-    <div id="navbar">
+    <!-- <div id="navbar">
         <span class="navItem" onclick="goDOT()">Home</span>
         <span class="navItem" onclick="goBoardDisplay()">Board Display</span>
         <span class="navItem" onclick="goFeatures()">Features</span>
         <span class="navItem" onclick="goProfile()">Profile</span>
-    </div>
+    </div> -->
     <!--Holds all page content-->
     <div class="pageContent">
         <!--Landing page logo-->
@@ -28,64 +28,81 @@
                 <p id="connectionResultMessage"></p>
             </div>
         </div>
-        <!--Dot menu to navigate to main categories-->
-        <div id="dot-container">
-            <h1 id="dot-title" class="title"></h1>
-            <h2 id="dot-subtitle" class="subtitle"></h2>
-            <button class="dot" id="dot1" onclick="goFeatures()">Edit Features</button>
-            <button class="dot" id="dot2" onclick="goBoardDisplay()">Board Display</button>
-            <button class="dot" id="dot3" onclick="goProfile()">Profile</button>
-        </div>
         <div id="featuresSection">
-            <div class="featuresListContainer">
+            <div class="leftContainer">
+                <div class="featuresListContainer">
                 <form id="features-list">
-                    <h3 id="features-title">Features</h3>
-                    <input type="checkbox" id="Todo-Check" name="Todo-Check" onchange="updateFeatures()">
-                    <label for="Todo-Check">To-Do List</label><br>
-            
-                    <input type="checkbox" id="WeeklyCal-Check" name="WeeklyCal-Check" onchange="updateFeatures()">
-                    <label for="WeeklyCal-Check">Weekly Calendar</label><br>
-            
-                    <input type="checkbox" id="Quotes-Check" name="Quotes-Check" onchange="updateFeatures()">
-                    <label for="Quotes-Check">Daily Quote</label><br>
-            
-                    <input type="checkbox" id="Weather-Check" name="Weather-Check" onchange="updateFeatures()">
-                    <label for="Weather-Check">Weather</label><br>
-            
-                    <input type="checkbox" id="Game-Check" name="Game-Check" onchange="updateFeatures()">
-                    <label for="Game-Check">Tic-Tac-Toe</label><br>
-            
-                    <input type="checkbox" id="Mood-Check" name="Mood-Check" onchange="updateFeatures()">
-                    <label for="Mood-Check">Mood Tracker</label><br>
-            
-                    <input type="checkbox" id="Theme-Check" name="Theme-Check" onchange="updateFeatures()">
-                    <label for="Theme-Check">Theme</label><br><br>
+                    <h1 class="title">Features</h1>
+                    <div class="featureItem">
+                        <input type="checkbox" id="Todo-Check" name="Todo-Check" onchange="updateFeatures()">
+                        <label for="Todo-Check">To-Do List</label><br>
+                    </div>
+                    <div class="featureItem">
+                        <input type="checkbox" id="WeeklyCal-Check" name="WeeklyCal-Check" onchange="updateFeatures()">
+                        <label for="WeeklyCal-Check">Weekly Calendar</label><br>
+                    </div>
+                    <div class="featureItem">
+                        <input type="checkbox" id="Mood-Check" name="Mood-Check" onchange="updateFeatures()">
+                        <label for="Mood-Check">Mood Tracker</label><br>
+                    </div>
+                    <div class="featureItem">
+                        <input type="checkbox" id="Weather-Check" name="Weather-Check" onchange="updateFeatures()">
+                        <label for="Weather-Check">Weather</label><br>
+                    </div>
+                    <div class="featureItem">
+                        <input type="checkbox" id="Game-Check" name="Game-Check" onchange="updateFeatures()">
+                        <label for="Game-Check">Tic-Tac-Toe</label><br>
+                    </div>
+                    <div class="featureItem">
+                        <input type="checkbox" id="Quotes-Check" name="Quotes-Check" onchange="updateFeatures()">
+                        <label for="Quotes-Check">Daily Quote</label><br>
+                    </div>
+                    <div class="featureItem">
+                        <input type="checkbox" id="Theme-Check" name="Theme-Check" onchange="updateFeatures()">
+                        <label for="Theme-Check">Theme</label><br>
+                    </div>
                 </form>
             </div>
-            <div class="featuresConfigurationSection">
-                <div id="todoPage">
-                    <h2>Todos</h2>
-                    
-                    <form action="">
-                        <label for="todoName">Task:</label>
-                        <input type="text" id="todoName" name="todoName"><br><br>
-                    </form>
-                    
-                    <form id="todo-date-or-daily" value="">
-                        <input type="radio" id="date-Check" name="date" value="1" onchange="showDateBoxTodo()">
-                        <label for="date-Check">Date</label><br>
-            
-                        <label id="todoDate-label" for="todoDate">Date:</label>
-                        <input type="text" id="todoDate" name="todoDate"><br><br>
-            
-                        <input type="radio" id="daily-Check" name="date" value="2" onchange="showDateBoxTodo()">
-                        <label for="daily-Check">Daily</label><br>
-            
-                    </form>
-            
-                    <input type="submit" value="Submit" onclick="getTask()">
+            <div id="profileContainer">
+                <div id="profileContent">
+                    <h1 class="title">Profile</h1>
+                    <div class="nameHolder">
+                        <h3>First name:</h3>
+                        <div class="nameEdit">
+                            <span id="firstName"></span>
+                            <div class="editIcon"></div>
+                        </div>
+                    </div>
+                    <div class="nameHolder">
+                        <h3>Last name:</h3>
+                        <div class="nameEdit">
+                            <span id="lastName"></span>
+                            <div class="editIcon"></div>
+                        </div>
+                    </div>
                 </div>
-                <div id="eventsPage">
+            </div>
+            </div>
+            <div class="featuresConfigurationSection">
+                <div class="featureConfig" id="featurePageDescription">
+                    <div class="featureConfigContent">
+                        <h1>Select and configure your features</h2>
+                        <p> asdjhf ladsjfh lasdjhf laksjdh flkasjdh flajsdhf lkajsdh flkjashd flkjasdh flkajsdh flkajsdh flkjasdhfljkhoeriufhkdjshb fvkj sdnb ehbf kahebw f</p>
+                    </div>
+                </div>
+                <div class="featureConfig" id="todoPage">
+                    <div class="featureConfigContent">
+                    <h2>Todos</h2>
+                    <div id="toDoLists">
+                        <div class="toDoList" id="morningToDo"><p>Morning To-Do List</p></div>
+                        <div class="toDoList" id="daytimeToDo"><p>Daytime To-Do List</p></div>
+                        <div class="toDoList" id="eveningToDo"><p>Evening To-Do List</p></div>
+                    </div>
+                    <input type="submit" value="Submit" onclick="getTask()">
+                    </div>
+                </div>
+                <div class="featureConfig" id="eventsPage">
+                    <div class="featureConfigContent">
                     <h2>Events</h2>
                 
                     <form action="">
@@ -105,12 +122,25 @@
                     </form>
                 
                     <input type="submit" value="Submit" onclick="getEvent()">
+                    </div>
                 </div>
-                <div id="themePage">
-                    <h2>Themes</h2>
+                <div class="featureConfig" id="moodTrackerPage">
+                    <div class="featureConfigContent"></div>
+                </div>
+                <div class="featureConfig" id="weatherPage">
+                    <div class="featureConfigContent"></div>
+                    </div>
+                <div class="featureConfig" id="ticTacToePage">
+                    <div class="featureConfigContent"></div>
+                </div>
+                <div class="featureConfig" id="dailyQuotePage">
+                    <div class="featureConfigContent"></div>
+                </div>
+                <div class="featureConfig" id="themePage">
+                    <div class="featureConfigContent">
+                    <h1>Themes</h1>
+                    <p>Themes change the aesthetic design of the board. The default is <em>Blank</em>, but feel free to experiment with others!</p>
                     <form id="themes-list" value="">
-                        <h3 id="theme-title">Themes</h3>
-                    
                         <input type="radio" id="spaceTheme-Check" name="theme" value="1">
                         <label for="spaceTheme-Check">Space</label><br>
                     
@@ -125,9 +155,10 @@
                     
                         <input type="radio" id="noneTheme-Check" name="theme" value="5">
                         <label for="noneTheme-Check">Blank</label><br>
-                    
-                        <input type="submit" value="Submit">
+                        <br />
+                        <input class="configButton" type="button" value="Update Theme" onclick="updateTheme()">
                     </form>
+                    </div>
                 </div>
             </div>
         </div>

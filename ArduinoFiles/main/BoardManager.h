@@ -107,7 +107,15 @@ class BoardManager {
 		char _userLastName[20];
 		
 		int _theme;
-
+		
+		//features:
+		//0 = todolist
+		//1 = events
+		//2 = mood
+		//3 = weather
+		//4 = game
+		//5 = quotes
+		//6 = theme
 		int _numFeatures;
 		bool _features[20];
 
