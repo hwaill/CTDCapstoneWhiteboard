@@ -372,6 +372,9 @@ if (eventDate.style.display == "inline") {
 }
 console.log(eventName.value);
 }
+function getEventDateNameTime(){
+    alert(eventName.value);
+}
 
 
 //These are functions to "change pages"

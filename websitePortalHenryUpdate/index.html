@@ -25,6 +25,7 @@
                 <h1 class="title">Welcome to your todos whiteboard configuration portal.</h1>
                 <h2 class="subtitle">Please connect to your board.</h2>
                 <button onclick="connectToBluetooth()">Connect</button>
+                <button onclick="goMain()">Go to Main</button>
                 <p id="connectionResultMessage"></p>
             </div>
         </div>
@@ -101,11 +102,12 @@
                     <input type="submit" value="Submit" onclick="getTask()">
                     </div>
                 </div>
+<!-- -------------------------------Events-------------------------------------------------------------------------- -->
                 <div class="featureConfig" id="eventsPage">
                     <div class="featureConfigContent">
                     <h2>Events</h2>
                 
-                    <form action="">
+                    <!-- <form action="">
                         <label for="eventName">Event:</label>
                         <input type="text" id="eventName" name="eventName"><br><br>
                     </form>
@@ -119,11 +121,17 @@
                 
                         <input type="radio" id="daily-Check-Event" name="date" value="2" onchange="showDateBoxEvent()">
                         <label for="daily-Check-Event">Daily</label><br>
-                    </form>
+                    </form> -->
                 
-                    <input type="submit" value="Submit" onclick="getEvent()">
+                    <form action="/action_page.php">
+                        <label for="eventName">Event:</label>
+                        <input type="datetime-local" id="eventName" name="eventName">
+                        <input type="submit" value="Submit" onclick="getEventDateNameTime()">
+                    </form>
+
                     </div>
                 </div>
+<!-- -------------------------------End Events-------------------------------------------------------------------------- -->
                 <div class="featureConfig" id="moodTrackerPage">
                     <div class="featureConfigContent"></div>
                 </div>
