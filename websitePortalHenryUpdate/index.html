@@ -91,15 +91,49 @@
                         <p> asdjhf ladsjfh lasdjhf laksjdh flkasjdh flajsdhf lkajsdh flkjashd flkjasdh flkajsdh flkajsdh flkjasdhfljkhoeriufhkdjshb fvkj sdnb ehbf kahebw f</p>
                     </div>
                 </div>
+<!-- -------------------------todos--------------------------------------------------- -->
                 <div class="featureConfig" id="todoPage">
                     <div class="featureConfigContent">
                     <h2>Todos</h2>
                     <div id="toDoLists">
-                        <div class="toDoList" id="morningToDo"><p>Morning To-Do List</p></div>
-                        <div class="toDoList" id="daytimeToDo"><p>Daytime To-Do List</p></div>
-                        <div class="toDoList" id="eveningToDo"><p>Evening To-Do List</p></div>
+
+                        <div class="toDoList" id="morningToDo"><p>Morning</p>
+                            <form id="todoName-Form-M">
+                                <label for="morningToDo">Add Todo:</label>
+                                <input type="text" id="morningToDo" name="morningToDo">
+                                <input type="submit" value="Add" onclick="addTask()">
+                            </form><br>
+                            <h4>To-Do List</h4>
+                            <h6>5am-12pm</h6><br>
+
+
+                        </div>
+
+                        <div class="toDoList" id="daytimeToDo"><p>Daytime</p>
+                            <form id="todoName-Form-D">
+                                <label for="daytimeToDo">Add Todo:</label>
+                                <input type="text" id="daytimeToDo" name="daytimeToDo">
+                                <input type="submit" value="Add" onclick="addTask()">
+                            </form><br>
+                            <h4>To-Do List</h4>
+                            <h6>12pm-6pm</h6><br>
+
+                            
+                        </div>
+
+                        <div class="toDoList" id="eveningToDo"><p>Evening</p>
+                            <form id="todoName-Form-E">
+                                <label for="eveningToDo">Add Todo:</label>
+                                <input type="text" id="eveningToDo" name="eveningToDo">
+                                <input type="submit" value="Add" onclick="addTask()">
+                            </form><br>
+                            <h4>To-Do List</h4>
+                            <h6>6pm-5am</h6><br>
+
+
+                        </div>
                     </div>
-                    <input type="submit" value="Submit" onclick="getTask()">
+                    
                     </div>
                 </div>
 <!-- -------------------------------Events-------------------------------------------------------------------------- -->

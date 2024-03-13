@@ -353,24 +353,24 @@ else{
 console.log(todoName.value);
 }
 function showDateBoxEvent() {
-var selectedDateOrDaily = document.querySelector('input[name="date"]:checked');
-var valueDateorDaily = selectedDateOrDaily.value;
+    var selectedDateOrDaily = document.querySelector('input[name="date"]:checked');
+    var valueDateorDaily = selectedDateOrDaily.value;
 
-if (valueDateorDaily == 1) {
-    eventDateTitle.style.display = "inline";
-    eventDate.style.display = "inline";
-} else {
-    eventDateTitle.style.display = "none";
-    eventDate.style.display = "none";
-}
+    if (valueDateorDaily == 1) {
+        eventDateTitle.style.display = "inline";
+        eventDate.style.display = "inline";
+    } else {
+        eventDateTitle.style.display = "none";
+        eventDate.style.display = "none";
+    }
 }
 function getEvent() {
-if (eventDate.style.display == "inline") {
-    console.log(eventDate.value);
-} else {
-    console.log("daily");
-}
-console.log(eventName.value);
+    if (eventDate.style.display == "inline") {
+        console.log(eventDate.value);
+    } else {
+        console.log("daily");
+    }
+    console.log(eventName.value);
 }
 
 function getEventDateNameTime(){
