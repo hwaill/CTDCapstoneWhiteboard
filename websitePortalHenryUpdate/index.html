@@ -105,29 +105,15 @@
 <!-- -------------------------------Events-------------------------------------------------------------------------- -->
                 <div class="featureConfig" id="eventsPage">
                     <div class="featureConfigContent">
-                    <h2>Events</h2>
-                
-                    <!-- <form action="">
-                        <label for="eventName">Event:</label>
-                        <input type="text" id="eventName" name="eventName"><br><br>
-                    </form>
-                    
-                    <form id="event-date-or-daily" value="">
-                        <input type="radio" id="event-date-Check" name="date" value="1" onchange="showDateBoxEvent()">
-                        <label for="event-date-Check">Date</label><br>
-                
-                        <label id="eventDate-label" for="eventDate">Date:</label>
-                        <input type="text" id="eventDate" name="eventDate"><br><br>
-                
-                        <input type="radio" id="daily-Check-Event" name="date" value="2" onchange="showDateBoxEvent()">
-                        <label for="daily-Check-Event">Daily</label><br>
-                    </form> -->
-                
-                    <form action="/action_page.php">
-                        <label for="eventName">Event:</label>
-                        <input type="datetime-local" id="eventName" name="eventName">
-                        <input type="submit" value="Submit" onclick="getEventDateNameTime()">
-                    </form>
+                        <h2>Events</h2>
+            
+                        <form id="Event-Info-Form" >
+                            <label for="eventName">Event:</label>
+                            <input type="text" id="eventName" name="eventName">
+                            <label for="eventDateTime">When:</label>
+                            <input type="datetime-local" id="eventDateTime" name="eventDateTime"><br><br>
+                            <input type="button" value="Submit" onclick="getEventDateNameTime()">
+                        </form>
 
                     </div>
                 </div>

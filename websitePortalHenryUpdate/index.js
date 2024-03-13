@@ -372,8 +372,19 @@ if (eventDate.style.display == "inline") {
 }
 console.log(eventName.value);
 }
+
 function getEventDateNameTime(){
-    alert(eventName.value);
+    var eForm = document.getElementById("Event-Info-Form");
+    var eName = eventName.value;
+    var eventDateTime = document.getElementById("eventDateTime").value;
+    var eventDate = eventDateTime.split("T")[0];
+    var eventTime = eventDateTime.split("T")[1];
+
+    console.log(eName);
+    console.log(eventDate);
+    console.log(eventTime);
+    eForm.reset();
+    return false;
 }
 
 
