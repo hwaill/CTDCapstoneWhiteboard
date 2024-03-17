@@ -517,6 +517,8 @@ void BoardManager::NTP() {
 	lastTimeUpdate = millis();
 }
 
+
+
 void BoardManager::drawListSection(double startY, double startX, int numItems, char *listName, ToDoListItem *itemList, bool hasCheckboxes, bool hasLeftLabel) {
 	double leftLineX = startX;
 	double endX = startX + TODO_ITEM_WIDTH;

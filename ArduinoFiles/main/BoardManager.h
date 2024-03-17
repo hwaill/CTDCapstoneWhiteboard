@@ -17,7 +17,7 @@ struct ToDoListItem {
 };
 
 struct CalendarEvent {
-	char* name;
+	char name[50];
 	unsigned long epochTime;
 };
 
@@ -58,6 +58,7 @@ inline const char* DAY[7] {
   "Saturday"
 };
 
+
 class BoardManager {
 	public:
 		BoardManager(Stream &consoleSerial, GCodeHandler &myGCodeHandler, NTPClient &timeClient, RTCTime &currentTime, bool *buttonStates, int *hallSensorValues);
@@ -76,9 +77,13 @@ class BoardManager {
 		ToDoListItem _dayToDoList[20];
 		ToDoListItem _eveningToDoList[20];
 
+		CalendarEvent _events[20];
+
 		int _numMorningToDos;
 		int _numDayToDos;
 		int _numEveningToDos;
+
+		int _numEvents;
 
 		void drawListSection(double startY, double startX, int numItems, char* listName, ToDoListItem *itemList, bool hasCheckboxes, bool hasLeftLabel);
 	private:

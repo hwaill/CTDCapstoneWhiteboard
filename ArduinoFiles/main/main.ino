@@ -33,6 +33,7 @@ const int SD_CS_PIN = 10;
 bool buttonStates[16];
 //holds hall effect sensor values
 int hallSensorValues[64];
+bool hallSensorStates[64];
 
 WiFiUDP Udp;  // A UDP instance to let us send and receive packets over UDP
 NTPClient timeClient(Udp);
@@ -93,6 +94,11 @@ void loop() {
   // Serial.println(currentTime.getSeconds());
 	myBoardManager.drawListSection(400, 60, myBoardManager._numMorningToDos, "Morning Tasks", myBoardManager._morningToDoList, true, false);
 
+	if(its 12) {
+		updateHallSensorValues();
+	}
+
+
   delay(1000000);
 
 	//update RTC from internet
@@ -128,4 +134,8 @@ void updateHallSensorValues() {
 		hallSensorValues[i + 32] = analogRead(SIGNAL_HALL_MULTI3);
 		hallSensorValues[i + 48] = analogRead(SIGNAL_HALL_MULTI4);
   }
+
+	for(int i = 0; i < 64; i++) {
+	//	hallSensorStates[i] = hallSensorValues > VALUE;
+	}
 }
