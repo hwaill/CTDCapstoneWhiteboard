@@ -21,7 +21,7 @@ void BoardManager::initialize() {
 	// if(_hasWiFiInfo) {
 	// 	//_connectToWifi();
 	// }
-	// RTC.begin();
+	RTC.begin();
 	// _consoleSerial->println("\nStarting connection to server...");
 	// _timeClient->begin();
 	// _timeClient->update();
@@ -343,6 +343,8 @@ void BoardManager::openBluetoothBLE() {
 						dataCharacteristic.writeValue(_wifiSSID);
 					} else if (strcmp(requestType, "wifiPass") == 0) {
 						dataCharacteristic.writeValue(_wifiPass);
+						_consoleSerial->print(_wifiSSID);
+						_consoleSerial->println("test");
 					} else if (strcmp(requestType, "timeZone") == 0) {
 						dataCharacteristic.writeValue(itoa(_timeZoneOffsetHours, temp, 10));
 					} else if (strcmp(requestType, "zipCode") == 0) {
@@ -377,11 +379,30 @@ void BoardManager::openBluetoothBLE() {
 						myFile.print(tempString);
 						myFile.close();
 					} else if(strcmp(updateType, "firstName") == 0) {
-						
+						_consoleSerial->println(tempString);
+						tempString.toCharArray(_userFirstName, 20);
+						myFile = SD.open("name.txt", FILE_WRITE | O_TRUNC);
+						myFile.print(_userFirstName);
+						myFile.print(':');
+						myFile.print(_userLastName);
+						myFile.close();
 					} else if(strcmp(updateType, "lastName") == 0) {
-						
+						_consoleSerial->println(tempString);
+						tempString.toCharArray(_userLastName, 20);
+						myFile = SD.open("name.txt", FILE_WRITE | O_TRUNC);
+						myFile.print(_userFirstName);
+						myFile.print(':');
+						myFile.print(_userLastName);
+						myFile.close();
 					} else if(strcmp(updateType, "features") == 0) {
-						
+						_consoleSerial->println(tempString);
+						for(int i = 0; i < _numFeatures; i++) {
+							_features[i] = (tempString.charAt(i) == '1');
+						}
+						myFile = SD.open("features.txt", FILE_WRITE | O_TRUNC);
+						myFile.println(_numFeatures);
+						myFile.print(tempString);
+						myFile.close();
 					} else if(strcmp(updateType, "numFeatures") == 0) {
 						
 					} else if(strcmp(updateType, "moodQuestions") == 0) {
@@ -389,9 +410,21 @@ void BoardManager::openBluetoothBLE() {
 					} else if(strcmp(updateType, "numMoodQuestions") == 0) {
 						
 					} else if(strcmp(updateType, "wifiSSID") == 0) {
-						
+						_consoleSerial->println(tempString);
+						tempString.toCharArray(_wifiSSID, 30);
+						myFile = SD.open("wifi.txt", FILE_WRITE | O_TRUNC);
+						myFile.print(_wifiSSID);
+						myFile.print('\n');
+						myFile.print(_wifiPass);
+						myFile.close();
 					} else if(strcmp(updateType, "wifiPass") == 0) {
-						
+						_consoleSerial->println(tempString);
+						tempString.toCharArray(_wifiPass, 30);
+						myFile = SD.open("wifi.txt", FILE_WRITE | O_TRUNC);
+						myFile.print(_wifiSSID);
+						myFile.print('\n');
+						myFile.print(_wifiPass);
+						myFile.close();
 					} else if(strcmp(updateType, "timeZone") == 0) {
 						
 					} else if(strcmp(updateType, "zipCode") == 0) {

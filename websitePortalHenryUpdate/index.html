@@ -31,57 +31,76 @@
         <div id="featuresSection">
             <div class="leftContainer">
                 <div class="featuresListContainer">
-                <form id="features-list">
-                    <h1 class="title">Features</h1>
-                    <div class="featureItem">
-                        <input type="checkbox" id="Todo-Check" name="Todo-Check" onchange="updateFeatures()">
-                        <label for="Todo-Check">To-Do List</label><br>
-                    </div>
-                    <div class="featureItem">
-                        <input type="checkbox" id="WeeklyCal-Check" name="WeeklyCal-Check" onchange="updateFeatures()">
-                        <label for="WeeklyCal-Check">Weekly Calendar</label><br>
-                    </div>
-                    <div class="featureItem">
-                        <input type="checkbox" id="Mood-Check" name="Mood-Check" onchange="updateFeatures()">
-                        <label for="Mood-Check">Mood Tracker</label><br>
-                    </div>
-                    <div class="featureItem">
-                        <input type="checkbox" id="Weather-Check" name="Weather-Check" onchange="updateFeatures()">
-                        <label for="Weather-Check">Weather</label><br>
-                    </div>
-                    <div class="featureItem">
-                        <input type="checkbox" id="Game-Check" name="Game-Check" onchange="updateFeatures()">
-                        <label for="Game-Check">Tic-Tac-Toe</label><br>
-                    </div>
-                    <div class="featureItem">
-                        <input type="checkbox" id="Quotes-Check" name="Quotes-Check" onchange="updateFeatures()">
-                        <label for="Quotes-Check">Daily Quote</label><br>
-                    </div>
-                    <div class="featureItem">
-                        <input type="checkbox" id="Theme-Check" name="Theme-Check" onchange="updateFeatures()">
-                        <label for="Theme-Check">Theme</label><br>
-                    </div>
-                </form>
-            </div>
-            <div id="profileContainer">
-                <div id="profileContent">
-                    <h1 class="title">Profile</h1>
-                    <div class="nameHolder">
-                        <h3>First name:</h3>
-                        <div class="nameEdit">
-                            <span id="firstName"></span>
-                            <div class="editIcon"></div>
+                    <form id="features-list">
+                        <h1 class="title">Features</h1>
+                        <div class="featureItem">
+                            <input type="checkbox" id="Todo-Check" name="Todo-Check" onchange="updateFeatures()">
+                            <label for="Todo-Check">To-Do List</label><br>
                         </div>
-                    </div>
-                    <div class="nameHolder">
-                        <h3>Last name:</h3>
-                        <div class="nameEdit">
-                            <span id="lastName"></span>
-                            <div class="editIcon"></div>
+                        <div class="featureItem">
+                            <input type="checkbox" id="WeeklyCal-Check" name="WeeklyCal-Check" onchange="updateFeatures()">
+                            <label for="WeeklyCal-Check">Weekly Calendar</label><br>
+                        </div>
+                        <div class="featureItem">
+                            <input type="checkbox" id="Mood-Check" name="Mood-Check" onchange="updateFeatures()">
+                            <label for="Mood-Check">Mood Tracker</label><br>
+                        </div>
+                        <div class="featureItem">
+                            <input type="checkbox" id="Weather-Check" name="Weather-Check" onchange="updateFeatures()">
+                            <label for="Weather-Check">Weather</label><br>
+                        </div>
+                        <div class="featureItem">
+                            <input type="checkbox" id="Game-Check" name="Game-Check" onchange="updateFeatures()">
+                            <label for="Game-Check">Tic-Tac-Toe</label><br>
+                        </div>
+                        <div class="featureItem">
+                            <input type="checkbox" id="Quotes-Check" name="Quotes-Check" onchange="updateFeatures()">
+                            <label for="Quotes-Check">Daily Quote</label><br>
+                        </div>
+                        <div class="featureItem">
+                            <input type="checkbox" id="Theme-Check" name="Theme-Check" onchange="updateFeatures()">
+                            <label for="Theme-Check">Theme</label><br>
+                        </div>
+                    </form>
+                </div>
+                <div id="profileContainer">
+                    <div id="profileContent">
+                        <h1 class="title">Profile</h1>
+                        <div class="nameHolder">
+                            <h3>First name:</h3>
+                            <div class="nameEdit">
+                                <span id="firstName"></span>
+                                <div class="editIcon" onclick="editField(this)"></div>
+                                <div class="doneEditing" onclick="updateFirstName(this)">DONE</div>
+                            </div>
+                        </div>
+                        <div class="nameHolder">
+                            <h3>Last name:</h3>
+                            <div class="nameEdit">
+                                <span id="lastName"></span>
+                                <div class="editIcon" onclick="editField(this)"></div>
+                                <div class="doneEditing" onclick="updateLastName(this)">DONE</div>
+                            </div>
+                        </div>
+                        <h2 class="subtitle">WiFi Network</h2>
+                        <div class="nameHolder">
+                            <h3>Network:</h3>
+                            <div class="nameEdit">
+                                <span id="wifiSSID"></span>
+                                <div class="editIcon" onclick="editField(this)"></div>
+                                <div class="doneEditing" onclick="updateWifiSSID(this)">DONE</div>
+                            </div>
+                        </div>
+                        <div class="nameHolder">
+                            <h3>Password:</h3>
+                            <div class="nameEdit">
+                                <span id="wifiPass"></span>
+                                <div class="editIcon" onclick="editField(this)"></div>
+                                <div class="doneEditing" onclick="updateWifiPass(this)">DONE</div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
             </div>
             <div class="featuresConfigurationSection">
                 <div class="featureConfig" id="featurePageDescription">
@@ -138,26 +157,26 @@
                 </div>
                 <div class="featureConfig" id="themePage">
                     <div class="featureConfigContent">
-                    <h1>Themes</h1>
-                    <p>Themes change the aesthetic design of the board. The default is <em>Blank</em>, but feel free to experiment with others!</p>
-                    <form id="themes-list" value="">
-                        <input type="radio" id="spaceTheme-Check" name="theme" value="1">
-                        <label for="spaceTheme-Check">Space</label><br>
-                    
-                        <input type="radio" id="plantTheme-Check" name="theme" value="2">
-                        <label for="plantTheme-Check">Plants</label><br>
-                    
-                        <input type="radio" id="heartTheme-Check" name="theme" value="3">
-                        <label for="heartTheme-Check">Hearts</label><br>
-                    
-                        <input type="radio" id="swirlTheme-Check" name="theme" value="4">
-                        <label for="swirlTheme-Check">Swirls</label><br>
-                    
-                        <input type="radio" id="noneTheme-Check" name="theme" value="5">
-                        <label for="noneTheme-Check">Blank</label><br>
-                        <br />
-                        <input class="configButton" type="button" value="Update Theme" onclick="updateTheme()">
-                    </form>
+                        <h1>Themes</h1>
+                        <p>Themes change the aesthetic design of the board. The default is <em>Blank</em>, but feel free to experiment with others!</p>
+                        <form id="themes-list" value="">
+                            <input type="radio" id="spaceTheme-Check" name="theme" value="1">
+                            <label for="spaceTheme-Check">Space</label><br>
+                        
+                            <input type="radio" id="plantTheme-Check" name="theme" value="2">
+                            <label for="plantTheme-Check">Plants</label><br>
+                        
+                            <input type="radio" id="heartTheme-Check" name="theme" value="3">
+                            <label for="heartTheme-Check">Hearts</label><br>
+                        
+                            <input type="radio" id="swirlTheme-Check" name="theme" value="4">
+                            <label for="swirlTheme-Check">Swirls</label><br>
+                        
+                            <input type="radio" id="noneTheme-Check" name="theme" value="5">
+                            <label for="noneTheme-Check">Blank</label><br>
+                            <br />
+                            <input class="configButton" type="button" value="Update Theme" onclick="updateTheme()">
+                        </form>
                     </div>
                 </div>
             </div>

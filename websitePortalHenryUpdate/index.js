@@ -36,6 +36,8 @@ var blankCheckBox = document.getElementById("noneTheme-Check");
 var display_connectResultMessage = document.getElementById("connectionResultMessage");
 var display_firstName = document.getElementById("firstName");
 var display_lastName = document.getElementById("lastName");
+var display_wifiSSID = document.getElementById("wifiSSID");
+var display_wifiPass = document.getElementById("wifiPass");
 
 var eventDateTitle = document.getElementById("eventDate-label");
 var eventDate = document.getElementById("eventDate");
@@ -43,9 +45,6 @@ var eventName = document.getElementById("eventName");
 
 eventDateTitle.style.display = "none";
 eventDate.style.display = "none";
-
-var featureSelectedString;
-var themeSelectedString;
 
 //Variables that hold configuration values:
 var config_firstName;
@@ -94,7 +93,6 @@ async function connectToBluetooth() {
     const server = await device.gatt.connect();
     const service = await server.getPrimaryService(serviceUUID);
 
-    console.log("test");
     dataCharacteristic = await service.getCharacteristic(dataCharacteristic1UUID);
     requestNameCharacteristic = await service.getCharacteristic(requestNameUUID);
     indexCharacteristic = await service.getCharacteristic(indexCharacteristicUUID);
@@ -239,6 +237,8 @@ function updateSiteFromValues() {
     document.querySelector("input[name='theme'][value='" + config_theme + "'").checked = true;
     display_firstName.innerText = config_firstName;
     display_lastName.innerText = config_lastName;
+    display_wifiSSID.innerText = config_wifiSSID;
+    display_wifiPass.innerText = config_wifiPass;
 
     let index = 0;
     for(const c of config_features) {
@@ -272,10 +272,6 @@ function updateSiteFromValues() {
 }
 
 
-
-
-
-
 // 1234567
 // order: Todo[1], WeeklyCalendar[2], Quotes[3], Weather[4], Game[5], Mood[6], Theme[7]
 
@@ -289,20 +285,26 @@ function displaySelectedFeatures() {
     dailyQuotePage.style.display = quotesCheckBox.checked ? "block" : "none";
 }
 
-function updateFeatures() {
+async function updateFeatures() {
     displaySelectedFeatures();
 
-var todoValue = todoCheckBox.checked ? "1" : "0";
-var weeklyCalValue = weeklyCalCheckBox.checked ? "1" : "0";
-var quotesValue = quotesCheckBox.checked ? "1" : "0";
-var weatherValue = weatherCheckBox.checked ? "1" : "0";
-var gameValue = gameCheckBox.checked ? "1" : "0";
-var moodValue = moodCheckBox.checked ? "1" : "0";
-var themeValue = themeCheckBox.checked ? "1" : "0";
-
-featureSelectedString = todoValue + weeklyCalValue + quotesValue + weatherValue + gameValue + moodValue + themeValue;
-
-console.log(featureSelectedString);
+    config_features = "";
+    config_features += todoCheckBox.checked ? "1" : "0";
+    config_features += weeklyCalCheckBox.checked ? "1" : "0";
+    config_features += moodCheckBox.checked ? "1" : "0";
+    config_features += weatherCheckBox.checked ? "1" : "0";
+    config_features += gameCheckBox.checked ? "1" : "0";
+    config_features += quotesCheckBox.checked ? "1" : "0";
+    config_features += themeCheckBox.checked ? "1" : "0";
+    
+    console.log("Updating features...");
+    var newFeatures = config_features + '\0';
+    console.log("New features value: " + newFeatures);
+    console.log("Sending update...");
+    await dataCharacteristic.writeValueWithResponse(encoder.encode(newFeatures));
+    await requestNameCharacteristic.writeValueWithResponse(encoder.encode("features\0"));
+    await portalHasUpdateCharacteristic.writeValue(trueBuffer);
+    console.log("Features updated successfully!");
 }
 
 async function updateTheme() {
@@ -321,14 +323,54 @@ async function updateTheme() {
     console.log("Theme updated successfully!");
 }
 
-function themeSelected() {
-var selectedTheme = document.querySelector('input[name="theme"]:checked');
+async function updateFirstName(element) {
+    lockField(element);
+    console.log("Updating first name...");
+    var newName = display_firstName.textContent + '\0';
+    console.log("New first name value: " + newName);
+    console.log("Sending update...");
+    await dataCharacteristic.writeValueWithResponse(encoder.encode(newName));
+    await requestNameCharacteristic.writeValueWithResponse(encoder.encode("firstName\0"));
+    await portalHasUpdateCharacteristic.writeValue(trueBuffer);
+    console.log("First name updated successfully!");
+}
 
-if (selectedTheme) {
-    var themeSelectedValue = selectedTheme.value;
-    console.log(themeSelectedValue);
+async function updateLastName(element) {
+    lockField(element);
+    console.log("Updating last name...");
+    var newName = display_lastName.textContent + '\0';
+    console.log("New last name value: " + newName);
+    console.log("Sending update...");
+    await dataCharacteristic.writeValueWithResponse(encoder.encode(newName));
+    await requestNameCharacteristic.writeValueWithResponse(encoder.encode("lastName\0"));
+    await portalHasUpdateCharacteristic.writeValue(trueBuffer);
+    console.log("Last name updated successfully!");
 }
+
+async function updateWifiSSID(element) {
+    lockField(element);
+    console.log("Updating wifi SSID...");
+    var newSSID = display_wifiSSID.textContent + '\0';
+    console.log("New wifi SSID value: " + newSSID);
+    console.log("Sending update...");
+    await dataCharacteristic.writeValueWithResponse(encoder.encode(newSSID));
+    await requestNameCharacteristic.writeValueWithResponse(encoder.encode("wifiSSID\0"));
+    await portalHasUpdateCharacteristic.writeValue(trueBuffer);
+    console.log("Wifi SSID updated successfully!");
 }
+
+async function updateWifiPass(element) {
+    lockField(element);
+    console.log("Updating wifi password...");
+    var newPass = display_wifiPass.textContent + '\0';
+    console.log("New wifi password value: " + newPass);
+    console.log("Sending update...");
+    await dataCharacteristic.writeValueWithResponse(encoder.encode(newPass));
+    await requestNameCharacteristic.writeValueWithResponse(encoder.encode("wifiPass\0"));
+    await portalHasUpdateCharacteristic.writeValue(trueBuffer);
+    console.log("Wifi password updated successfully!");
+}
+
 function showDateBoxTodo(){
 var selectedDateOrDaily = document.querySelector('input[name="date"]:checked');
 var valueDateorDaily = selectedDateOrDaily.value;
@@ -373,6 +415,21 @@ if (eventDate.style.display == "inline") {
 console.log(eventName.value);
 }
 
+function editField(element) {
+    element.previousElementSibling.contentEditable = true;
+    element.nextElementSibling.style.display = "block";
+    element.style.display = "none";
+    element.parentElement.style.backgroundColor = "#ffffff";
+    element.parentElement.style.border = "2px solid #9396CB";
+}
+
+function lockField(element) {
+    element.previousElementSibling.previousElementSibling.contentEditable = false;
+    element.style.display = "none";
+    element.previousElementSibling.style.display = "block";
+    element.parentElement.style.backgroundColor = "rgb(217, 232, 255)";
+    element.parentElement.style.border = 0;
+}
 
 //These are functions to "change pages"
 function goLanding() {

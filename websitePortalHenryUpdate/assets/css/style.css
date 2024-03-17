@@ -11,11 +11,11 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .title {
-    margin-bottom: 1em;
+    margin-bottom: 0.5em;
 }
 
 .subtitle {
-    margin: 1em 0;
+    margin: 1em 0 0.5em 0;
 }
 
 body {
@@ -102,7 +102,7 @@ body {
     margin-bottom: 2em;
     background-color: #9396CB;
     box-shadow: rgba(0, 0, 0, 0.5) 0 0 10px;
-    width: 19.2em;
+    width: 23.2em;
 }
 
 #profileContainer {
@@ -110,7 +110,7 @@ body {
     padding: 2em;
     background-color: #9396CB;
     box-shadow: rgba(0, 0, 0, 0.5) 0 0 10px;
-    width: 19.2em;
+    width: 23.2em;
 }
 
 #profileContent {
@@ -120,6 +120,7 @@ body {
 }
 
 .nameEdit {
+    box-sizing: border-box;
     background-color: rgb(217, 232, 255);
     padding: 0.5em;
     margin: 0.1em 0;
@@ -131,6 +132,15 @@ body {
     height: 1em;
     background-size: contain;
     float: right;
+}
+
+.doneEditing {
+    float: right;
+    display: none;
+    font-style: italic;
+    font-weight: 800;
+    color: #9396CB;
+    font-size: 0.9em;
 }
 
 #features-list {
