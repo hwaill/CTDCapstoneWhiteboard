@@ -395,24 +395,38 @@ else{
 console.log(todoName.value);
 }
 function showDateBoxEvent() {
-var selectedDateOrDaily = document.querySelector('input[name="date"]:checked');
-var valueDateorDaily = selectedDateOrDaily.value;
+    var selectedDateOrDaily = document.querySelector('input[name="date"]:checked');
+    var valueDateorDaily = selectedDateOrDaily.value;
 
-if (valueDateorDaily == 1) {
-    eventDateTitle.style.display = "inline";
-    eventDate.style.display = "inline";
-} else {
-    eventDateTitle.style.display = "none";
-    eventDate.style.display = "none";
-}
+    if (valueDateorDaily == 1) {
+        eventDateTitle.style.display = "inline";
+        eventDate.style.display = "inline";
+    } else {
+        eventDateTitle.style.display = "none";
+        eventDate.style.display = "none";
+    }
 }
 function getEvent() {
-if (eventDate.style.display == "inline") {
-    console.log(eventDate.value);
-} else {
-    console.log("daily");
+    if (eventDate.style.display == "inline") {
+        console.log(eventDate.value);
+    } else {
+        console.log("daily");
+    }
+    console.log(eventName.value);
 }
-console.log(eventName.value);
+
+function getEventDateNameTime(){
+    var eForm = document.getElementById("Event-Info-Form");
+    var eName = eventName.value;
+    var eventDateTime = document.getElementById("eventDateTime").value;
+    var eventDate = eventDateTime.split("T")[0];
+    var eventTime = eventDateTime.split("T")[1];
+
+    console.log(eName);
+    console.log(eventDate);
+    console.log(eventTime);
+    eForm.reset();
+    return false;
 }
 
 function editField(element) {
