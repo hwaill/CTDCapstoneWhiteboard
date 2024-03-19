@@ -1,7 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 
 *{
-    color:black;
     font-family: "Montserrat", Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; /* test for css connected to html */
 }
 
@@ -16,6 +15,10 @@ h1, h2, h3, h4, h5, h6 {
 
 .subtitle {
     margin: 1em 0 0.5em 0;
+}
+
+h6 {
+    margin-bottom: 1rem;
 }
 
 body {
@@ -128,8 +131,30 @@ body {
 
 .editIcon {
     background-image: url("../../images/editLogo.svg");
-    width: 1em;
-    height: 1em;
+    width: 1rem;
+    height: 1rem;
+    background-size: contain;
+    float: right;
+}
+
+.icons {
+    float: right;
+    width: 2.3rem;
+}
+
+.editListIcon {
+    background-image: url("../../images/editLogo.svg");
+    width: 1rem;
+    height: 1rem;
+    background-size: contain;
+    display: inline-block;
+}
+
+.removeIcon {
+    margin-left: 0.3rem;
+    background-image: url("../../images/removeIcon.svg");
+    width: 1rem;
+    height: 1rem;
     background-size: contain;
     float: right;
 }
@@ -141,6 +166,28 @@ body {
     font-weight: 800;
     color: #9396CB;
     font-size: 0.9em;
+}
+
+.addItem {
+    font-style: italic;
+    font-weight: 800;
+    color: #9396CB;
+    font-size: 0.9em;
+    box-sizing: border-box;
+    padding: 0.5em;
+    margin: 0.1em 0;
+}
+
+.listItem {
+    max-width: calc(100% - 2.5rem);
+    display: inline-block;
+}
+
+.itemHolder {
+    box-sizing: border-box;
+    background-color: rgb(217, 232, 255);
+    padding: 0.5em;
+    margin: 0.1em 0;
 }
 
 #features-list {
@@ -182,6 +229,7 @@ body {
 
 .toDoList {
     box-sizing: border-box;
+    flex-basis: 0;
     flex-grow: 1;
 }
 

@@ -25,7 +25,6 @@
                 <h1 class="title">Welcome to your todos whiteboard configuration portal.</h1>
                 <h2 class="subtitle">Please connect to your board.</h2>
                 <button onclick="connectToBluetooth()">Connect</button>
-                <button onclick="goMain()">Go to Main</button>
                 <p id="connectionResultMessage"></p>
             </div>
         </div>
@@ -113,46 +112,32 @@
 <!-- -------------------------todos--------------------------------------------------- -->
                 <div class="featureConfig" id="todoPage">
                     <div class="featureConfigContent">
-                    <h2>Todos</h2>
-                    <div id="toDoLists">
+                        <h2>To-Dos</h2>
+                        <div id="toDoLists">
+                            <div class="toDoList" id="morningToDo"><p>Morning</p>
+                                <h4>To-Do List</h4>
+                                <h6>7am-12pm</h6>
+                                <div class="listHolder"></div>
+                            </div>
 
-                        <div class="toDoList" id="morningToDo"><p>Morning</p>
-                            <form id="todoName-Form-M">
-                                <label for="morningToDo">Add Todo:</label>
-                                <input type="text" id="morningToDo" name="morningToDo">
-                                <input type="submit" value="Add" onclick="addTask()">
-                            </form><br>
-                            <h4>To-Do List</h4>
-                            <h6>5am-12pm</h6><br>
+                            <div class="toDoList" id="daytimeToDo">
+                                <p>Daytime</p>
+                                <h4>To-Do List</h4>
+                                <h6>12pm-6pm</h6>
+                                <div class="listHolder"></div>
+                            </div>
 
-
+                            <div class="toDoList" id="eveningToDo"><p>Evening</p>
+                                <h4>To-Do List</h4>
+                                <h6>6pm-11pm</h6>
+                                <div class="listHolder"></div>
+                            </div>
                         </div>
 
-                        <div class="toDoList" id="daytimeToDo"><p>Daytime</p>
-                            <form id="todoName-Form-D">
-                                <label for="daytimeToDo">Add Todo:</label>
-                                <input type="text" id="daytimeToDo" name="daytimeToDo">
-                                <input type="submit" value="Add" onclick="addTask()">
-                            </form><br>
-                            <h4>To-Do List</h4>
-                            <h6>12pm-6pm</h6><br>
+                        <br />
+                        <input class="configButton" type="button" value="Update To-Do Lists" onclick="updateToDoLists()">
+                        
 
-                            
-                        </div>
-
-                        <div class="toDoList" id="eveningToDo"><p>Evening</p>
-                            <form id="todoName-Form-E">
-                                <label for="eveningToDo">Add Todo:</label>
-                                <input type="text" id="eveningToDo" name="eveningToDo">
-                                <input type="submit" value="Add" onclick="addTask()">
-                            </form><br>
-                            <h4>To-Do List</h4>
-                            <h6>6pm-5am</h6><br>
-
-
-                        </div>
-                    </div>
-                    
                     </div>
                 </div>
 <!-- -------------------------------Events-------------------------------------------------------------------------- -->

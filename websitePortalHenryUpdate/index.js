@@ -38,13 +38,13 @@ var display_firstName = document.getElementById("firstName");
 var display_lastName = document.getElementById("lastName");
 var display_wifiSSID = document.getElementById("wifiSSID");
 var display_wifiPass = document.getElementById("wifiPass");
+var display_morningToDoList = document.getElementById("morningToDo").children.item(3);
+var display_daytimeToDoList = document.getElementById("daytimeToDo").children.item(3);
+var display_eveningToDoList = document.getElementById("eveningToDo").children.item(3);
 
 var eventDateTitle = document.getElementById("eventDate-label");
 var eventDate = document.getElementById("eventDate");
 var eventName = document.getElementById("eventName");
-
-eventDateTitle.style.display = "none";
-eventDate.style.display = "none";
 
 //Variables that hold configuration values:
 var config_firstName;
@@ -269,6 +269,46 @@ function updateSiteFromValues() {
             
         }
     }
+
+    display_morningToDoList.innerHTML = "";
+    display_daytimeToDoList.innerHTML = "";
+    display_eveningToDoList.innerHTML = "";
+
+    for(let i = 0; i < config_morningToDos.length; i++) {
+        var itemHolder = document.createElement('div');
+        itemHolder.classList.add('itemHolder');
+        var itemLabel = document.createElement('span');
+        itemLabel.classList.add('listItem');
+        itemLabel.innerText = config_morningToDos[i];
+        itemHolder.appendChild(itemLabel);
+        itemHolder.innerHTML += '<div class="icons"><div class="editListIcon" onclick="editListItem(this)"></div><div class="removeIcon" onclick="removeItem(this)"></div></div><div class="doneEditing" onclick="finishItem(this)">DONE</div>';
+        display_morningToDoList.appendChild(itemHolder);
+    }
+    display_morningToDoList.innerHTML += '<div class="addItem"><div class="addIcon" onclick="addToDo(this)">ADD TO-DO</div></div>'
+
+    for(let i = 0; i < config_daytimeToDos.length; i++) {
+        var itemHolder = document.createElement('div');
+        itemHolder.classList.add('itemHolder');
+        var itemLabel = document.createElement('span');
+        itemLabel.classList.add('listItem');
+        itemLabel.innerText = config_daytimeToDos[i];
+        itemHolder.appendChild(itemLabel);
+        itemHolder.innerHTML += '<div class="icons"><div class="editListIcon" onclick="editListItem(this)"></div><div class="removeIcon" onclick="removeItem(this)"></div></div><div class="doneEditing" onclick="finishItem(this)">DONE</div>';
+        display_daytimeToDoList.appendChild(itemHolder);
+    }
+    display_daytimeToDoList.innerHTML += '<div class="addItem"><div class="addIcon" onclick="addToDo(this)">ADD TO-DO</div></div>'
+    
+    for(let i = 0; i < config_eveningToDos.length; i++) {
+        var itemHolder = document.createElement('div');
+        itemHolder.classList.add('itemHolder');
+        var itemLabel = document.createElement('span');
+        itemLabel.classList.add('listItem');
+        itemLabel.innerText = config_eveningToDos[i];
+        itemHolder.appendChild(itemLabel);
+        itemHolder.innerHTML += '<div class="icons"><div class="editListIcon" onclick="editListItem(this)"></div><div class="removeIcon" onclick="removeItem(this)"></div></div><div class="doneEditing" onclick="finishItem(this)">DONE</div>';
+        display_eveningToDoList.appendChild(itemHolder);
+    }
+    display_eveningToDoList.innerHTML += '<div class="addItem"><div class="addIcon" onclick="addToDo(this)">ADD TO-DO</div></div>'
 }
 
 
@@ -371,29 +411,27 @@ async function updateWifiPass(element) {
     console.log("Wifi password updated successfully!");
 }
 
-function showDateBoxTodo(){
-var selectedDateOrDaily = document.querySelector('input[name="date"]:checked');
-var valueDateorDaily = selectedDateOrDaily.value;
+function showDateBoxTodo() {
+    var selectedDateOrDaily = document.querySelector('input[name="date"]:checked');
+    var valueDateorDaily = selectedDateOrDaily.value;
 
-if (valueDateorDaily == 1) {
-    todoDateTitle.style.display = "inline";
-    todoDate.style.display = "inline";
-
-}else{
-    todoDateTitle.style.display = "none";
-    todoDate.style.display = "none";
-}
-
+    if (valueDateorDaily == 1) {
+        todoDateTitle.style.display = "inline";
+        todoDate.style.display = "inline";
+    } else {
+        todoDateTitle.style.display = "none";
+        todoDate.style.display = "none";
+    }
 }
 function getTask() {
-if(todoDate.style.display == "inline"){
-    console.log(todoDate.value);
+    if(todoDate.style.display == "inline") {
+        console.log(todoDate.value);
+    } else {
+        console.log("daily");
+    }
+    console.log(todoName.value);
 }
-else{
-    console.log("daily");
-}
-console.log(todoName.value);
-}
+
 function showDateBoxEvent() {
     var selectedDateOrDaily = document.querySelector('input[name="date"]:checked');
     var valueDateorDaily = selectedDateOrDaily.value;
@@ -406,6 +444,7 @@ function showDateBoxEvent() {
         eventDate.style.display = "none";
     }
 }
+
 function getEvent() {
     if (eventDate.style.display == "inline") {
         console.log(eventDate.value);
@@ -415,7 +454,7 @@ function getEvent() {
     console.log(eventName.value);
 }
 
-function getEventDateNameTime(){
+function getEventDateNameTime() {
     var eForm = document.getElementById("Event-Info-Form");
     var eName = eventName.value;
     var eventDateTime = document.getElementById("eventDateTime").value;
@@ -429,6 +468,7 @@ function getEventDateNameTime(){
     return false;
 }
 
+
 function editField(element) {
     element.previousElementSibling.contentEditable = true;
     element.nextElementSibling.style.display = "block";
@@ -441,6 +481,54 @@ function lockField(element) {
     element.previousElementSibling.previousElementSibling.contentEditable = false;
     element.style.display = "none";
     element.previousElementSibling.style.display = "block";
+    element.parentElement.style.backgroundColor = "rgb(217, 232, 255)";
+    element.parentElement.style.border = 0;
+}
+
+function editListItem(element) {
+    element.parentElement.previousElementSibling.contentEditable = true;
+    element.parentElement.nextElementSibling.style.display = "block";
+    element.parentElement.style.display = "none";
+    element.parentElement.parentElement.style.backgroundColor = "#ffffff";
+    element.parentElement.parentElement.style.border = "2px solid #9396CB";
+}
+
+function removeItem(element) {
+    var listID = element.parentElement.parentElement.parentElement.parentElement.id;
+    if(listID == "morningToDo") {
+        config_numMorningToDos--;
+    } else if(listID == "daytimeToDo") {
+        config_numDaytimeToDos--;
+    } else if(listID == "eveningToDo") {
+        config_numEveningToDos--;
+    }
+    element.parentElement.parentElement.remove();
+}
+
+function addToDo(element) {
+    var listID = element.parentElement.parentElement.parentElement.id;
+    if(listID == "morningToDo") {
+        config_numMorningToDos++;
+    } else if(listID == "daytimeToDo") {
+        config_numDaytimeToDos++;
+    } else if(listID == "eveningToDo") {
+        config_numEveningToDos++;
+    }
+    var newItem = document.createElement('div');
+    newItem.classList.add('itemHolder');
+    var itemLabel = document.createElement('span');
+    itemLabel.classList.add('listItem');
+    itemLabel.innerText = "new item";
+    newItem.appendChild(itemLabel);
+    newItem.innerHTML += '<div class="icons"><div class="editListIcon" onclick="editListItem(this)"></div><div class="removeIcon" onclick="removeItem(this)"></div></div><div class="doneEditing" onclick="finishItem(this)">DONE</div>';
+    element.parentElement.parentElement.insertBefore(newItem, element.parentElement);
+    editListItem(newItem.children.item(1).children.item(0));
+}
+
+function finishItem(element) {
+    element.previousElementSibling.previousElementSibling.contentEditable = false;
+    element.previousElementSibling.style.display = "block";
+    element.style.display = "none";
     element.parentElement.style.backgroundColor = "rgb(217, 232, 255)";
     element.parentElement.style.border = 0;
 }
@@ -460,25 +548,4 @@ function goMain() {
     featuresPage.style.display = "flex";
     boardDisplayPage.style.display = "none";
     profilePage.style.display = "none";
-}
-
-function goBoardDisplay() {
-    mainLogo.style.display = "none";
-    needsBluetoothScreen.style.display = "none";
-    navbar.style.display = "block";
-    dotContainer.style.display = "none";
-    featuresPage.style.display = "none";
-    boardDisplayPage.style.display = "block";
-    profilePage.style.display = "none";
-}
-
-function goProfile() {
-    mainLogo.style.display = "none";
-    needsBluetoothScreen.style.display = "none";
-    navbar.style.display = "block";
-    dotContainer.style.display = "none";
-    featuresPage.style.display = "none";
-    boardDisplayPage.style.display = "none";
-    profilePage.style.display = "block";
-
 }
