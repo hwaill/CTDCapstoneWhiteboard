@@ -284,7 +284,10 @@ function updateSiteFromValues() {
         itemHolder.innerHTML += '<div class="icons"><div class="editListIcon" onclick="editListItem(this)"></div><div class="removeIcon" onclick="removeItem(this)"></div></div><div class="doneEditing" onclick="finishItem(this)">DONE</div>';
         display_morningToDoList.appendChild(itemHolder);
     }
-    display_morningToDoList.innerHTML += '<div class="addItem"><div class="addIcon" onclick="addToDo(this)">ADD TO-DO</div></div>'
+
+    if(config_numMorningToDos < 12) {
+        display_morningToDoList.innerHTML += '<div class="addItem"><div class="addIcon" onclick="addToDo(this)">ADD TO-DO</div></div>';
+    }
 
     for(let i = 0; i < config_daytimeToDos.length; i++) {
         var itemHolder = document.createElement('div');
@@ -296,7 +299,10 @@ function updateSiteFromValues() {
         itemHolder.innerHTML += '<div class="icons"><div class="editListIcon" onclick="editListItem(this)"></div><div class="removeIcon" onclick="removeItem(this)"></div></div><div class="doneEditing" onclick="finishItem(this)">DONE</div>';
         display_daytimeToDoList.appendChild(itemHolder);
     }
-    display_daytimeToDoList.innerHTML += '<div class="addItem"><div class="addIcon" onclick="addToDo(this)">ADD TO-DO</div></div>'
+    
+    if(config_numDaytimeToDos < 12) {
+        display_daytimeToDoList.innerHTML += '<div class="addItem"><div class="addIcon" onclick="addToDo(this)">ADD TO-DO</div></div>';
+    }
     
     for(let i = 0; i < config_eveningToDos.length; i++) {
         var itemHolder = document.createElement('div');
@@ -308,7 +314,10 @@ function updateSiteFromValues() {
         itemHolder.innerHTML += '<div class="icons"><div class="editListIcon" onclick="editListItem(this)"></div><div class="removeIcon" onclick="removeItem(this)"></div></div><div class="doneEditing" onclick="finishItem(this)">DONE</div>';
         display_eveningToDoList.appendChild(itemHolder);
     }
-    display_eveningToDoList.innerHTML += '<div class="addItem"><div class="addIcon" onclick="addToDo(this)">ADD TO-DO</div></div>'
+
+    if(config_numEveningToDos < 12) {
+        display_eveningToDoList.innerHTML += '<div class="addItem"><div class="addIcon" onclick="addToDo(this)">ADD TO-DO</div></div>';
+    }
 }
 
 
@@ -495,25 +504,45 @@ function editListItem(element) {
 
 function removeItem(element) {
     var listID = element.parentElement.parentElement.parentElement.parentElement.id;
+    var shouldAddAdd = false;
     if(listID == "morningToDo") {
         config_numMorningToDos--;
+        if(config_numMorningToDos == 11) shouldAddAdd = true;
     } else if(listID == "daytimeToDo") {
         config_numDaytimeToDos--;
+        if(config_numDaytimeToDos == 11) shouldAddAdd = true;
     } else if(listID == "eveningToDo") {
         config_numEveningToDos--;
+        if(config_numEveningToDos == 11) shouldAddAdd = true;
     }
-    element.parentElement.parentElement.remove();
+
+    if(shouldAddAdd) {
+        var listHolder = element.parentElement.parentElement.parentElement;
+        element.parentElement.parentElement.remove();
+        listHolder.innerHTML += '<div class="addItem"><div class="addIcon" onclick="addToDo(this)">ADD TO-DO</div></div>';
+    } else {
+        element.parentElement.parentElement.remove();
+    }
+    
+    console.log("m:" + config_numMorningToDos);
+    console.log("d:" + config_numDaytimeToDos);
+    console.log("e:" + config_numEveningToDos);
 }
 
 function addToDo(element) {
     var listID = element.parentElement.parentElement.parentElement.id;
+    var shouldDelete = false;
     if(listID == "morningToDo") {
         config_numMorningToDos++;
+        if(config_numMorningToDos == 12) shouldDelete = true;
     } else if(listID == "daytimeToDo") {
         config_numDaytimeToDos++;
+        if(config_numDaytimeToDos == 12) shouldDelete = true;
     } else if(listID == "eveningToDo") {
         config_numEveningToDos++;
+        if(config_numEveningToDos == 12) shouldDelete = true;
     }
+
     var newItem = document.createElement('div');
     newItem.classList.add('itemHolder');
     var itemLabel = document.createElement('span');
@@ -523,6 +552,11 @@ function addToDo(element) {
     newItem.innerHTML += '<div class="icons"><div class="editListIcon" onclick="editListItem(this)"></div><div class="removeIcon" onclick="removeItem(this)"></div></div><div class="doneEditing" onclick="finishItem(this)">DONE</div>';
     element.parentElement.parentElement.insertBefore(newItem, element.parentElement);
     editListItem(newItem.children.item(1).children.item(0));
+    if(shouldDelete) element.parentElement.remove();
+
+    console.log("m:" + config_numMorningToDos);
+    console.log("d:" + config_numDaytimeToDos);
+    console.log("e:" + config_numEveningToDos);
 }
 
 function finishItem(element) {
