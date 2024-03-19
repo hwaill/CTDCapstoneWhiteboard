@@ -164,6 +164,7 @@ body {
     box-sizing: border-box;
 }
 
+
 #toDoLists {
     display: flex;
     flex-flow: row nowrap;
@@ -199,8 +200,8 @@ body {
 #features-list {
     text-align: left;
 }
-#whiteboard{
-    width: 600px;
+.board {
+    
 }
 /* -----------End of Board Display Tab ---------- */
 /* ---------Edit Features Tab---------- */

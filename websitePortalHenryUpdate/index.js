@@ -7,6 +7,7 @@ var needsBluetoothScreen = document.getElementById("needsBluetoothConnection");
 // var dotContainer = document.getElementById("dot-container");
 
 var featuresPage = document.getElementById("featuresSection");
+var fpage = document.getElementsByClassName("featuresListContainer");
 var profilePage = document.getElementById("profileContainer");
 
 var todoPage = document.getElementById("todoPage");
@@ -25,6 +26,7 @@ ticTacToePage.style.display = "none";
 moodTrackerPage.style.display = "none";
 dailyQuotePage.style.display = "none";
 profilePage.style.display = "none"; 
+featuresPage.style.dispay = "none";
 
 var todoCheckBox = document.getElementById("Todo-Check");
 var weeklyCalCheckBox = document.getElementById("WeeklyCal-Check");
@@ -397,6 +399,24 @@ function getEventDateNameTime(){
 
 
 //These are functions to "change pages"
+function goFeatures(){
+
+    document.querySelector(".featuresListContainer").style.display = "none";
+    document.getElementById("featurePageDescription").style.display = "none";
+    document.getElementById("needsBluetoothConnection").style.display = "none";
+
+    eventsPage.style.display = "block";
+    themePage.style.display = "block";
+    weatherPage.style.display = "block";
+    todoPage.style.display = "block";
+
+    ticTacToePage.style.display = "none";
+    moodTrackerPage.style.display = "none";
+    dailyQuotePage.style.display = "none";
+    profilePage.style.display = "none";
+ 
+}
+
 function goLanding() {
     mainLogo.style.display = "inline";
     needsBluetoothScreen.style.display = "block";
@@ -414,13 +434,21 @@ function goMain() {
 }
 
 function goBoardDisplay() {
-    mainLogo.style.display = "none";
-    needsBluetoothScreen.style.display = "none";
-    navbar.style.display = "block";
-    dotContainer.style.display = "none";
-    featuresPage.style.display = "none";
-    boardDisplayPage.style.display = "block";
+
+    document.querySelector(".featuresListContainer").style.display = "flex";
+    document.getElementById("featurePageDescription").style.display = "flex";
+    document.getElementById("needsBluetoothConnection").style.display = "none";
+
+    eventsPage.style.display = "none";
+    themePage.style.display = "none";
+    weatherPage.style.display = "none";
+    todoPage.style.display = "none";
+
+    ticTacToePage.style.display = "none";
+    moodTrackerPage.style.display = "none";
+    dailyQuotePage.style.display = "none";
     profilePage.style.display = "none";
+ 
 }
 
 function goProfile() {
@@ -442,3 +470,5 @@ function getLocation(){
 
     alert(location);
 }
+
+document.querySelector("#navbar .navItem:nth-child(3)").addEventListener("click", goFeatures);

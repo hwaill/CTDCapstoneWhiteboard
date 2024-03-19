@@ -9,17 +9,19 @@
 </head>
 <body>
     <!--Navigation bar for after dot menu-->
-    <!-- <div id="navbar">
+    <div id="navbar">
         <span class="navItem" onclick="goDOT()">Home</span>
         <span class="navItem" onclick="goBoardDisplay()">Board Display</span>
         <span class="navItem" onclick="goFeatures()">Features</span>
         <span class="navItem" onclick="goProfile()">Profile</span>
-    </div> -->
+    </div>
+
     <!--Holds all page content-->
     <div class="pageContent">
         <!--Landing page logo-->
         <img id="mainLogo" src="images/newLogo.svg" alt="" />
-        <!--Waiting screen to prompt for bluetooth connections-->
+
+<!--Waiting screen to prompt for bluetooth connections------------->
         <div id="needsBluetoothConnection">
             <div class="needsConnectionContent">
                 <h1 class="title">Welcome to your todos whiteboard configuration portal.</h1>
@@ -29,6 +31,8 @@
                 <p id="connectionResultMessage"></p>
             </div>
         </div>
+
+<!-- ----------------------Features Check list-------------------------------------------------- -->
         <div id="featuresSection">
             <div class="leftContainer">
                 <div class="featuresListContainer">
@@ -64,141 +68,162 @@
                     </div>
                 </form>
             </div>
-            <div id="profileContainer">
-                <div id="profileContent">
-                    <h1 class="title">Profile</h1>
-                    <div class="nameHolder">
-                        <label for="firstName">First Name:</label>
-                        <input type="text" id="firstName" name="firstName">
-                    </div>
-                    <div class="nameHolder">
-                        <h3>Last name:</h3>
-                        <div class="nameEdit">
-                            <label for="lastName">Last Name:</label>
-                            <input type="text" id="lastName" name="lastName">
-                        </div>
-                    </div>
+        </div>
+<!-- ----------------------END Features Check list-------------------------------------------------- -->
+
+<!-- ----------------------Profile-------------------------------------------------- -->
+        <div id="profileContainer">
+            <div id="profileContent">
+                <h1 class="title">Profile</h1>
+                <div class="nameHolder">
+                    <label for="firstName">First Name:</label>
+                    <input type="text" id="firstName" name="firstName">
                 </div>
-            </div>
-            </div>
-            <div class="featuresConfigurationSection">
-                <div class="featureConfig" id="featurePageDescription">
-                    <div class="featureConfigContent">
-                        <h1>Select and configure your features</h2>
-                        <p> asdjhf ladsjfh lasdjhf laksjdh flkasjdh flajsdhf lkajsdh flkjashd flkjasdh flkajsdh flkajsdh flkjasdhfljkhoeriufhkdjshb fvkj sdnb ehbf kahebw f</p>
-                    </div>
-                </div>
-<!-- -------------------------todos--------------------------------------------------- -->
-                <div class="featureConfig" id="todoPage">
-                    <div class="featureConfigContent">
-                    <h2>Todos</h2>
-                    <div id="toDoLists">
-
-                        <div class="toDoList" id="morningToDo"><p>Morning</p>
-                            <form id="todoName-Form-M">
-                                <label for="morningToDo">Add Todo:</label>
-                                <input type="text" id="morningToDo" name="morningToDo">
-                                <input type="submit" value="Add" onclick="addTask()">
-                            </form><br>
-                            <h4>To-Do List</h4>
-                            <h6>5am-12pm</h6><br>
-
-
-                        </div>
-
-                        <div class="toDoList" id="daytimeToDo"><p>Daytime</p>
-                            <form id="todoName-Form-D">
-                                <label for="daytimeToDo">Add Todo:</label>
-                                <input type="text" id="daytimeToDo" name="daytimeToDo">
-                                <input type="submit" value="Add" onclick="addTask()">
-                            </form><br>
-                            <h4>To-Do List</h4>
-                            <h6>12pm-6pm</h6><br>
-
-                            
-                        </div>
-
-                        <div class="toDoList" id="eveningToDo"><p>Evening</p>
-                            <form id="todoName-Form-E">
-                                <label for="eveningToDo">Add Todo:</label>
-                                <input type="text" id="eveningToDo" name="eveningToDo">
-                                <input type="submit" value="Add" onclick="addTask()">
-                            </form><br>
-                            <h4>To-Do List</h4>
-                            <h6>6pm-5am</h6><br>
-
-
-                        </div>
-                    </div>
-                    
-                    </div>
-                </div>
-<!-- -------------------------------Events-------------------------------------------------------------------------- -->
-                <div class="featureConfig" id="eventsPage">
-                    <div class="featureConfigContent">
-                        <h2>Events</h2>
-            
-                        <form id="Event-Info-Form" >
-                            <label for="eventName">Event:</label>
-                            <input type="text" id="eventName" name="eventName">
-                            <label for="eventDateTime">When:</label>
-                            <input type="datetime-local" id="eventDateTime" name="eventDateTime"><br><br>
-                            <input type="button" value="Submit" onclick="getEventDateNameTime()">
-                        </form>
-
-                    </div>
-                </div>
-<!-- -------------------------------End Events-------------------------------------------------------------------------- -->
-                <div class="featureConfig" id="moodTrackerPage">
-                    <div class="featureConfigContent"></div>
-                </div>
-<!-- --------------------------------end of mood tracker page--------------------------------------------------
-----------------------------------weather -------------------------------------------------- -->
-                <div class="featureConfig" id="weatherPage">
-                    <div class="featureConfigContent">
-                        <h2>Weather</h2><br>
-
-                        <label for="longitude">Longitude:</label>
-                        <input type="number" id="longitude" name="longitude">
-
-                        <label for="latitude">Latitude:</label>
-                        <input type="number" id="latitude" name="latitude">
-                        <input type="button" value="Submit" onclick="getLocation()">
-                    </div>
-                </div>
-<!-- ----------------------------------end of weather --------------------------------------------------  -->
-                <div class="featureConfig" id="ticTacToePage">
-                    <div class="featureConfigContent"></div>
-                </div>
-                <div class="featureConfig" id="dailyQuotePage">
-                    <div class="featureConfigContent"></div>
-                </div>
-                <div class="featureConfig" id="themePage">
-                    <div class="featureConfigContent">
-                    <h1>Themes</h1>
-                    <p>Themes change the aesthetic design of the board. The default is <em>Blank</em>, but feel free to experiment with others!</p>
-                    <form id="themes-list" value="">
-                        <input type="radio" id="spaceTheme-Check" name="theme" value="1">
-                        <label for="spaceTheme-Check">Space</label><br>
-                    
-                        <input type="radio" id="plantTheme-Check" name="theme" value="2">
-                        <label for="plantTheme-Check">Plants</label><br>
-                    
-                        <input type="radio" id="heartTheme-Check" name="theme" value="3">
-                        <label for="heartTheme-Check">Hearts</label><br>
-                    
-                        <input type="radio" id="swirlTheme-Check" name="theme" value="4">
-                        <label for="swirlTheme-Check">Swirls</label><br>
-                    
-                        <input type="radio" id="noneTheme-Check" name="theme" value="5">
-                        <label for="noneTheme-Check">Blank</label><br>
-                        <br />
-                        <input class="configButton" type="button" value="Update Theme" onclick="updateTheme()">
-                    </form>
+                <div class="nameHolder">
+                    <h3>Last name:</h3>
+                    <div class="nameEdit">
+                        <label for="lastName">Last Name:</label>
+                        <input type="text" id="lastName" name="lastName">
                     </div>
                 </div>
             </div>
         </div>
+<!-- ----------------------END Profile-------------------------------------------------- -->
+
+<!-- ----------------------Instructions-------------------------------------------------- -->
+        <div class="featuresConfigurationSection">
+            <div class="featureConfig" id="featurePageDescription">
+                <div class="featureConfigContent">
+                    <h1>Select and configure your features</h2>
+                    <img class="board" src="images/whiteBoard.png">
+                </div>
+            </div>
+<!-- ---------------------- END Instructions-------------------------------------------------- -->
+
+<!-- -------------------------todos--------------------------------------------------- -->
+            <div class="featureConfig" id="todoPage">
+                <div class="featureConfigContent">
+                <h2>Todos</h2>
+                <div id="toDoLists">
+
+                    <div class="toDoList" id="morningToDo"><p>Morning</p>
+                        <form id="todoName-Form-M">
+                            <label for="morningToDo">Add Todo:</label>
+                            <input type="text" id="morningToDo" name="morningToDo">
+                            <input type="submit" value="Add" onclick="addTask()">
+                        </form><br>
+                        <h4>To-Do List</h4>
+                        <h6>5am-12pm</h6><br>
+
+
+                    </div>
+
+                    <div class="toDoList" id="daytimeToDo"><p>Daytime</p>
+                        <form id="todoName-Form-D">
+                            <label for="daytimeToDo">Add Todo:</label>
+                            <input type="text" id="daytimeToDo" name="daytimeToDo">
+                            <input type="submit" value="Add" onclick="addTask()">
+                        </form><br>
+                        <h4>To-Do List</h4>
+                        <h6>12pm-6pm</h6><br>
+
+                        
+                    </div>
+
+                    <div class="toDoList" id="eveningToDo"><p>Evening</p>
+                        <form id="todoName-Form-E">
+                            <label for="eveningToDo">Add Todo:</label>
+                            <input type="text" id="eveningToDo" name="eveningToDo">
+                            <input type="submit" value="Add" onclick="addTask()">
+                        </form><br>
+                        <h4>To-Do List</h4>
+                        <h6>6pm-5am</h6><br>
+
+
+                    </div>
+                </div>
+                
+                </div>
+            </div>
+<!-- -------------------------todos--------------------------------------------------- -->
+
+<!-- -------------------------------Events-------------------------------------------------------------------------- -->
+            <div class="featureConfig" id="eventsPage">
+                <div class="featureConfigContent">
+                    <h2>Events</h2>
+        
+                    <form id="Event-Info-Form" >
+                        <label for="eventName">Event:</label>
+                        <input type="text" id="eventName" name="eventName">
+                        <label for="eventDateTime">When:</label>
+                        <input type="datetime-local" id="eventDateTime" name="eventDateTime"><br><br>
+                        <input type="button" value="Submit" onclick="getEventDateNameTime()">
+                    </form>
+
+                </div>
+            </div>
+<!-- -------------------------------End Events-------------------------------------------------------------------------- -->
+
+<!-- -------------------------mood tracker--------------------------------------------------- -->
+            <div class="featureConfig" id="moodTrackerPage">
+                <div class="featureConfigContent"></div>
+            </div>
+<!-- --------------------------------end of mood tracker page--------------------------------------------------
+
+----------------------------------weather -------------------------------------------------- -->
+            <div class="featureConfig" id="weatherPage">
+                <div class="featureConfigContent">
+                    <h2>Weather</h2><br>
+
+                    <label for="longitude">Longitude:</label>
+                    <input type="number" id="longitude" name="longitude">
+
+                    <label for="latitude">Latitude:</label>
+                    <input type="number" id="latitude" name="latitude">
+                    <input type="button" value="Submit" onclick="getLocation()">
+                </div>
+            </div>
+<!-- ----------------------------------end of weather --------------------------------------------------  -->
+
+<!-- -------------------------tic tac toe--------------------------------------------------- -->
+            <div class="featureConfig" id="ticTacToePage">
+                <div class="featureConfigContent"></div>
+            </div>
+<!-- -------------------------tic tac toe--------------------------------------------------- -->
+
+<!-- -------------------------daily quote--------------------------------------------------- -->
+            <div class="featureConfig" id="dailyQuotePage">
+                <div class="featureConfigContent"></div>
+            </div>
+<!-- -------------------------END daily quote--------------------------------------------------- -->
+
+<!-- ------------------------- Theme --------------------------------------------------- -->
+            <div class="featureConfig" id="themePage">
+                <div class="featureConfigContent">
+                <h1>Themes</h1>
+                <p>Themes change the aesthetic design of the board. The default is <em>Blank</em>, but feel free to experiment with others!</p>
+                <form id="themes-list" value="">
+                    <input type="radio" id="spaceTheme-Check" name="theme" value="1">
+                    <label for="spaceTheme-Check">Space</label><br>
+                
+                    <input type="radio" id="plantTheme-Check" name="theme" value="2">
+                    <label for="plantTheme-Check">Plants</label><br>
+                
+                    <input type="radio" id="heartTheme-Check" name="theme" value="3">
+                    <label for="heartTheme-Check">Hearts</label><br>
+                
+                    <input type="radio" id="swirlTheme-Check" name="theme" value="4">
+                    <label for="swirlTheme-Check">Swirls</label><br>
+                
+                    <input type="radio" id="noneTheme-Check" name="theme" value="5">
+                    <label for="noneTheme-Check">Blank</label><br>
+                    <br />
+                    <input class="configButton" type="button" value="Update Theme" onclick="updateTheme()">
+                </form>
+                </div>
+            </div>
+        </div>
+<!-- ------------------------- Theme --------------------------------------------------- -->
     </div>
 </body>
 <script src="index.js"></script>
