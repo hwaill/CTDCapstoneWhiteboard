@@ -7,8 +7,7 @@ var needsBluetoothScreen = document.getElementById("needsBluetoothConnection");
 // var dotContainer = document.getElementById("dot-container");
 
 var featuresPage = document.getElementById("featuresSection");
-var boardDisplayPage = document.getElementById("boardDisplayPage");
-var profilePage = document.getElementById("profilePage");
+var profilePage = document.getElementById("profileContainer");
 
 var todoPage = document.getElementById("todoPage");
 var eventsPage = document.getElementById("eventsPage");
@@ -17,6 +16,15 @@ var weatherPage = document.getElementById("weatherPage");
 var ticTacToePage = document.getElementById("ticTacToePage");
 var moodTrackerPage = document.getElementById("moodTrackerPage");
 var dailyQuotePage = document.getElementById("dailyQuotePage");
+
+todoPage.style.display = "none";
+eventsPage.style.display = "none";
+weatherPage.style.display = "none";
+themePage.style.display = "none";
+ticTacToePage.style.display = "none";
+moodTrackerPage.style.display = "none";
+dailyQuotePage.style.display = "none";
+profilePage.style.display = "none"; 
 
 var todoCheckBox = document.getElementById("Todo-Check");
 var weeklyCalCheckBox = document.getElementById("WeeklyCal-Check");
@@ -284,25 +292,25 @@ function displaySelectedFeatures() {
     eventsPage.style.display = weeklyCalCheckBox.checked ? "block" : "none";
     themePage.style.display = themeCheckBox.checked ? "block" : "none";
     weatherPage.style.display = weatherCheckBox.checked ? "block" : "none";
-    ticTacToePage.style.display = gameCheckBox.checked ? "block" : "none";
-    moodTrackerPage.style.display = moodCheckBox.checked ? "block" : "none";
-    dailyQuotePage.style.display = quotesCheckBox.checked ? "block" : "none";
+    // ticTacToePage.style.display = gameCheckBox.checked ? "block" : "none";
+    // moodTrackerPage.style.display = moodCheckBox.checked ? "block" : "none";
+    // dailyQuotePage.style.display = quotesCheckBox.checked ? "block" : "none";
 }
 
 function updateFeatures() {
     displaySelectedFeatures();
 
-var todoValue = todoCheckBox.checked ? "1" : "0";
-var weeklyCalValue = weeklyCalCheckBox.checked ? "1" : "0";
-var quotesValue = quotesCheckBox.checked ? "1" : "0";
-var weatherValue = weatherCheckBox.checked ? "1" : "0";
-var gameValue = gameCheckBox.checked ? "1" : "0";
-var moodValue = moodCheckBox.checked ? "1" : "0";
-var themeValue = themeCheckBox.checked ? "1" : "0";
+    var todoValue = todoCheckBox.checked ? "1" : "0";
+    var weeklyCalValue = weeklyCalCheckBox.checked ? "1" : "0";
+    var quotesValue = quotesCheckBox.checked ? "1" : "0";
+    var weatherValue = weatherCheckBox.checked ? "1" : "0";
+    var gameValue = gameCheckBox.checked ? "1" : "0";
+    var moodValue = moodCheckBox.checked ? "1" : "0";
+    var themeValue = themeCheckBox.checked ? "1" : "0";
 
-featureSelectedString = todoValue + weeklyCalValue + quotesValue + weatherValue + gameValue + moodValue + themeValue;
+    featureSelectedString = todoValue + weeklyCalValue + quotesValue + weatherValue + gameValue + moodValue + themeValue;
 
-console.log(featureSelectedString);
+    console.log(featureSelectedString);
 }
 
 async function updateTheme() {
@@ -426,8 +434,11 @@ function goProfile() {
 
 }
 
-function getZip(){
-    var zipCode = document.getElementById("zip").value;
+function getLocation(){
+    var long = document.getElementById("longitude").value;
+    var lat = document.getElementById("latitude").value;
 
-    alert(zipCode);
+    var location = long + " " + lat; 
+
+    alert(location);
 }
