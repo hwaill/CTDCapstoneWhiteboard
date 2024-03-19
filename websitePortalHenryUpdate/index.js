@@ -420,6 +420,80 @@ async function updateWifiPass(element) {
     console.log("Wifi password updated successfully!");
 }
 
+async function updateToDoLists() {
+    console.log("Updating to do lists...");
+    config_morningToDos.length = 0;
+    config_daytimeToDos.length = 0;
+    config_eveningToDos.length = 0;
+
+    for(let i = 0; i < config_numMorningToDos; i++) {
+        config_morningToDos.push(display_morningToDoList.children.item(i).children.item(0).innerText);
+    }
+
+    for(let i = 0; i < config_numDaytimeToDos; i++) {
+        config_daytimeToDos.push(display_daytimeToDoList.children.item(i).children.item(0).innerText);
+    }
+
+    for(let i = 0; i < config_numEveningToDos; i++) {
+        config_eveningToDos.push(display_eveningToDoList.children.item(i).children.item(0).innerText);
+    }
+
+    console.log("Number of morning to dos: " + config_numMorningToDos);
+    await dataCharacteristic.writeValueWithResponse(encoder.encode(config_numMorningToDos + '\0'));
+    await requestNameCharacteristic.writeValueWithResponse(encoder.encode("numMorningToDos\0"));
+    await portalHasUpdateCharacteristic.writeValueWithResponse(trueBuffer);
+
+    console.log("Number of daytime to dos: " + config_numDaytimeToDos);
+    await dataCharacteristic.writeValueWithResponse(encoder.encode(config_numDaytimeToDos + '\0'));
+    await requestNameCharacteristic.writeValueWithResponse(encoder.encode("numDaytimeToDos\0"));
+    await portalHasUpdateCharacteristic.writeValueWithResponse(trueBuffer);
+
+    console.log("Number of evening to dos: " + config_numEveningToDos);
+    await dataCharacteristic.writeValueWithResponse(encoder.encode(config_numEveningToDos + '\0'));
+    await requestNameCharacteristic.writeValueWithResponse(encoder.encode("numEveningToDos\0"));
+    await portalHasUpdateCharacteristic.writeValueWithResponse(trueBuffer);
+
+    const uint8 = new Uint8Array(1);
+
+    console.log("Sending morning to dos...");
+    for(let i = 0; i < config_numMorningToDos; i++) {
+        await dataCharacteristic.writeValueWithResponse(encoder.encode(config_morningToDos[i] + '\0'));
+        uint8[0] = i;
+        await indexCharacteristic.writeValue(uint8);
+        await requestNameCharacteristic.writeValueWithResponse(encoder.encode("morningToDo\0"));
+        await portalHasUpdateCharacteristic.writeValueWithResponse(trueBuffer);
+    }
+
+    await requestNameCharacteristic.writeValueWithResponse(encoder.encode("saveMorningToDos\0"));
+    await portalHasUpdateCharacteristic.writeValueWithResponse(trueBuffer);
+
+    console.log("Sending daytime to dos...");
+    for(let i = 0; i < config_numDaytimeToDos; i++) {
+        await dataCharacteristic.writeValueWithResponse(encoder.encode(config_daytimeToDos[i] + '\0'));
+        uint8[0] = i;
+        await indexCharacteristic.writeValue(uint8);
+        await requestNameCharacteristic.writeValueWithResponse(encoder.encode("daytimeToDo\0"));
+        await portalHasUpdateCharacteristic.writeValueWithResponse(trueBuffer);
+    }
+
+    await requestNameCharacteristic.writeValueWithResponse(encoder.encode("saveDaytimeToDos\0"));
+    await portalHasUpdateCharacteristic.writeValueWithResponse(trueBuffer);
+
+    console.log("Sending evening to dos...");
+    for(let i = 0; i < config_numEveningToDos; i++) {
+        await dataCharacteristic.writeValueWithResponse(encoder.encode(config_eveningToDos[i] + '\0'));
+        uint8[0] = i;
+        await indexCharacteristic.writeValue(uint8);
+        await requestNameCharacteristic.writeValueWithResponse(encoder.encode("eveningToDo\0"));
+        await portalHasUpdateCharacteristic.writeValueWithResponse(trueBuffer);
+    }
+
+    await requestNameCharacteristic.writeValueWithResponse(encoder.encode("saveEveningToDos\0"));
+    await portalHasUpdateCharacteristic.writeValueWithResponse(trueBuffer);
+
+    console.log("Done.");
+}
+
 function showDateBoxTodo() {
     var selectedDateOrDaily = document.querySelector('input[name="date"]:checked');
     var valueDateorDaily = selectedDateOrDaily.value;
@@ -523,10 +597,6 @@ function removeItem(element) {
     } else {
         element.parentElement.parentElement.remove();
     }
-    
-    console.log("m:" + config_numMorningToDos);
-    console.log("d:" + config_numDaytimeToDos);
-    console.log("e:" + config_numEveningToDos);
 }
 
 function addToDo(element) {
@@ -553,10 +623,6 @@ function addToDo(element) {
     element.parentElement.parentElement.insertBefore(newItem, element.parentElement);
     editListItem(newItem.children.item(1).children.item(0));
     if(shouldDelete) element.parentElement.remove();
-
-    console.log("m:" + config_numMorningToDos);
-    console.log("d:" + config_numDaytimeToDos);
-    console.log("e:" + config_numEveningToDos);
 }
 
 function finishItem(element) {

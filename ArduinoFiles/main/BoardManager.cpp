@@ -189,6 +189,18 @@ void BoardManager::updateFromConfig() {
 		_consoleSerial->println("error opening zip.txt!");
 	}
 
+	// myFile = SD.open("todo1.txt", FILE_WRITE | O_TRUNC);
+	// myFile.print("7\nBrush teeth\nMake coffee\nMake your bed\nShower\nMeditate\nWalk the frog\nFeed the dog");
+	// myFile.close();
+
+	// myFile = SD.open("todo2.txt", FILE_WRITE | O_TRUNC);
+	// myFile.print("5\nCheck emails\nReach out to a friend\nDo something creative\nExercise\nClean up");
+	// myFile.close();
+
+	// myFile = SD.open("todo3.txt", FILE_WRITE | O_TRUNC);
+	// myFile.print("6\nDrink tea\nTidy apartment\nCheck morning events\nTake out dog\nBrush teeth\nTake meds");
+	// myFile.close();
+
 	myFile = SD.open("todo1.txt");
 	if (myFile) {
 		input = "";
@@ -343,8 +355,6 @@ void BoardManager::openBluetoothBLE() {
 						dataCharacteristic.writeValue(_wifiSSID);
 					} else if (strcmp(requestType, "wifiPass") == 0) {
 						dataCharacteristic.writeValue(_wifiPass);
-						_consoleSerial->print(_wifiSSID);
-						_consoleSerial->println("test");
 					} else if (strcmp(requestType, "timeZone") == 0) {
 						dataCharacteristic.writeValue(itoa(_timeZoneOffsetHours, temp, 10));
 					} else if (strcmp(requestType, "zipCode") == 0) {
@@ -430,17 +440,59 @@ void BoardManager::openBluetoothBLE() {
 					} else if(strcmp(updateType, "zipCode") == 0) {
 						
 					} else if(strcmp(updateType, "numMorningToDos") == 0) {
-						
+						_consoleSerial->println(tempString);
+						_numMorningToDos = tempString.toInt();
 					} else if(strcmp(updateType, "morningToDo") == 0) {
-						
+						_consoleSerial->println(tempString);
+						tempString.toCharArray(_morningToDoList[indexCharacteristic.value()].name, 50);
+					} else if(strcmp(updateType, "saveMorningToDos") == 0) {
+						_consoleSerial->println("Saving morning to dos...");
+						myFile = SD.open("todo1.txt", FILE_WRITE | O_TRUNC);
+						myFile.print(_numMorningToDos);
+						myFile.print('\n');
+						for(int i = 0; i < _numMorningToDos; i++) {
+							myFile.print(_morningToDoList[i].name);
+							if(i != _numMorningToDos - 1) {
+								myFile.print('\n');
+							}
+						}
+						myFile.close();
 					} else if(strcmp(updateType, "numDaytimeToDos") == 0) {
-						
+						_consoleSerial->println(tempString);
+						_numDayToDos = tempString.toInt();
 					} else if(strcmp(updateType, "daytimeToDo") == 0) {
-						
+						_consoleSerial->println(tempString);
+						tempString.toCharArray(_dayToDoList[indexCharacteristic.value()].name, 50);
+					} else if(strcmp(updateType, "saveDaytimeToDos") == 0) {
+						_consoleSerial->println("Saving daytime to dos...");
+						myFile = SD.open("todo2.txt", FILE_WRITE | O_TRUNC);
+						myFile.print(_numDayToDos);
+						myFile.print('\n');
+						for(int i = 0; i < _numDayToDos; i++) {
+							myFile.print(_dayToDoList[i].name);
+							if(i != _numDayToDos - 1) {
+								myFile.print('\n');
+							}
+						}
+						myFile.close();
 					} else if(strcmp(updateType, "numEveningToDos") == 0) {
-						
+						_consoleSerial->println(tempString);
+						_numEveningToDos = tempString.toInt();
 					} else if(strcmp(updateType, "eveningToDo") == 0) {
-						
+						_consoleSerial->println(tempString);
+						tempString.toCharArray(_eveningToDoList[indexCharacteristic.value()].name, 50);
+					} else if(strcmp(updateType, "saveEveningToDos") == 0) {
+						_consoleSerial->println("Saving evening to dos...");
+						myFile = SD.open("todo3.txt", FILE_WRITE | O_TRUNC);
+						myFile.print(_numEveningToDos);
+						myFile.print('\n');
+						for(int i = 0; i < _numEveningToDos; i++) {
+							myFile.print(_eveningToDoList[i].name);
+							if(i != _numEveningToDos - 1) {
+								myFile.print('\n');
+							}
+						}
+						myFile.close();
 					}
 
 					portalHasUpdateCharacteristic.writeValue(false);
