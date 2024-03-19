@@ -425,3 +425,9 @@ function goProfile() {
     profilePage.style.display = "block";
 
 }
+
+function getZip(){
+    var zipCode = document.getElementById("zip").value;
+
+    alert(zipCode);
+}
