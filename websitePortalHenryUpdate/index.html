@@ -8,18 +8,22 @@
     <title>Todos Config - Home</title>
 </head>
 <body>
-    <!--Navigation bar for after dot menu-->
+<!-- -----------------old navbar----------------------------- -->
     <!-- <div id="navbar">
         <span class="navItem" onclick="goDOT()">Home</span>
         <span class="navItem" onclick="goBoardDisplay()">Board Display</span>
         <span class="navItem" onclick="goFeatures()">Features</span>
         <span class="navItem" onclick="goProfile()">Profile</span>
     </div> -->
-    <!--Holds all page content-->
+<!-- -----------------old navbar----------------------------- -->
+
+<!---------------page content--------------------->
     <div class="pageContent">
         <!--Landing page logo-->
         <img id="mainLogo" src="images/newLogo.svg" alt="" />
-        <!--Waiting screen to prompt for bluetooth connections-->
+        <!--Landing page logo-->
+
+        <!-- bluetooth connections----------------------->
         <div id="needsBluetoothConnection">
             <div class="needsConnectionContent">
                 <h1 class="title">Welcome to your todos whiteboard configuration portal.</h1>
@@ -28,8 +32,13 @@
                 <p id="connectionResultMessage"></p>
             </div>
         </div>
+        <!-- end bluetooth connections----------------------->
+
+        
         <div id="featuresSection">
             <div class="leftContainer">
+
+                <!-- features checkbox----------------------->
                 <div class="featuresListContainer">
                     <form id="features-list">
                         <h1 class="title">Features</h1>
@@ -63,6 +72,9 @@
                         </div>
                     </form>
                 </div>
+                <!-- end features selection checkbox----------------------->
+
+                <!--profile ----------------------->
                 <div id="profileContainer">
                     <div id="profileContent">
                         <h1 class="title">Profile</h1>
@@ -126,15 +138,33 @@
                         </div>
                     </div>
                 </div>
+                <!-- end profile ----------------------->
             </div>
+
+            
             <div class="featuresConfigurationSection">
+                <!--intructions/ maybe board preview ----------------------->
                 <div class="featureConfig" id="featurePageDescription">
                     <div class="featureConfigContent">
-                        <h1>Select and configure your features</h2>
-                        <p> asdjhf ladsjfh lasdjhf laksjdh flkasjdh flajsdhf lkajsdh flkjashd flkjasdh flkajsdh flkajsdh flkjasdhfljkhoeriufhkdjshb fvkj sdnb ehbf kahebw f</p>
+                        <h1>Board Preview</h2>
+                        <p>On the left, select your features.</p>
+                        <img id="board" src="images/whiteBoard.png">
+                       
+                        <div id="featurePics">
+                            <img id="todoPic" src="images/todo.png">
+                            <img id="weeklyPic" src="images/weekly.png">
+                            <img id="moodPic" src="images/mood.png">
+                            <img id="weatherPic" src="images/weather.png">
+                            <img id="tictacPic" src="images/tictactoe.png">
+                            <img id="quotePic" src="images/quote.png">
+                            <img id="themePic" src="images/theme.png">
+                        </div>
+                        
                     </div>
                 </div>
-<!-- -------------------------todos--------------------------------------------------- -->
+                <!-- end intructions/ maybe board preview ----------------------->
+
+                <!-- ---------todos--------------------------------------------------- -->
                 <div class="featureConfig" id="todoPage">
                     <div class="featureConfigContent">
                         <h1>To-Dos</h1>
@@ -163,7 +193,9 @@
                         <input class="configButton" type="button" value="Update To-Do Lists" onclick="updateToDoLists()">
                     </div>
                 </div>
-<!-- -------------------------------Events-------------------------------------------------------------------------- -->
+                <!-- --------- end todos--------------------------------------------------- -->
+
+                <!-- -------------------------------Events-------------------------------------------------------------------------- -->
                 <div class="featureConfig" id="eventsPage">
                     <div class="featureConfigContent">
                         <h1>Events</h1>
@@ -180,19 +212,33 @@
 
                     </div>
                 </div>
-<!-- -------------------------------End Events-------------------------------------------------------------------------- -->
-                <div class="featureConfig" id="moodTrackerPage">
+                <!-- -------------------------------End Events-------------------------------------------------------------------------- -->
+
+                <!-- --------- mood tracker--------------------------------------------------- -->
+                <div class="featureConfig" id="moodTrackerPage" style="display: none;">
                     <div class="featureConfigContent"></div>
                 </div>
-                <div class="featureConfig" id="weatherPage">
-                    <div class="featureConfigContent"></div>
-                    </div>
-                <div class="featureConfig" id="ticTacToePage">
-                    <div class="featureConfigContent"></div>
-                </div>
-                <div class="featureConfig" id="dailyQuotePage">
+                <!-- ---------end mood tracker------------------------------------------------ -->
+
+                <!-- --------- weather page--------------------------------------------------- -->
+                <div class="featureConfig" id="weatherPage" style="display: none;">
                     <div class="featureConfigContent"></div>
                 </div>
+                <!-- ---------end of weather page--------------------------------------------------- -->
+
+                <!-- --------- tic tac toe--------------------------------------------------- -->
+                <div class="featureConfig" id="ticTacToePage" style="display: none;">
+                    <div class="featureConfigContent"></div>
+                </div>
+                <!-- --------- end tic tac toe--------------------------------------------------- -->
+
+                <!-- --------- quotes--------------------------------------------------- -->
+                <div class="featureConfig" id="dailyQuotePage" style="display: none;">
+                    <div class="featureConfigContent"></div>
+                </div>
+                <!-- --------- end quotes--------------------------------------------------- -->
+
+                <!-- --------- theme--------------------------------------------------- -->
                 <div class="featureConfig" id="themePage">
                     <div class="featureConfigContent">
                         <h1>Themes</h1>
@@ -216,14 +262,10 @@
                             <input class="configButton" type="button" value="Update Theme" onclick="updateTheme()">
                         </form>
                     </div>
+                    <!-- --------- ennd theme--------------------------------------------------- -->
+
                 </div>
             </div>
-        </div>
-        <div id="boardDisplayPage">
-        
-        </div>
-        <div id="profilePage">
-            <h1>Profile</h1>
         </div>
     </div>
 </body>
