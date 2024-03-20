@@ -91,7 +91,7 @@ body {
     margin-top: 6em;
 }
 
-#featurePageDescription {
+#boardDisplayPage {
     position: relative;
 }
 
@@ -113,14 +113,14 @@ body {
 }
 
 
-#featurePageDescription .featureConfigContent{
+#boardDisplayPage .featureConfigContent{
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
 }
 
-#featurePageDescription #board {
+#boardDisplayPage #board {
     max-width: 80%; 
     height: auto;
     border: 2px gray solid;

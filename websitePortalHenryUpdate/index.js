@@ -111,7 +111,6 @@ trueBuffer[0] = true;
 var result;
 
 async function connectToBluetooth() {
-    goMain();
     const device = await navigator.bluetooth.requestDevice({filters: [{services: [serviceUUID]}]});
     display_connectResultMessage.innerText = "connecting...";
     const server = await device.gatt.connect();
@@ -708,7 +707,6 @@ function goLanding() {
     needsBluetoothScreen.style.display = "block";
     featuresPage.style.display = "none";
     boardDisplayPage.style.display = "none";
-    profilePage.style.display = "none";
 
     ticTacToePage.style.display = "none";
     moodTrackerPage.style.display = "none";
@@ -719,6 +717,5 @@ function goMain() {
     mainLogo.style.display = "inline";
     needsBluetoothScreen.style.display = "none";
     featuresPage.style.display = "flex";
-    boardDisplayPage.style.display = "none";
-    profilePage.style.display = "none";
+    boardDisplayPage.style.display = "block";
 }
