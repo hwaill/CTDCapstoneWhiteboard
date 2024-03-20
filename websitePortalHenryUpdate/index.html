@@ -99,6 +99,31 @@
                                 <div class="doneEditing" onclick="updateWifiPass(this)">DONE</div>
                             </div>
                         </div>
+                        <h2 class="subtitle">Location</h2>
+                        <div class="nameHolder">
+                            <h3>Time Zone:</h3>
+                            <div class="nameEdit">
+                                <span id="timeZone"></span>
+                                <div class="editIcon" onclick="editField(this)"></div>
+                                <div class="doneEditing" onclick="updateTimeZone(this)">DONE</div>
+                            </div>
+                        </div>
+                        <div class="nameHolder">
+                            <h3>Latitude:</h3>
+                            <div class="nameEdit">
+                                <span id="latitude"></span>
+                                <div class="editIcon" onclick="editField(this)"></div>
+                                <div class="doneEditing" onclick="updateLatitude(this)">DONE</div>
+                            </div>
+                        </div>
+                        <div class="nameHolder">
+                            <h3>Longitude:</h3>
+                            <div class="nameEdit">
+                                <span id="longitude"></span>
+                                <div class="editIcon" onclick="editField(this)"></div>
+                                <div class="doneEditing" onclick="updateLongitude(this)">DONE</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -112,39 +137,39 @@
 <!-- -------------------------todos--------------------------------------------------- -->
                 <div class="featureConfig" id="todoPage">
                     <div class="featureConfigContent">
-                        <h2>To-Dos</h2>
+                        <h1>To-Dos</h1>
+                        <p>To-do lists are the core of habit-building with todos. These lists remain the same day-to-day, and serve as convenient reminders of what a consistent routine can look like.</p>
                         <div id="toDoLists">
-                            <div class="toDoList" id="morningToDo"><p>Morning</p>
-                                <h4>To-Do List</h4>
-                                <h6>7am-12pm</h6>
+                            <div class="toDoList" id="morningToDo">
+                                <h2>Morning</h2>
+                                <h4>7am-12pm</h4>
                                 <div class="listHolder"></div>
                             </div>
 
                             <div class="toDoList" id="daytimeToDo">
-                                <p>Daytime</p>
-                                <h4>To-Do List</h4>
-                                <h6>12pm-6pm</h6>
+                                <h2>Daytime</h2>
+                                <h4>12pm-6pm</h4>
                                 <div class="listHolder"></div>
                             </div>
 
-                            <div class="toDoList" id="eveningToDo"><p>Evening</p>
-                                <h4>To-Do List</h4>
-                                <h6>6pm-11pm</h6>
+                            <div class="toDoList" id="eveningToDo">
+                                <h2>Evening</h2>
+                                <h4>6pm-11pm</h4>
                                 <div class="listHolder"></div>
                             </div>
                         </div>
 
                         <br />
                         <input class="configButton" type="button" value="Update To-Do Lists" onclick="updateToDoLists()">
-                        
-
                     </div>
                 </div>
 <!-- -------------------------------Events-------------------------------------------------------------------------- -->
                 <div class="featureConfig" id="eventsPage">
                     <div class="featureConfigContent">
-                        <h2>Events</h2>
-            
+                        <h1>Events</h1>
+                        <p></p>
+                        <h2>Upcoming Events</h2>
+                        <div class="eventHolder"></div>
                         <form id="Event-Info-Form" >
                             <label for="eventName">Event:</label>
                             <input type="text" id="eventName" name="eventName">

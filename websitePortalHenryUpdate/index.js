@@ -38,9 +38,12 @@ var display_firstName = document.getElementById("firstName");
 var display_lastName = document.getElementById("lastName");
 var display_wifiSSID = document.getElementById("wifiSSID");
 var display_wifiPass = document.getElementById("wifiPass");
-var display_morningToDoList = document.getElementById("morningToDo").children.item(3);
-var display_daytimeToDoList = document.getElementById("daytimeToDo").children.item(3);
-var display_eveningToDoList = document.getElementById("eveningToDo").children.item(3);
+var display_timeZone = document.getElementById("timeZone");
+var display_latitude = document.getElementById("latitude");
+var display_longitude = document.getElementById("longitude");
+var display_morningToDoList = document.getElementById("morningToDo").children.item(2);
+var display_daytimeToDoList = document.getElementById("daytimeToDo").children.item(2);
+var display_eveningToDoList = document.getElementById("eveningToDo").children.item(2);
 
 var eventDateTitle = document.getElementById("eventDate-label");
 var eventDate = document.getElementById("eventDate");
@@ -55,7 +58,8 @@ var config_features;
 var config_wifiSSID;
 var config_wifiPass;
 var config_timeZone;
-var config_zipCode;
+var config_latitude;
+var config_longitude;
 var config_numMoodQuestions;
 var config_moodQuestions;
 var config_numMorningToDos;
@@ -167,12 +171,19 @@ async function connectToBluetooth() {
     config_timeZone = decoder.decode(result);
     console.log("Time Zone: " + config_timeZone);
 
-    display_connectResultMessage.innerText = "loading zip code...";
-    await requestNameCharacteristic.writeValueWithResponse(encoder.encode("zipCode\0"));
+    display_connectResultMessage.innerText = "loading latitude...";
+    await requestNameCharacteristic.writeValueWithResponse(encoder.encode("latitude\0"));
     await portalSideRequestCharacteristic.writeValue(trueBuffer);
     result = await dataCharacteristic.readValue();
-    config_zipCode = decoder.decode(result);
-    console.log("Zip Code: " + config_zipCode);
+    config_latitude = decoder.decode(result);
+    console.log("Latitude: " + config_latitude);
+
+    display_connectResultMessage.innerText = "loading longitude...";
+    await requestNameCharacteristic.writeValueWithResponse(encoder.encode("longitude\0"));
+    await portalSideRequestCharacteristic.writeValue(trueBuffer);
+    result = await dataCharacteristic.readValue();
+    config_longitude = decoder.decode(result);
+    console.log("Longitude: " + config_longitude);
 
     display_connectResultMessage.innerText = "loading morning to-do list...";
     await requestNameCharacteristic.writeValueWithResponse(encoder.encode("numMorningToDos\0"));
@@ -239,6 +250,9 @@ function updateSiteFromValues() {
     display_lastName.innerText = config_lastName;
     display_wifiSSID.innerText = config_wifiSSID;
     display_wifiPass.innerText = config_wifiPass;
+    display_timeZone.innerText = config_timeZone;
+    display_latitude.innerText = config_latitude;
+    display_longitude.innerText = config_longitude;
 
     let index = 0;
     for(const c of config_features) {
@@ -418,6 +432,42 @@ async function updateWifiPass(element) {
     await requestNameCharacteristic.writeValueWithResponse(encoder.encode("wifiPass\0"));
     await portalHasUpdateCharacteristic.writeValue(trueBuffer);
     console.log("Wifi password updated successfully!");
+}
+
+async function updateTimeZone(element) {
+    lockField(element);
+    console.log("Updating time zone...");
+    var newTimeZone = display_timeZone.textContent + '\0';
+    console.log("New time zone value: " + newTimeZone);
+    console.log("Sending update...");
+    await dataCharacteristic.writeValueWithResponse(encoder.encode(newTimeZone));
+    await requestNameCharacteristic.writeValueWithResponse(encoder.encode("timeZone\0"));
+    await portalHasUpdateCharacteristic.writeValue(trueBuffer);
+    console.log("Time zone updated successfully!");
+}
+
+async function updateLatitude(element) {
+    lockField(element);
+    console.log("Updating latitude...");
+    var newLatitude = display_latitude.textContent + '\0';
+    console.log("New latitude value: " + newLatitude);
+    console.log("Sending update...");
+    await dataCharacteristic.writeValueWithResponse(encoder.encode(newLatitude));
+    await requestNameCharacteristic.writeValueWithResponse(encoder.encode("latitude\0"));
+    await portalHasUpdateCharacteristic.writeValue(trueBuffer);
+    console.log("Latitude updated successfully!");
+}
+
+async function updateLongitude(element) {
+    lockField(element);
+    console.log("Updating longitude...");
+    var newLongitude = display_longitude.textContent + '\0';
+    console.log("New longitude value: " + newLongitude);
+    console.log("Sending update...");
+    await dataCharacteristic.writeValueWithResponse(encoder.encode(newLongitude));
+    await requestNameCharacteristic.writeValueWithResponse(encoder.encode("longitude\0"));
+    await portalHasUpdateCharacteristic.writeValue(trueBuffer);
+    console.log("Longitude updated successfully!");
 }
 
 async function updateToDoLists() {

@@ -160,7 +160,7 @@ void BoardManager::updateFromConfig() {
 	if (myFile) {
 		input = "";
 		while (myFile.available()) {
-			next = myFile.read(); break;
+			next = myFile.read();
 			input.concat(next);
 		}
 
@@ -174,15 +174,27 @@ void BoardManager::updateFromConfig() {
 		_consoleSerial->println("error opening timezone.txt!");
 	}
 
-	myFile = SD.open("zip.txt");
-	if (myFile) {
+	// myFile = SD.open("coords.txt", FILE_WRITE | O_TRUNC);
+	// myFile.print("40.014984\n-105.270546");
+	// myFile.close();
+
+	myFile = SD.open("coords.txt");
+	if(myFile) {
 		input = "";
 		while (myFile.available()) {
 			next = myFile.read();
 			if (next == '\n') break;
 			input.concat(next);
 		}
-		input.toCharArray(_zipcode, 6);
+		input.toCharArray(_latitude, 12);
+
+		input = "";
+		while (myFile.available()) {
+			next = myFile.read();
+			if (next == '\n') break;
+			input.concat(next);
+		}
+		input.toCharArray(_longitude, 12);
 
 		myFile.close();
 	} else {
@@ -357,8 +369,10 @@ void BoardManager::openBluetoothBLE() {
 						dataCharacteristic.writeValue(_wifiPass);
 					} else if (strcmp(requestType, "timeZone") == 0) {
 						dataCharacteristic.writeValue(itoa(_timeZoneOffsetHours, temp, 10));
-					} else if (strcmp(requestType, "zipCode") == 0) {
-						dataCharacteristic.writeValue(_zipcode);
+					} else if (strcmp(requestType, "latitude") == 0) {
+						dataCharacteristic.writeValue(_latitude);
+					} else if (strcmp(requestType, "longitude") == 0) {
+						dataCharacteristic.writeValue(_longitude);
 					} else if (strcmp(requestType, "numMorningToDos") == 0) {
 						dataCharacteristic.writeValue(itoa(_numMorningToDos, temp, 10));
 					} else if (strcmp(requestType, "morningToDo") == 0) {
@@ -436,9 +450,27 @@ void BoardManager::openBluetoothBLE() {
 						myFile.print(_wifiPass);
 						myFile.close();
 					} else if(strcmp(updateType, "timeZone") == 0) {
-						
-					} else if(strcmp(updateType, "zipCode") == 0) {
-						
+						_consoleSerial->println(tempString);
+						_timeZoneOffsetHours = tempString.toInt();
+						myFile = SD.open("timezone.txt", FILE_WRITE | O_TRUNC);
+						myFile.print(_timeZoneOffsetHours);
+						myFile.close();
+					} else if(strcmp(updateType, "latitude") == 0) {
+						_consoleSerial->println(tempString);
+						tempString.toCharArray(_latitude, 12);
+						myFile = SD.open("coords.txt", FILE_WRITE | O_TRUNC);
+						myFile.print(_latitude);
+						myFile.print("\n");
+						myFile.print(_longitude);
+						myFile.close();
+					} else if(strcmp(updateType, "longitude") == 0) {
+						_consoleSerial->println(tempString);
+						tempString.toCharArray(_longitude, 12);
+						myFile = SD.open("coords.txt", FILE_WRITE | O_TRUNC);
+						myFile.print(_latitude);
+						myFile.print("\n");
+						myFile.print(_longitude);
+						myFile.close();
 					} else if(strcmp(updateType, "numMorningToDos") == 0) {
 						_consoleSerial->println(tempString);
 						_numMorningToDos = tempString.toInt();

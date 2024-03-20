@@ -17,10 +17,6 @@ h1, h2, h3, h4, h5, h6 {
     margin: 1em 0 0.5em 0;
 }
 
-h6 {
-    margin-bottom: 1rem;
-}
-
 body {
     background-color: white;
     color:black;
@@ -231,6 +227,10 @@ body {
     box-sizing: border-box;
     flex-basis: 0;
     flex-grow: 1;
+}
+
+.toDoList > h4 {
+    margin-bottom: 1rem;
 }
 
 .configButton {
