@@ -1,10 +1,25 @@
-// Your JavaScript code here
-// Make sure to access the elements after the DOM is fully loaded
+
 //var navbar = document.getElementById("navbar");
 var mainLogo = document.getElementById("mainLogo");
 var needsBluetoothScreen = document.getElementById("needsBluetoothConnection");
 
 // var dotContainer = document.getElementById("dot-container");
+
+var todoPic = document.getElementById("todoPic");
+var weeklyPic = document.getElementById("weeklyPic");
+var moodPic = document.getElementById("moodPic");
+var weatherPic = document.getElementById("weatherPic");
+var tictacPic = document.getElementById("tictacPic");
+var quotePic = document.getElementById("quotePic");
+var themePic = document.getElementById("themePic");
+
+todoPic.style.display = "none";
+weeklyPic.style.display = "none";
+moodPic.style.display = "none";
+weatherPic.style.display = "none";
+tictacPic.style.display = "none";
+quotePic.style.display = "none";
+themePic.style.display = "none";
 
 var featuresPage = document.getElementById("featuresSection");
 var boardDisplayPage = document.getElementById("boardDisplayPage");
@@ -14,6 +29,7 @@ var todoPage = document.getElementById("todoPage");
 var eventsPage = document.getElementById("eventsPage");
 var themePage = document.getElementById("themePage");
 var weatherPage = document.getElementById("weatherPage");
+
 var ticTacToePage = document.getElementById("ticTacToePage");
 var moodTrackerPage = document.getElementById("moodTrackerPage");
 var dailyQuotePage = document.getElementById("dailyQuotePage");
@@ -71,6 +87,9 @@ const config_eveningToDos = [];
 
 goLanding();
 
+ticTacToePage.style.display = "none";
+moodTrackerPage.style.display = "none";
+dailyQuotePage.style.display = "none";
 //BLE variables and what not...
 let dataCharacteristic, requestNameCharacteristic, indexCharacteristic, portalSideRequestCharacteristic, portalHasUpdateCharacteristic, successResponseCharacteristic;
 
@@ -92,6 +111,7 @@ trueBuffer[0] = true;
 var result;
 
 async function connectToBluetooth() {
+    goMain();
     const device = await navigator.bluetooth.requestDevice({filters: [{services: [serviceUUID]}]});
     display_connectResultMessage.innerText = "connecting...";
     const server = await device.gatt.connect();
@@ -334,18 +354,17 @@ function updateSiteFromValues() {
     }
 }
 
-
 // 1234567
 // order: Todo[1], WeeklyCalendar[2], Quotes[3], Weather[4], Game[5], Mood[6], Theme[7]
 
 function displaySelectedFeatures() {
-    todoPage.style.display = todoCheckBox.checked ? "block" : "none";
-    eventsPage.style.display = weeklyCalCheckBox.checked ? "block" : "none";
-    themePage.style.display = themeCheckBox.checked ? "block" : "none";
-    weatherPage.style.display = weatherCheckBox.checked ? "block" : "none";
-    ticTacToePage.style.display = gameCheckBox.checked ? "block" : "none";
-    moodTrackerPage.style.display = moodCheckBox.checked ? "block" : "none";
-    dailyQuotePage.style.display = quotesCheckBox.checked ? "block" : "none";
+    todoPic.style.display = todoCheckBox.checked ? "block" : "none";
+    weeklyPic.style.display = weeklyCalCheckBox.checked ? "block" : "none";
+    themePic.style.display = themeCheckBox.checked ? "block" : "none";
+    weatherPic.style.display = weatherCheckBox.checked ? "block" : "none";
+    tictacPic.style.display = gameCheckBox.checked ? "block" : "none";
+    moodPic.style.display = moodCheckBox.checked ? "block" : "none";
+    quotePic.style.display = quotesCheckBox.checked ? "block" : "none";
 }
 
 async function updateFeatures() {
@@ -556,6 +575,7 @@ function showDateBoxTodo() {
         todoDate.style.display = "none";
     }
 }
+
 function getTask() {
     if(todoDate.style.display == "inline") {
         console.log(todoDate.value);
@@ -600,7 +620,6 @@ function getEventDateNameTime() {
     eForm.reset();
     return false;
 }
-
 
 function editField(element) {
     element.previousElementSibling.contentEditable = true;
@@ -690,6 +709,10 @@ function goLanding() {
     featuresPage.style.display = "none";
     boardDisplayPage.style.display = "none";
     profilePage.style.display = "none";
+
+    ticTacToePage.style.display = "none";
+    moodTrackerPage.style.display = "none";
+    dailyQuotePage.style.display = "none";
 }
 
 function goMain() {

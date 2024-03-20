@@ -91,6 +91,42 @@ body {
     margin-top: 6em;
 }
 
+#featurePageDescription {
+    position: relative;
+}
+
+#featurePics {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+#featurePics img {
+    width: 50px;
+    margin: 5px; 
+}
+
+
+#featurePageDescription .featureConfigContent{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+#featurePageDescription #board {
+    max-width: 80%; 
+    height: auto;
+    border: 2px gray solid;
+}
+
+
 .leftContainer {
     flex-shrink: 0;
 }
@@ -301,5 +337,7 @@ button#dot2:hover{
 button#dot3:hover{
     background-color: #405bac;
 }
+
+
 
 /* ---------End of Edit Features Tab---------- */
