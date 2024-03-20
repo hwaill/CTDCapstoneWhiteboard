@@ -108,8 +108,8 @@ body {
 }
 
 #featurePics img {
-    width: 50px;
-    margin: 5px; 
+    width: 5%;
+    margin: 10px; 
 }
 
 
@@ -125,7 +125,6 @@ body {
     height: auto;
     border: 2px gray solid;
 }
-
 
 .leftContainer {
     flex-shrink: 0;
