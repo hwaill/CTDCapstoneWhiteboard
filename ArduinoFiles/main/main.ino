@@ -94,10 +94,6 @@ void loop() {
   // Serial.println(currentTime.getSeconds());
 	myBoardManager.drawListSection(400, 60, myBoardManager._numMorningToDos, "Morning Tasks", myBoardManager._morningToDoList, true, false);
 
-	if(its 12) {
-		updateHallSensorValues();
-	}
-
 
   delay(1000000);
 

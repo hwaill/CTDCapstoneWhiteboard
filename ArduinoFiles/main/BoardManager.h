@@ -126,8 +126,9 @@ class BoardManager {
 
 		int _numMoodQuestions;
 		bool _moodQuestions[10];
-
-		char _zipcode[6];
+		
+		char _latitude[12];
+		char _longitude[12];
 };
 
 #endif
