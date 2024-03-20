@@ -1,5 +1,4 @@
-// Your JavaScript code here
-// Make sure to access the elements after the DOM is fully loaded
+
 //var navbar = document.getElementById("navbar");
 var mainLogo = document.getElementById("mainLogo");
 var needsBluetoothScreen = document.getElementById("needsBluetoothConnection");
@@ -17,16 +16,6 @@ var weatherPage = document.getElementById("weatherPage");
 var ticTacToePage = document.getElementById("ticTacToePage");
 var moodTrackerPage = document.getElementById("moodTrackerPage");
 var dailyQuotePage = document.getElementById("dailyQuotePage");
-
-todoPage.style.display = "none";
-eventsPage.style.display = "none";
-weatherPage.style.display = "none";
-themePage.style.display = "none";
-ticTacToePage.style.display = "none";
-moodTrackerPage.style.display = "none";
-dailyQuotePage.style.display = "none";
-profilePage.style.display = "none"; 
-featuresPage.style.dispay = "none";
 
 var todoCheckBox = document.getElementById("Todo-Check");
 var weeklyCalCheckBox = document.getElementById("WeeklyCal-Check");
@@ -54,6 +43,20 @@ var eventName = document.getElementById("eventName");
 eventDateTitle.style.display = "none";
 eventDate.style.display = "none";
 
+document.querySelector(".featuresListContainer").style.display = "none";
+document.getElementById("featurePageDescription").style.display = "none";
+document.getElementById("needsBluetoothConnection").style.display = "none";
+
+todoPage.style.display = "none";
+eventsPage.style.display = "none";
+weatherPage.style.display = "none";
+themePage.style.display = "none";
+ticTacToePage.style.display = "none";
+moodTrackerPage.style.display = "none";
+dailyQuotePage.style.display = "none";
+profilePage.style.display = "none"; 
+featuresPage.style.dispay = "none";
+
 var featureSelectedString;
 var themeSelectedString;
 
@@ -76,8 +79,10 @@ const config_morningToDos = [];
 const config_daytimeToDos = [];
 const config_eveningToDos = [];
 
-goLanding();
-
+// goLanding();
+window.onload = function() {
+    goProfile();
+};
 //BLE variables and what not...
 let dataCharacteristic, requestNameCharacteristic, indexCharacteristic, portalSideRequestCharacteristic, portalHasUpdateCharacteristic, successResponseCharacteristic;
 
@@ -241,8 +246,9 @@ async function connectToBluetooth() {
     console.log("Evening To-Dos: " + config_eveningToDos);
 
     updateSiteFromValues();
-    displaySelectedFeatures();
-    goMain();
+    goProfile()
+    // displaySelectedFeatures();
+    // goMain();
 }
 
 function updateSiteFromValues() {
@@ -282,12 +288,16 @@ function updateSiteFromValues() {
 }
 
 
-
-
-
-
 // 1234567
 // order: Todo[1], WeeklyCalendar[2], Quotes[3], Weather[4], Game[5], Mood[6], Theme[7]
+
+function getLocation(){
+    var long = document.getElementById("longitude").value;
+    var lat = document.getElementById("latitude").value;
+    var location = long + " " + lat; 
+
+    console.log(location);
+}
 
 function displaySelectedFeatures() {
     todoPage.style.display = todoCheckBox.checked ? "block" : "none";
@@ -332,36 +342,39 @@ async function updateTheme() {
 }
 
 function themeSelected() {
-var selectedTheme = document.querySelector('input[name="theme"]:checked');
+    var selectedTheme = document.querySelector('input[name="theme"]:checked');
 
-if (selectedTheme) {
-    var themeSelectedValue = selectedTheme.value;
-    console.log(themeSelectedValue);
+    if (selectedTheme) {
+        var themeSelectedValue = selectedTheme.value;
+        console.log(themeSelectedValue);
+    }
 }
-}
+
 function showDateBoxTodo(){
-var selectedDateOrDaily = document.querySelector('input[name="date"]:checked');
-var valueDateorDaily = selectedDateOrDaily.value;
+    var selectedDateOrDaily = document.querySelector('input[name="date"]:checked');
+    var valueDateorDaily = selectedDateOrDaily.value;
 
-if (valueDateorDaily == 1) {
-    todoDateTitle.style.display = "inline";
-    todoDate.style.display = "inline";
+    if (valueDateorDaily == 1) {
+        todoDateTitle.style.display = "inline";
+        todoDate.style.display = "inline";
 
-}else{
-    todoDateTitle.style.display = "none";
-    todoDate.style.display = "none";
+    }else{
+        todoDateTitle.style.display = "none";
+        todoDate.style.display = "none";
+    }
+
 }
 
-}
 function getTask() {
-if(todoDate.style.display == "inline"){
-    console.log(todoDate.value);
+    if(todoDate.style.display == "inline"){
+        console.log(todoDate.value);
+    }
+    else{
+        console.log("daily");
+    }
+    console.log(todoName.value);
 }
-else{
-    console.log("daily");
-}
-console.log(todoName.value);
-}
+
 function showDateBoxEvent() {
     var selectedDateOrDaily = document.querySelector('input[name="date"]:checked');
     var valueDateorDaily = selectedDateOrDaily.value;
@@ -374,6 +387,7 @@ function showDateBoxEvent() {
         eventDate.style.display = "none";
     }
 }
+
 function getEvent() {
     if (eventDate.style.display == "inline") {
         console.log(eventDate.value);
@@ -397,7 +411,6 @@ function getEventDateNameTime(){
     return false;
 }
 
-
 //These are functions to "change pages"
 function goFeatures(){
 
@@ -418,17 +431,25 @@ function goFeatures(){
 }
 
 function goLanding() {
-    mainLogo.style.display = "inline";
-    needsBluetoothScreen.style.display = "block";
-    featuresPage.style.display = "none";
-    boardDisplayPage.style.display = "none";
-    profilePage.style.display = "none";
+    document.querySelector(".featuresListContainer").style.display = "none";
+    document.getElementById("featurePageDescription").style.display = "none";
+    document.getElementById("needsBluetoothConnection").style.display = "none";
+
+    todoPage.style.display = "none";
+    eventsPage.style.display = "none";
+    weatherPage.style.display = "none";
+    themePage.style.display = "none";
+    ticTacToePage.style.display = "none";
+    moodTrackerPage.style.display = "none";
+    dailyQuotePage.style.display = "none";
+    profilePage.style.display = "none"; 
+    featuresPage.style.dispay = "none";
 }
 
 function goMain() {
-    mainLogo.style.display = "inline";
+    // mainLogo.style.display = "inline";
     needsBluetoothScreen.style.display = "none";
-    featuresPage.style.display = "flex";
+    // featuresPage.style.display = "flex";
     boardDisplayPage.style.display = "none";
     profilePage.style.display = "none";
 }
@@ -452,23 +473,20 @@ function goBoardDisplay() {
 }
 
 function goProfile() {
-    mainLogo.style.display = "none";
-    needsBluetoothScreen.style.display = "none";
-    navbar.style.display = "block";
-    dotContainer.style.display = "none";
-    featuresPage.style.display = "none";
-    boardDisplayPage.style.display = "none";
-    profilePage.style.display = "block";
+    document.querySelector(".featuresListContainer").style.display = "none";
+    document.getElementById("featurePageDescription").style.display = "none";
+    document.getElementById("needsBluetoothConnection").style.display = "flex";
+
+    eventsPage.style.display = "none";
+    themePage.style.display = "none";
+    weatherPage.style.display = "none";
+    todoPage.style.display = "none";
+
+    ticTacToePage.style.display = "none";
+    moodTrackerPage.style.display = "none";
+    dailyQuotePage.style.display = "none";
+    profilePage.style.display = "none";
 
 }
 
-function getLocation(){
-    var long = document.getElementById("longitude").value;
-    var lat = document.getElementById("latitude").value;
 
-    var location = long + " " + lat; 
-
-    alert(location);
-}
-
-document.querySelector("#navbar .navItem:nth-child(3)").addEventListener("click", goFeatures);

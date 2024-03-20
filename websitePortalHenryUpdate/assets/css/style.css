@@ -46,17 +46,23 @@ body {
 #connectionResultMessage {
     padding-top: 1em;
 }
-
+/* --------NAV BAR---------- */
 #navbar{
     background-color: rgb(217, 232, 255);
-    position: relative;
+    /* position: relative; */
+    position: fixed;
+
     overflow: hidden;
     left: 0;
     top: 0;
+    width: 100%;
     box-sizing: border-box;
-    width: 100vw;
     padding: 20px;
     box-shadow: rgba(0, 0, 0, 0.5) 0 0 10px;
+
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
 }
 
 #navbar .navItem {
@@ -73,15 +79,19 @@ body {
     color:rgb(55, 59, 171);
 }
 
+#navbar #mainLogo {
+    max-height: 4.5em;
+    margin-right: auto;
+}
+
+/* -------- End NAV BAR---------- */
+
+
 .pageContent {
     padding-top: 5em;
     text-align: left;
     width: 80%;
     margin: auto;
-}
-
-#mainLogo {
-    max-height: 4.5em;
 }
 
 #featuresSection {
@@ -201,7 +211,11 @@ body {
     text-align: left;
 }
 .board {
-    
+    max-width: 90%; 
+    height: auto; 
+    border: 1px solid rgb(168, 165, 165);
+    box-sizing: border-box;
+    display: flex;
 }
 /* -----------End of Board Display Tab ---------- */
 /* ---------Edit Features Tab---------- */
