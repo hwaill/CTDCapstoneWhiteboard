@@ -313,18 +313,78 @@ void BoardManager::finalizeToDos() {
 }
 
 void BoardManager::drawWeather() {
+    _myGCodeHandler->setCursor(639.149, 473.776);
+    _myGCodeHandler->setFontScale(1.2);
+    _myGCodeHandler->setTextConstraints(639.149,473.776,853.38, 473.555); 
+
+    //incomplete, need to ask hwo to get api stat update
 
 }
 
 void BoardManager::drawQuote() {
+    string quotes[6] = {
+        "A winner is just a loser who tried one more time. George M. Moore, Jr.", 
+        "Fall seven times, stand up eight. Japanese proverb", 
+        "You miss 100 percent of the shots you do not take. Wayne Gretzky", 
+        "A person who never made a mistake never tried anything new. Albert Einstein", 
+        "Every strike brings me closer to the next home run. Babe Ruth", 
+        "I have not failed. I have just found 10,000 ways that will not work. Thomas Edison"
+    };
+
+    _myGCodeHandler->setCursor(639.149, 473.776);
+    _myGCodeHandler->setFontScale(0.8)
+    _myGCodeHandler->setTextConstraints(639.149,473.776,853.38, 473.555); 
+    _myGCodeHandler->write(quotes[5], WRAP_TRUNCATE, true);
+
+    //write the Thomas Edison quote in top right corner
 
 }
 
 void BoardManager::drawMorningMoodQs() {
+    //vertical spacing: 38.762
+    double spacing = 38.762;
+    //moods coordinate start: 700, 354.962
+    //checkbox start top right corner of box: 780,137, 376.131, 805.537, 350.731
+
+    _myGCodeHandler->setCursor(689.936, 400);
+    _myGCodeHandler->setFontScale(1.2);
+    _myGCodeHandler->write("Morning Mood", WRAP_TRUNCATE, true)//fix this///////////////////////////////////
+
+    string moods[9] = {"Grateful", "Engeretic", "Peaceful", "Stressed", "Anxious", "Okay", "Sad", "Angry", "Content"};
+
+    for(int i = 0; i < 9; i++){
+        _myGCodeHandler->setCursor(700, 354.962 - (spacing * i));
+        _myGCodeHandler->setFontScale(0.8);
+        _myGCodeHandler->write(moods[i], WRAP_TRUNCATE, true)//fix this///////////////////////////////////
+        _myGCodeHandler->drawRect(780.137, 376.131 - (spacing * i), 805.537, 350.731-(spacing * i));
+    }
+
+    //ask henry about sensor updating and storing data
+    //list of how which mood they feel in morning
 
 }
 
 void BoardManager::drawEveningMoodQs() {
+       //vertical spacing: 38.762
+    double spacing = 38.762;
+    //moods coordinate start: 700, 354.962
+    //checkbox start top right corner of box: 780,137, 376.131, 805.537, 350.731
+
+    _myGCodeHandler->setCursor(689.936, 400);
+    _myGCodeHandler->setFontScale(1.2);
+    _myGCodeHandler->write("Evening Mood", WRAP_TRUNCATE, true)//fix this///////////////////////////////////
+
+    string moods[9] = {"Grateful", "Engeretic", "Peaceful", "Stressed", "Anxious", "Okay", "Sad", "Angry", "Content"};
+
+    for(int i = 0; i < 9; i++){
+        _myGCodeHandler->setCursor(700, 354.962 - (spacing * i));
+        _myGCodeHandler->setFontScale(0.8);
+        _myGCodeHandler->write(moods[i], WRAP_TRUNCATE, true)//fix this///////////////////////////////////
+        _myGCodeHandler->drawRect(780.137, 376.131 - (spacing * i), 805.537, 350.731-(spacing * i));
+    }
+
+    //ask henry about sensor updating and storing data
+    //list of which mood they feel at night
 
 }
 
