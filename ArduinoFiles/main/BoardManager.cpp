@@ -128,7 +128,51 @@ void BoardManager::togglePaused() {
 }
 
 void BoardManager::ticTacToe() {
-
+	_myGCodeHandler->drawLine(713, 24.5, 713, 232.7);
+	_myGCodeHandler->drawLine(792.5, 24.5, 792.5, 232.7);
+	_myGCodeHandler->drawLine(647.142, 90, 853.38, 90);
+	_myGCodeHandler->drawLine(647.142, 170, 853.38, 170);
+	
+	bool flag = true;
+	
+	initalizeGame();
+	
+	// Player's turn
+	while (flag) {
+		for (int i = 0; i < ROWS; i++) {
+			for (int j = 0; j < COLS; j++) {
+				if (sensorGrid[i][j] == 0 && isValidMove(i, j)) {
+				    makeMove(i, j, PLAYER_X);
+				    // Check for win or draw
+				    if (checkWin(PLAYER_X)) {
+					_myGCodeHandler->setCursor(678.495,250);
+					_myGCodeHandler->write("You win", WRAP_TRUNCATE, true);
+					flag = false; // Game over
+				    }
+				    if (isBoardFull()) {
+					_myGCodeHandler->setCursor(678.495,250);
+					_myGCodeHandler->write("Draw", WRAP_TRUNCATE, true);
+					flag = false; // Game over
+				    }
+			
+			
+				    // Computer's turn
+				    computerMove();
+				    // Check for win or draw
+				    if (checkWin(PLAYER_O)) {
+					_myGCodeHandler->setCursor(678.495,250);
+					_myGCodeHandler->write("You lose", WRAP_TRUNCATE, true);
+					flag = false; // Game over
+				    }
+				    if (isBoardFull()) {
+					_myGCodeHandler->setCursor(678.495,250);
+					_myGCodeHandler->write("Draw", WRAP_TRUNCATE, true);
+					flag = false; // Game over
+		    			}
+				}
+	    		}
+		}
+	}
 }
 
 void BoardManager::finalizeToDos() {
