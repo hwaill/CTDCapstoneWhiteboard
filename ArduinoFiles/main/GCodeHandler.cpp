@@ -43,8 +43,9 @@ void GCodeHandler::initialize() {
 	_sendSingleCommand("$X");
 	_sendSingleCommand("G10 P0 L20 X-24 Y-70 Z0.2");
 	_sendSingleCommand("$H");
-	_sendSingleCommand("G10 P0 L20 X-24 Y-70 Z0.2");
+	_sendSingleCommand("G10 P0 L20 X-4 Y-40 Z0.2");
 	_sendSingleCommand("G00 X0 Y0");
+	digitalWrite(8, LOW);
 }
 
 void GCodeHandler::setCursor(double x, double y) {
@@ -69,34 +70,44 @@ void GCodeHandler::setTextConstraints(double startX, double startY, double endX,
 	_textConstraintEndY = endY;
 }
 
+void GCodeHandler::returnToHome() {
+	sendSingleCommand("G00 X0 Y0");
+}
+
 void GCodeHandler::sendSingleCommand(String command) {
 	_wakeGRBLSerial();
 	_sendSingleCommand(command);
+	digitalWrite(8, LOW);
 }
 
 void GCodeHandler::sendSingleCommand(const char* command, double posX, double posY, double scale) {
 	_wakeGRBLSerial();
 	_sendSingleCommand(command, posX, posY, scale);
+	digitalWrite(8, LOW);
 }
 
 void GCodeHandler::sendMultipleCommands(const char* commands[], int numCommands) {
 	_wakeGRBLSerial();
 	_sendMultipleCommands(commands, numCommands);
+	digitalWrite(8, LOW);
 }
 
 void GCodeHandler::sendMultipleCommands(const char* commands[], int numCommands, double posX, double posY, double scale) {
 	_wakeGRBLSerial();
 	_sendMultipleCommands(commands, numCommands, posX, posY, scale);
+	digitalWrite(8, LOW);
 }
 
 void GCodeHandler::sendCharacter(const char c, double posX, double posY, double scale) {
 	_wakeGRBLSerial();
 	_sendCharacter(c, posX, posY, scale);
+	digitalWrite(8, LOW);
 }
 
 void GCodeHandler::sendWord(const char* word) {
 	_wakeGRBLSerial();
 	_sendWord(word);
+	digitalWrite(8, LOW);
 }
 
 void GCodeHandler::write(const char* text, int wrapBehavior, bool obeyConstraints) {
@@ -158,26 +169,31 @@ void GCodeHandler::write(const char* text, int wrapBehavior, bool obeyConstraint
 			_sendWord(textToWrite.substring(0));
 		}
 	}
+	digitalWrite(8, LOW);
 }
 
 void GCodeHandler::drawLine(double startX, double startY, double endX, double endY) {
 	_wakeGRBLSerial();
 	_drawLine(startX, startY, endX, endY);
+	digitalWrite(8, LOW);
 }
 
 void GCodeHandler::drawRect(double startX, double startY, double endX, double endY) {
 	_wakeGRBLSerial();
 	_drawRect(startX, startY, endX, endY);
+	digitalWrite(8, LOW);
 }
 
 void GCodeHandler::drawCircle(double centerX, double centerY, double radius) {
 	_wakeGRBLSerial();
 	_drawCircle(centerX, centerY, radius);
+	digitalWrite(8, LOW);
 }
 
 void GCodeHandler::boxZigZag(double startX, double startY, double endX, double endY, double rowHeight) {
 	_wakeGRBLSerial();
 	_boxZigZag(startX, startY, endX, endY, rowHeight);
+	digitalWrite(8, LOW);
 }
 
 /*
@@ -185,6 +201,7 @@ void GCodeHandler::boxZigZag(double startX, double startY, double endX, double e
 */
 
 void GCodeHandler::_sendSingleCommand(String command) {
+	digitalWrite(8, HIGH);
 	_consoleSerial->println(command);
 	_gcodeSerial->print(command);
 	_gcodeSerial->print('\n');

@@ -21,6 +21,12 @@ struct CalendarEvent {
 	unsigned long epochTime;
 };
 
+inline const unsigned long USER_INTERACTION_WAIT_COOLDOWN = 900000;
+
+inline const double ERROR_FONT_SCALE = 1.2;
+inline const double ERROR_START_X = 60;
+inline const double ERROR_START_Y = 400;
+
 inline const double TODO_LINE_HEIGHT = 37;
 inline const double TODO_ITEM_FONT_SCALE = 0.6;
 inline const double TODO_LABEL_FONT_SCALE = 0.5;
@@ -58,12 +64,27 @@ inline const char* DAY[7] {
   "Saturday"
 };
 
+inline const int UPDATE_TYPE_NONE = 0;
+inline const int UPDATE_TYPE_MORNING = 1;
+inline const int UPDATE_TYPE_DAYTIME = 2;
+inline const int UPDATE_TYPE_EVENING = 3;
+inline const int UPDATE_TYPE_OTHER = 4;
 
 class BoardManager {
 	public:
 		BoardManager(Stream &consoleSerial, GCodeHandler &myGCodeHandler, NTPClient &timeClient, RTCTime &currentTime, bool *buttonStates, int *hallSensorValues);
 		void initialize();
 		void updateFromConfig();
+
+		void update();
+
+		void togglePaused();
+
+		void morningUpdate();
+		void daytimeUpdate();
+		void eveningUpdate();
+
+		void captureToDos();
 
 		char* getWifiSSID();
 		char* getWifiPass();
@@ -93,6 +114,11 @@ class BoardManager {
 		bool* _buttonStates;
 		int* _hallSensorValues;
 
+		unsigned long _lastUserInteractionTime;
+
+		bool _isPaused = false;
+		int _lastUpdateType = UPDATE_TYPE_NONE;
+
 		bool _needsBluetoothConfig = false;
 
 		bool _hasWiFiInfo = false;
@@ -104,9 +130,15 @@ class BoardManager {
 		NTPClient* _timeClient;
 		int _timeZoneOffsetHours = -7;
 
+		unsigned long _currentDay;
+
+		bool _needsMorningUpdate = true;
+		bool _needsDaytimeUpdate = true;
+		bool _needsEveningUpdate = true;
+
 		bool _connectToWifi();
-		void _checkForWifiInfo();
 		void _printWifiStatus();
+		void _displayError(const char* errorMessage, int lineNumber);
 
 		char _userFirstName[20];
 		char _userLastName[20];

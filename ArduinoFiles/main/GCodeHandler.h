@@ -19,6 +19,8 @@ class GCodeHandler {
 		double getFontScale();
 		void setTextConstraints(double startX, double startY, double endX, double endY);
 
+		void returnToHome();
+
 		void sendSingleCommand(String command);
 		void sendSingleCommand(const char* command, double posX, double posY, double scale);
 		void sendMultipleCommands(const char* commands[], int numCommands);

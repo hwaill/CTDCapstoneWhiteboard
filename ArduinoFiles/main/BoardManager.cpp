@@ -13,21 +13,57 @@ BoardManager::BoardManager(Stream &consoleSerial, GCodeHandler &myGCodeHandler, 
 }
 
 void BoardManager::initialize() {
-	//_myGCodeHandler->initialize();
+	_lastUserInteractionTime = millis() - USER_INTERACTION_WAIT_COOLDOWN;
+	_myGCodeHandler->initialize();
 	updateFromConfig();
 
 	openBluetoothBLE();
-	//_checkForWifiInfo();
-	// if(_hasWiFiInfo) {
-	// 	//_connectToWifi();
-	// }
+	if(_hasWiFiInfo) {
+		_connectToWifi();
+	} else {
+		_displayError("Wifi credentials required!", 0);
+		_displayError("Please configure with bluetooth.", 1);
+	}
 	RTC.begin();
-	// _consoleSerial->println("\nStarting connection to server...");
-	// _timeClient->begin();
-	// _timeClient->update();
+	_consoleSerial->println("\nStarting connection to server...");
+	_timeClient->begin();
+	_timeClient->update();
 
-	// // Get the current time from NTP
-	// NTP();
+	// Get the current time from NTP
+	NTP();
+
+	RTC.getTime(*_currentTime);
+	_currentDay = _currentTime->getUnixTime() / 86400UL;
+}
+
+void BoardManager::update() {
+	//checks if it is a new day (at midnight)
+	if(!_isPaused) {
+		if(_currentDay != _currentTime->getUnixTime() / 86400UL) {
+			_currentDay = _currentTime->getUnixTime() / 86400UL;
+
+			_needsMorningUpdate = true;
+			_needsDaytimeUpdate = true;
+			_needsEveningUpdate = true;
+		}
+
+		if((unsigned long)(millis() - _lastUserInteractionTime) >= USER_INTERACTION_WAIT_COOLDOWN) {
+			if(_needsMorningUpdate && _currentTime->getHour() >= 7 && _currentTime->getHour() < 12) {
+				_needsMorningUpdate = false;
+				morningUpdate();
+			} else if(_needsDaytimeUpdate && _currentTime->getHour() >= 12 && _currentTime->getHour() < 18) {
+				_needsDaytimeUpdate = false;
+				daytimeUpdate();
+			} else if(_needsEveningUpdate && _currentTime->getHour() >= 18 && _currentTime->getHour() < 23) {
+				_needsEveningUpdate = false;
+				eveningUpdate();
+			}
+		}
+	}
+}
+
+void BoardManager::togglePaused() {
+	_isPaused = !_isPaused;
 }
 
 void BoardManager::updateFromConfig() {
@@ -40,7 +76,9 @@ void BoardManager::updateFromConfig() {
 
 	if (!SD.begin(10)) {
 		_consoleSerial->println("initialization failed!");
-		return;
+		_displayError("error: SD card failure", 0);
+		_displayError("restart board...", 1);
+		while(true);
 	}
 	_consoleSerial->println("initialization success!");
 
@@ -92,6 +130,9 @@ void BoardManager::updateFromConfig() {
 			if (next == '\n') break;
 			input.concat(next);
 		}
+
+		bool hasSSID = input != "";
+
 		input.toCharArray(_wifiSSID, 30);
 
 		input = "";
@@ -100,6 +141,8 @@ void BoardManager::updateFromConfig() {
 			if (next == '\n') break;
 			input.concat(next);
 		}
+
+		_hasWiFiInfo = hasSSID && input != "";
 
 		input.toCharArray(_wifiPass, 30);
 
@@ -300,6 +343,9 @@ void BoardManager::openBluetoothBLE() {
 
 	if (!BLE.begin()) {
 		_consoleSerial->println("Starting BLE failed!");
+		_displayError("error: BLE failure", 0);
+		_displayError("restart board...", 1);
+		while(true);
 	}
 
 	BLE.setLocalName("WhiteboardConfig");
@@ -549,10 +595,6 @@ void bleDisconnectHandler(BLEDevice central) {
 	Serial.println(central.address());
 }
 
-void BoardManager::_checkForWifiInfo() {
-	_hasWiFiInfo = true;
-}
-
 bool BoardManager::_connectToWifi() {
 	// check for the WiFi module:
 	if (WiFi.status() == WL_NO_MODULE) {
@@ -566,11 +608,19 @@ bool BoardManager::_connectToWifi() {
 	}
 
 	// attempt to connect to WiFi network:
-	while (_wifiStatus != WL_CONNECTED) {
+	int attemptCount = 0;
+	while (_wifiStatus != WL_CONNECTED && attemptCount <= 10) {
 		_consoleSerial->print("Attempting to connect to SSID: ");
 		_consoleSerial->println(_wifiSSID);
 		_wifiStatus = WiFi.begin(_wifiSSID, _wifiPass);
+		attemptCount++;
 		delay(1000);
+	}
+
+	if(attemptCount > 10) {
+		_displayError("error: wifi failure", 0);
+		_displayError("some features will not work", 1);
+		return false;
 	}
 
 	_consoleSerial->println("Connected to WiFi!");
@@ -600,8 +650,6 @@ void BoardManager::NTP() {
 	RTC.setTime(timeToSet);
 	lastTimeUpdate = millis();
 }
-
-
 
 void BoardManager::drawListSection(double startY, double startX, int numItems, char *listName, ToDoListItem *itemList, bool hasCheckboxes, bool hasLeftLabel) {
 	double leftLineX = startX;
@@ -649,4 +697,11 @@ void BoardManager::drawListSection(double startY, double startX, int numItems, c
 			_myGCodeHandler->write(itemList[i].label, WRAP_TRUNCATE, true);
 		}
 	}
+}
+
+void BoardManager::_displayError(const char* errorMessage, int lineNumber) {
+	_myGCodeHandler->setCursor(ERROR_START_X, ERROR_START_Y - lineNumber * LINE_HEIGHT * ERROR_FONT_SCALE);
+	_myGCodeHandler->setFontScale(ERROR_FONT_SCALE);
+	_myGCodeHandler->write(errorMessage, WRAP_ELLIPSES, false);
+	_myGCodeHandler->returnToHome();
 }
