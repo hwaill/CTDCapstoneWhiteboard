@@ -146,12 +146,14 @@ class BoardManager {
 		ToDoListItem _morningToDoList[20];
 		ToDoListItem _dayToDoList[20];
 		ToDoListItem _eveningToDoList[20];
+		ToDoListItem _weeklyToDoList[20];
 
 		CalendarEvent _events[20];
 
 		int _numMorningToDos;
 		int _numDayToDos;
 		int _numEveningToDos;
+		int _numWeeklyToDos;
 
 		int _numEvents;
 
@@ -160,6 +162,8 @@ class BoardManager {
 		void drawQuote();
 		void drawMorningMoodQs();
 		void drawEveningMoodQs();
+
+		void updateRewards();
 	private:
 		Stream* _consoleSerial;
 		GCodeHandler* _myGCodeHandler;

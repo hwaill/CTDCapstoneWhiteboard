@@ -65,7 +65,9 @@ void BoardManager::update() {
 
 void BoardManager::morningUpdate() {
 	//check previous to dos
-
+	if(_lastUpdateType != UPDATE_TYPE_NONE && _lastUpdateType != UPDATE_TYPE_OTHER) {
+		updateRewards();
+	}
 	//print good morning
 	String text = "Good morning, ";
 	text += _userFirstName;
@@ -88,9 +90,15 @@ void BoardManager::morningUpdate() {
 	//print todos
 	drawListSection(TODO_Y_START, TODO_LEFT_X_START, _numMorningToDos, "Morning To-Do", _morningToDoList, true, false);
 	//print events?
+	drawListSection(TODO_Y_START, TODO_RIGHT_X_START, _numWeeklyToDos, "Weekly To-Do", _weeklyToDoList, true, false);
 	//print weather
+	drawWeather();
 	//print quote
+	drawQuote();
 	//print sleep survey
+	drawMorningMoodQs();
+
+	_lastUpdateType = UPDATE_TYPE_MORNING;
 }
 
 void BoardManager::forceMorningUpdate() {
@@ -140,6 +148,10 @@ void BoardManager::drawMorningMoodQs() {
 }
 
 void BoardManager::drawEveningMoodQs() {
+
+}
+
+void BoardManager::updateRewards() {
 
 }
 
