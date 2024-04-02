@@ -128,6 +128,34 @@ class BoardManager {
 		void forceEveningUpdate();
 
 		void ticTacToe();
+
+		//for tictactoe
+		void initalizeGame();
+		bool checkWin(char player);
+		bool checkRows(char player);
+		bool checkCols(char player);
+		bool checkDiags(char player);
+		bool isBoardFull(char player);
+		bool isValidMove(int row, int col);
+		void makeMove(int row, int col, char player);
+		void computerMove();
+
+		const char PLAYER_X = 'X';
+		const char PLAYER_O = 'O'; 
+		const char EMPTY = ' ';
+		
+		const int ROWS = 3;
+		const int COLS = 3; 
+		
+		char board[3][3];
+		
+		int sensorGrid[3][3] = {
+		    _hallSensorStates[GRID_SENSOR[0][0]], _hallSensorStates[GRID_SENSOR[0][2]], _hallSensorStates[GRID_SENSOR[0][4]], 
+		    _hallSensorStates[GRID_SENSOR[2][0]], _hallSensorStates[GRID_SENSOR[2][2]], _hallSensorStates[GRID_SENSOR[2][4]], 
+		    _hallSensorStates[GRID_SENSOR[4][0]], _hallSensorStates[GRID_SENSOR[4][2]], _hallSensorStates[GRID_SENSOR[4][4]], 
+		};
+		//for tictactoe
+
 		void finalizeToDos();
 
 		void captureToDos();
