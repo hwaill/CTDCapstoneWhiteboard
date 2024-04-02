@@ -175,6 +175,88 @@ void BoardManager::ticTacToe() {
 	}
 }
 
+//start tictactoe extra functions
+
+//setup Game board
+void BoardManager::initalizeGame(){
+    for (int i = 0; i < ROWS; i++) {
+        for (int j = 0; j < COLS; j++) {
+            board[i][j] = EMPTY;
+        }
+    }
+
+}
+
+// Check if a player has won by completing a row
+bool BoardManager::checkRows(char player) {
+  for (int i = 0; i < ROWS; i++) {
+    if (board[i][0] == player && board[i][1] == player && board[i][2] == player) {
+      return true;
+    }
+  }
+  return false;
+}
+
+
+bool BoardManager::checkWin(char player) {
+  return checkRows(player) || checkCols(player) || checkDiagonals(player);
+}
+
+// Check if a player has won by completing a row
+bool BoardManager::checkRows(char player) {
+  for (int i = 0; i < ROWS; i++) {
+    if (board[i][0] == player && board[i][1] == player && board[i][2] == player) {
+      return true;
+    }
+  }
+  return false;
+}
+
+// Check if a player has won by completing a column
+bool BoardManager::checkCols(char player) {
+  for (int j = 0; j < COLS; j++) {
+    if (board[0][j] == player && board[1][j] == player && board[2][j] == player) {
+      return true;
+    }
+  }
+  return false;
+}
+
+// Check if a player has won by completing a diagonal
+bool BoardManager::checkDiags(char player) {
+  return (board[0][0] == player && board[1][1] == player && board[2][2] == player) ||
+         (board[0][2] == player && board[1][1] == player && board[2][0] == player);
+}
+
+// Check if the board is full (i.e., no more moves can be made)
+bool BoardManager::isBoardFull() {
+  for (int i = 0; i < ROWS; i++) {
+    for (int j = 0; j < COLS; j++) {
+      if (board[i][j] == EMPTY) {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
+// Check if a move is valid
+bool BoardManager::isValidMove(int row, int col) {
+  return row >= 0 && row < ROWS && col >= 0 && col < COLS && board[row][col] == EMPTY;
+}
+
+// Make a move on the board
+void BoardManager::makeMove(int row, int col, char player) {
+    for (int i = 0; i < ROWS; i++) {
+        for (int j = 0; j < COLS; j++) {
+            if(sensorGrid[i][j] == HIGH){
+                board[row][col] = player;
+            }
+        }
+    }
+}
+//end tictactoe extra functions
+
 void BoardManager::finalizeToDos() {
 
 }
