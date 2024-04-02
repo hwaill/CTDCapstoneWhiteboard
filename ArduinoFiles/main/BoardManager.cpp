@@ -146,11 +146,13 @@ void BoardManager::ticTacToe() {
 				    // Check for win or draw
 				    if (checkWin(PLAYER_X)) {
 					_myGCodeHandler->setCursor(678.495,250);
+					_myGCodeHandler->setFontScale(1.2);
 					_myGCodeHandler->write("You win", WRAP_TRUNCATE, true);
 					flag = false; // Game over
 				    }
 				    if (isBoardFull()) {
 					_myGCodeHandler->setCursor(678.495,250);
+					_myGCodeHandler->setFontScale(1.2);
 					_myGCodeHandler->write("Draw", WRAP_TRUNCATE, true);
 					flag = false; // Game over
 				    }
@@ -161,11 +163,13 @@ void BoardManager::ticTacToe() {
 				    // Check for win or draw
 				    if (checkWin(PLAYER_O)) {
 					_myGCodeHandler->setCursor(678.495,250);
+					_myGCodeHandler->setFontScale(1.2);
 					_myGCodeHandler->write("You lose", WRAP_TRUNCATE, true);
 					flag = false; // Game over
 				    }
 				    if (isBoardFull()) {
 					_myGCodeHandler->setCursor(678.495,250);
+					_myGCodeHandler->setFontScale(1.2);
 					_myGCodeHandler->write("Draw", WRAP_TRUNCATE, true);
 					flag = false; // Game over
 		    			}
