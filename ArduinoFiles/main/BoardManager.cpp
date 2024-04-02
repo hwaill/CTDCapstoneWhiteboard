@@ -282,10 +282,81 @@ void BoardManager::finalizeToDos() {
 
 }
 
+
+void BoardManager::read_response(){
+	uint32_t received_data_num = 0;
+	uint32_t data_num = 0;
+	bool jsonDetected = false;
+	char data[500];
+
+	while (client.available() && data_num < 500) {
+		char c = client.read();
+		if ('{' == c) {
+			jsonDetected = true;
+		}
+		if (jsonDetected) {
+			data[data_num++] = c;
+		}
+	}
+
+	if (jsonDetected) {
+		
+		myObject = JSON.parse(data);
+		Serial.print("Temperature F: ");
+		if (myObject.hasOwnProperty("current_weather")) {
+
+			temperature = (double)myObject["current_weather"]["temperature"];
+			Serial.println(temperature);
+		}
+	}
+}
+
+void BoardManager::http_request(float latitude, float longitude) {
+	client.stop();
+
+	Serial.println("\nStarting connection to server...");
+  
+  	if (client.connect(server, 80)) {
+		Serial.println("connected to server");
+		client.println("GET /v1/forecast?latitude=" + String(latitude) + "&longitude=" + String(longitude) + "&temperature_unit=fahrenheit&current_weather=true HTTP/1.1");
+		client.println("Host: api.open-meteo.com");
+		client.println("Connection: close");
+		client.println();
+		lastConnectionTime = millis();
+	} else {
+   		Serial.println("connection failed");
+  	}
+}
+
 void BoardManager::drawWeather() {
+	// Wifi Connection
+	if (WiFi.status() == WL_NO_MODULE) {
+		Serial.println("Communication with WiFi module failed!");
+	
+		while (true)
+		;
+  	}
+
+	String fv = WiFi.firmwareVersion();
+	if (fv < WIFI_FIRMWARE_LATEST_VERSION) {
+		Serial.println("Please upgrade the firmware");
+	}
+
+	while (status != WL_CONNECTED) {
+		Serial.print("Attempting to connect to SSID: ");
+		Serial.println(_wifiSSID[30]);
+		status = WiFi.begin(_wifiSSID[30],_wifiPass[30]); //subbed with variables from .h
+	}
+  	printWifiStatus();
+
+	// Read Response and http request
+	read_response();
+	http_request(_latitude[12], _longitude[12]); //subbed with variables from .h
+
     _myGCodeHandler->setCursor(639.149, 473.776);
-    _myGCodeHandler->setFontScale(1.2);
+    _myGCodeHandler->setFontScale(0.8);
     _myGCodeHandler->setTextConstraints(639.149,473.776,853.38, 473.555); 
+	_myGCodeHandler->write("Weather: " + temperature + "F", WRAP_TRUNCATE, true);
 
     //incomplete, need to ask hwo to get api stat update
 
