@@ -72,6 +72,7 @@ void loop() {
 		}
 	}
 
+	//magic happens here
 	myBoardManager.update();
 
 	//update RTC from internet

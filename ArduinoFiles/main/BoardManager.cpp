@@ -124,7 +124,23 @@ void BoardManager::ticTacToe() {
 }
 
 void BoardManager::finalizeToDos() {
-	
+
+}
+
+void BoardManager::drawWeather() {
+
+}
+
+void BoardManager::drawQuote() {
+
+}
+
+void BoardManager::drawMorningMoodQs() {
+
+}
+
+void BoardManager::drawEveningMoodQs() {
+
 }
 
 void BoardManager::updateFromConfig() {

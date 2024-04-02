@@ -156,6 +156,10 @@ class BoardManager {
 		int _numEvents;
 
 		void drawListSection(double startY, double startX, int numItems, char* listName, ToDoListItem *itemList, bool hasCheckboxes, bool hasLeftLabel);
+		void drawWeather();
+		void drawQuote();
+		void drawMorningMoodQs();
+		void drawEveningMoodQs();
 	private:
 		Stream* _consoleSerial;
 		GCodeHandler* _myGCodeHandler;
