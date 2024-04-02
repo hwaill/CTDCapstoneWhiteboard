@@ -110,6 +110,14 @@ void GCodeHandler::sendWord(const char* word) {
 	digitalWrite(8, LOW);
 }
 
+void GCodeHandler::write(String text, int wrapBehavior, bool obeyConstraints) {
+	int stringLength = text.length() + 1;
+	char textChars[stringLength];
+	text.toCharArray(textChars, stringLength);
+
+	write(textChars, wrapBehavior, obeyConstraints);
+}
+
 void GCodeHandler::write(const char* text, int wrapBehavior, bool obeyConstraints) {
 	double xMax = obeyConstraints ? _textConstraintEndX : CANVAS_END_X;
 	double yMin = obeyConstraints ? _textConstraintStartY : CANVAS_START_Y;
@@ -522,6 +530,8 @@ int GCodeHandler::_mapCharToIndex(char c) {
 		index = 65;
 	} else if (c == ' ') {
 		index = 66;
+	} else if (c == '\'') {
+		index = 67;
 	} else {
 		index = -1;
 	}

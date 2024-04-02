@@ -7,35 +7,9 @@
 #include <SD.h>
 #include "RTC.h"
 
-//Selectors choose which multiplexer channel to read
-const int MULTI_SELECT0 = 2;
-const int MULTI_SELECT1 = 3;
-const int MULTI_SELECT2 = 4;
-const int MULTI_SELECT3 = 5;
 
-//Multiplexer signal pins
-const int SIGNAL_BUTTON_MULTI = A0;
-const int SIGNAL_HALL_MULTI1 = A4;
-const int SIGNAL_HALL_MULTI2 = A3;
-const int SIGNAL_HALL_MULTI3 = A2;
-const int SIGNAL_HALL_MULTI4 = A1;
-
-//Servo pins
-const int SERVO_1_ENABLE = 6;
-const int SERVO_2_ENABLE = 7;
-const int SERVO_SIGNAL = 9;
-
-const int LED_PIN = 8;
-
-//SD Chip Select Pin
-const int SD_CS_PIN = 10;
-
-//holds button states
-const int NUM_BUTTONS = 7;
-const int BUTTON_PRESS_COOLDOWN = 750;
 bool buttonStates[16];
 unsigned long lastButtonPressTime[16];
-const int BUTTON_INDEX[16] = {8, 9, 10, 11, 12, 13, 14, 15, 7, 6, 5, 4, 3, 2, 1};
 
 //holds hall effect sensor values
 int hallSensorValues[64];
@@ -47,7 +21,7 @@ NTPClient timeClient(Udp);
 RTCTime currentTime;
 
 GCodeHandler myGCodeHandler(Serial1, Serial);
-BoardManager myBoardManager(Serial, myGCodeHandler, timeClient, currentTime, buttonStates, hallSensorValues);
+BoardManager myBoardManager(Serial, myGCodeHandler, timeClient, currentTime, buttonStates, hallSensorValues, hallSensorStates);
 
 void setup() {
 	//Serial is used to communicate with the console
@@ -82,10 +56,6 @@ void setup() {
 		lastButtonPressTime[i] = millis();
 	}
 
-	needsMorningUpdate = true;
-	needsDaytimeUpdate = true;
-	needsEveningUpdate = true;
-
   myBoardManager.initialize();
 }
 
@@ -93,7 +63,7 @@ void loop() {
 	RTC.getTime(currentTime);
 
 	//check for button presses
-	updateButtonStates();
+	myBoardManager.updateButtonStates();
 	for(int i = 0; i < NUM_BUTTONS; i++) {
 		if(buttonStates[BUTTON_INDEX[i]] && (unsigned long)(millis() - lastButtonPressTime[i]) >= BUTTON_PRESS_COOLDOWN) {
 			lastButtonPressTime[i] = millis();
@@ -103,22 +73,6 @@ void loop() {
 	}
 
 	myBoardManager.update();
-
-  // Serial.print(DAY[DayOfWeek2int(currentTime.getDayOfWeek(), true) - 1]);
-  // Serial.print(", ");
-  // Serial.print(MONTH_LONG[Month2int(currentTime.getMonth()) - 1]);
-  // Serial.print(" ");
-  // Serial.print(currentTime.getDayOfMonth());
-  // Serial.print(", ");
-  // Serial.print(currentTime.getYear());
-  // Serial.print(" ");
-
-  Serial.print(currentTime.getHour());
-  // Serial.print(":");
-  // Serial.print(currentTime.getMinutes());
-  // Serial.print(":");
-  // Serial.println(currentTime.getSeconds());
-	// myBoardManager.drawListSection(400, 60, myBoardManager._numMorningToDos, "Morning Tasks", myBoardManager._morningToDoList, true, false);
 
 	//update RTC from internet
 	if((unsigned long)(millis() - myBoardManager.lastTimeUpdate) > 600000) {
@@ -148,38 +102,5 @@ void buttonPressed(int buttonNum) {
 	} else if(buttonNum == 6) {
 		//connect to bluetooth button
 
-	}
-}
-
-//reads all button states in just over 1ms
-void updateButtonStates() {
-	for(int i = 0; i < 16; i++) {
-    digitalWrite(MULTI_SELECT0, bitRead(i, 0));
-    digitalWrite(MULTI_SELECT1, bitRead(i, 1));
-    digitalWrite(MULTI_SELECT2, bitRead(i, 2));
-    digitalWrite(MULTI_SELECT3, bitRead(i, 3));
-    delayMicroseconds(63);
-
-		buttonStates[i] = digitalRead(SIGNAL_BUTTON_MULTI);
-  }
-}
-
-//reads all hall effect sensor values in just over 1ms
-void updateHallSensorValues() {
-	for(int i = 0; i < 16; i++) {
-    digitalWrite(MULTI_SELECT0, bitRead(i, 0));
-    digitalWrite(MULTI_SELECT1, bitRead(i, 1));
-    digitalWrite(MULTI_SELECT2, bitRead(i, 2));
-    digitalWrite(MULTI_SELECT3, bitRead(i, 3));
-    delayMicroseconds(63);
-
-		hallSensorValues[i] = analogRead(SIGNAL_HALL_MULTI1);
-		hallSensorValues[i + 16] = analogRead(SIGNAL_HALL_MULTI2);
-		hallSensorValues[i + 32] = analogRead(SIGNAL_HALL_MULTI3);
-		hallSensorValues[i + 48] = analogRead(SIGNAL_HALL_MULTI4);
-  }
-
-	for(int i = 0; i < 64; i++) {
-		hallSensorStates[i] = hallSensorValues[i] > 560 || hallSensorValues[i] < 440;
 	}
 }

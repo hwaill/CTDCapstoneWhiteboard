@@ -21,12 +21,51 @@ struct CalendarEvent {
 	unsigned long epochTime;
 };
 
+//Selectors choose which multiplexer channel to read
+inline const int MULTI_SELECT0 = 2;
+inline const int MULTI_SELECT1 = 3;
+inline const int MULTI_SELECT2 = 4;
+inline const int MULTI_SELECT3 = 5;
+
+//Multiplexer signal pins
+inline const int SIGNAL_BUTTON_MULTI = A0;
+inline const int SIGNAL_HALL_MULTI1 = A4;
+inline const int SIGNAL_HALL_MULTI2 = A3;
+inline const int SIGNAL_HALL_MULTI3 = A2;
+inline const int SIGNAL_HALL_MULTI4 = A1;
+
+//Servo pins
+inline const int SERVO_1_ENABLE = 6;
+inline const int SERVO_2_ENABLE = 7;
+inline const int SERVO_SIGNAL = 9;
+
+inline const int LED_PIN = 8;
+
+//SD Chip Select Pin
+inline const int SD_CS_PIN = 10;
+
+//holds button states
+inline const int NUM_BUTTONS = 7;
+inline const int BUTTON_PRESS_COOLDOWN = 750;
+inline const int BUTTON_INDEX[16] = {8, 9, 10, 11, 12, 13, 14, 15, 7, 6, 5, 4, 3, 2, 1};
+
 inline const unsigned long USER_INTERACTION_WAIT_COOLDOWN = 900000;
 
+//board layout variables
+//for error messages
 inline const double ERROR_FONT_SCALE = 1.2;
 inline const double ERROR_START_X = 60;
 inline const double ERROR_START_Y = 400;
 
+//for titles and subtitles
+inline const double TITLE_FONT_SCALE = 2;
+inline const double TITLE_START_X = 30;
+inline const double TITLE_START_Y = 510;
+inline const double SUBTITLE_FONT_SCALE = 1.2;
+inline const double SUBTITLE_START_X = 30;
+inline const double SUBTITLE_START_Y = 475;
+
+//for todo lists
 inline const double TODO_LINE_HEIGHT = 37;
 inline const double TODO_ITEM_FONT_SCALE = 0.6;
 inline const double TODO_LABEL_FONT_SCALE = 0.5;
@@ -72,7 +111,7 @@ inline const int UPDATE_TYPE_OTHER = 4;
 
 class BoardManager {
 	public:
-		BoardManager(Stream &consoleSerial, GCodeHandler &myGCodeHandler, NTPClient &timeClient, RTCTime &currentTime, bool *buttonStates, int *hallSensorValues);
+		BoardManager(Stream &consoleSerial, GCodeHandler &myGCodeHandler, NTPClient &timeClient, RTCTime &currentTime, bool *buttonStates, int *hallSensorValues, bool *hallSensorStates);
 		void initialize();
 		void updateFromConfig();
 
@@ -90,6 +129,9 @@ class BoardManager {
 		char* getWifiPass();
 
 		void openBluetoothBLE();
+
+		void updateButtonStates();
+		void updateHallEffectStates();
 
 		void NTP();
 		unsigned long lastTimeUpdate;
@@ -112,6 +154,7 @@ class BoardManager {
 		GCodeHandler* _myGCodeHandler;
 
 		bool* _buttonStates;
+		bool* _hallSensorStates;
 		int* _hallSensorValues;
 
 		unsigned long _lastUserInteractionTime;

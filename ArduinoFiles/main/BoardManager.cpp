@@ -3,13 +3,14 @@
 void bleConnectHandler(BLEDevice central);
 void bleDisconnectHandler(BLEDevice central);
 
-BoardManager::BoardManager(Stream &consoleSerial, GCodeHandler &myGCodeHandler, NTPClient &timeClient, RTCTime &currentTime, bool *buttonStates, int *hallSensorValues) {
+BoardManager::BoardManager(Stream &consoleSerial, GCodeHandler &myGCodeHandler, NTPClient &timeClient, RTCTime &currentTime, bool *buttonStates, int *hallSensorValues, bool *hallSensorStates) {
 	_consoleSerial = &consoleSerial;
 	_myGCodeHandler = &myGCodeHandler;
 	_timeClient = &timeClient;
 	_currentTime = &currentTime;
 	_buttonStates = buttonStates;
 	_hallSensorValues = hallSensorValues;
+	_hallSensorStates = hallSensorStates;
 }
 
 void BoardManager::initialize() {
@@ -60,6 +61,44 @@ void BoardManager::update() {
 			}
 		}
 	}
+}
+
+void BoardManager::morningUpdate() {
+	//check previous to dos
+
+	//print good morning
+	String text = "Good morning, ";
+	text += _userFirstName;
+	text += "!";
+	_myGCodeHandler->setCursor(TITLE_START_X, TITLE_START_Y);
+	_myGCodeHandler->setFontScale(TITLE_FONT_SCALE);
+	_myGCodeHandler->write(text, WRAP_TRUNCATE, false);
+	//print the date
+	text = "It's ";
+	text += DAY[DayOfWeek2int(_currentTime->getDayOfWeek(), true) - 1];
+	text += ", ";
+	text += MONTH_LONG[Month2int(_currentTime->getMonth()) - 1];
+	text += " ";
+	text += _currentTime->getDayOfMonth();
+  text += ", ";
+  text += _currentTime->getYear();
+	_myGCodeHandler->setCursor(SUBTITLE_START_X, SUBTITLE_START_Y);
+	_myGCodeHandler->setFontScale(SUBTITLE_FONT_SCALE);
+	_myGCodeHandler->write(text, WRAP_TRUNCATE, false);
+	//print todos
+	drawListSection(TODO_Y_START, TODO_LEFT_X_START, _numMorningToDos, "Morning To-Do", _morningToDoList, true, false);
+	//print events?
+	//print weather
+	//print quote
+	//print sleep survey
+}
+
+void BoardManager::daytimeUpdate() {
+
+}
+
+void BoardManager::eveningUpdate() {
+
 }
 
 void BoardManager::togglePaused() {
@@ -331,6 +370,7 @@ void BoardManager::updateFromConfig() {
 }
 
 void BoardManager::openBluetoothBLE() {
+	unsigned long lastBluetoothEvent = millis();
 	BLEService whiteboardService("722cf000-6c3d-48ac-8180-64551d967680");
 	BLEDevice central;
 
@@ -376,6 +416,8 @@ void BoardManager::openBluetoothBLE() {
 	String tempString = "";
 	char temp[20];
 	while (true) {
+		updateButtonStates();
+		if(_buttonStates[BUTTON_INDEX[6]] && (unsigned long)(millis() - lastBluetoothEvent) >= 3000) break;
 		BLE.poll();
 
 		unsigned long t = millis();
@@ -383,6 +425,7 @@ void BoardManager::openBluetoothBLE() {
 		if (central.connected()) {
 			// this is where most of the reading of changes happens.
 			if (portalSideRequestCharacteristic.written()) {
+				lastBluetoothEvent = millis();
 				if (portalSideRequestCharacteristic.value()) {
 					requestType = (char *)requestNameCharacteristic.value();
 					if (strcmp(requestType, "firstName") == 0) {
@@ -437,6 +480,7 @@ void BoardManager::openBluetoothBLE() {
 			}
 
 			if (portalHasUpdateCharacteristic.written()) {
+				lastBluetoothEvent = millis();
 				if (portalHasUpdateCharacteristic.value()) {
 					File myFile;
 					updateType = (char *)requestNameCharacteristic.value();
@@ -704,4 +748,37 @@ void BoardManager::_displayError(const char* errorMessage, int lineNumber) {
 	_myGCodeHandler->setFontScale(ERROR_FONT_SCALE);
 	_myGCodeHandler->write(errorMessage, WRAP_ELLIPSES, false);
 	_myGCodeHandler->returnToHome();
+}
+
+//reads all button states in just over 1ms
+void BoardManager::updateButtonStates() {
+	for(int i = 0; i < 16; i++) {
+    digitalWrite(MULTI_SELECT0, bitRead(i, 0));
+    digitalWrite(MULTI_SELECT1, bitRead(i, 1));
+    digitalWrite(MULTI_SELECT2, bitRead(i, 2));
+    digitalWrite(MULTI_SELECT3, bitRead(i, 3));
+    delayMicroseconds(63);
+
+		_buttonStates[i] = digitalRead(SIGNAL_BUTTON_MULTI);
+  }
+}
+
+//reads all hall effect sensor values in just over 1ms
+void BoardManager::updateHallEffectStates() {
+	for(int i = 0; i < 16; i++) {
+    digitalWrite(MULTI_SELECT0, bitRead(i, 0));
+    digitalWrite(MULTI_SELECT1, bitRead(i, 1));
+    digitalWrite(MULTI_SELECT2, bitRead(i, 2));
+    digitalWrite(MULTI_SELECT3, bitRead(i, 3));
+    delayMicroseconds(63);
+
+		_hallSensorValues[i] = analogRead(SIGNAL_HALL_MULTI1);
+		_hallSensorValues[i + 16] = analogRead(SIGNAL_HALL_MULTI2);
+		_hallSensorValues[i + 32] = analogRead(SIGNAL_HALL_MULTI3);
+		_hallSensorValues[i + 48] = analogRead(SIGNAL_HALL_MULTI4);
+  }
+
+	for(int i = 0; i < 64; i++) {
+		_hallSensorStates[i] = _hallSensorValues[i] > 560 || _hallSensorValues[i] < 440;
+	}
 }

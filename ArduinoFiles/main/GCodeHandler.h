@@ -28,6 +28,7 @@ class GCodeHandler {
 		void sendCharacter(const char c, double posX, double posY, double scale);
 		void sendWord(const char* word);
 		void write(const char* text, int wrapBehavior, bool obeyConstraints);
+		void write(String text, int wrapBehavior, bool obeyConstraints);
 		void drawLine(double startX, double startY, double endX, double endY);
 		void drawRect(double startX, double startY, double endX, double endY);
 		void drawCircle(double centerX, double centerY, double radius);

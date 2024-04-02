@@ -82,7 +82,8 @@ inline const double CHARACTER_WIDTHS[67] {
 	12, //!
 	12, //.
 	28, //?
-	28 //(space)
+	28, //(space)
+	12 //'
 };
 
 inline const char* GRBL_SETTINGS[33] = {
@@ -1186,11 +1187,21 @@ inline const char* GC_PUNCT_QUESTION[] = {
 	"END"
 };
 
+inline const char* GC_PUNCT_APOSTROPHE[] = {
+	"G00 Z0.30",
+	"G00 X1.439040 Y61.923520",
+	"G01 Z-0.30 F15000",
+	"G02 X3.588335 Y60.928691 Z-0.30 I0.803312 J-1.083627 F15000",
+	"G02 X1.781760 Y58.353280 Z-0.30 I-3.468704 J-0.228841",
+	"G00 Z0.30",
+	"END"
+};
+
 inline const char* GC_SPACE[] = {
 	"END"
 };
 
-inline const char** CHARACTERS[67] {
+inline const char** CHARACTERS[68] {
 	GC_CAP_A,
 	GC_CAP_B,
 	GC_CAP_C,
@@ -1257,7 +1268,8 @@ inline const char** CHARACTERS[67] {
 	GC_PUNCT_EXCLAMATION,
 	GC_PUNCT_PERIOD,
 	GC_PUNCT_QUESTION,
-	GC_SPACE
+	GC_SPACE,
+	GC_PUNCT_APOSTROPHE
 };
 
 #endif
