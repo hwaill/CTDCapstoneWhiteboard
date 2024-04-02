@@ -255,6 +255,53 @@ void BoardManager::makeMove(int row, int col, char player) {
         }
     }
 }
+
+// Computer makes a random move on the board
+void BoardManager::computerMove() {
+  int row, col;
+  do {
+    row = random(ROWS);
+    col = random(COLS);
+  } while (!isValidMove(row, col));
+  makeMove(row, col, PLAYER_O);
+  if(row = 0 && col = 0){
+    _myGCodeHandler->drawline(666, 218, 695, 178);
+    _myGCodeHandler->drawline(666, 178, 695, 218);
+  }
+  if(row = 0 && col = 1){
+    _myGCodeHandler->drawline(737, 218, 767, 178);
+    _myGCodeHandler->drawline(737, 178, 767, 218);
+  }
+  if(row = 0 && col = 2){
+    _myGCodeHandler->drawline(806, 218, 836, 178);
+    _myGCodeHandler->drawline(806, 178, 836, 218);
+  }
+  if(row = 1 && col = 0){
+    _myGCodeHandler->drawline(666, 149, 695, 109);
+    _myGCodeHandler->drawline(666, 109, 695, 149);
+  }
+  if(row = 1 && col = 1){
+    _myGCodeHandler->drawline(737, 149, 767, 109);
+    _myGCodeHandler->drawline(737, 109, 767, 149);
+  }
+  if(row = 1 && col = 2){
+    _myGCodeHandler->drawline(806, 149, 836, 109);
+    _myGCodeHandler->drawline(806, 109, 836, 149);
+  }
+  if(row = 2 && col = 0){
+    _myGCodeHandler->drawline(666, 69, 695, 29);
+    _myGCodeHandler->drawline(666, 29, 695, 49);
+  }
+  if(row = 2 && col = 1){
+    _myGCodeHandler->drawline(738, 69, 767, 29);
+    _myGCodeHandler->drawline(738, 29, 767, 29);
+  }
+  if(row = 2 && col = 2){
+    _myGCodeHandler->drawline(806, 69, 836, 29);
+    _myGCodeHandler->drawline(806, 29, 836, 69);
+  }
+  
+}
 //end tictactoe extra functions
 
 void BoardManager::finalizeToDos() {
