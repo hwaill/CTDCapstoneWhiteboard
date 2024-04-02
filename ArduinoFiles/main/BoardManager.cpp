@@ -93,16 +93,38 @@ void BoardManager::morningUpdate() {
 	//print sleep survey
 }
 
-void BoardManager::daytimeUpdate() {
+void BoardManager::forceMorningUpdate() {
+	_lastUserInteractionTime = millis();
+	morningUpdate();
+}
 
+void BoardManager::daytimeUpdate() {
+}
+
+void BoardManager::forceDaytimeUpdate() {
+	_lastUserInteractionTime = millis();
+	daytimeUpdate();
 }
 
 void BoardManager::eveningUpdate() {
 
 }
 
+void BoardManager::forceEveningUpdate() {
+	_lastUserInteractionTime = millis();
+	eveningUpdate();
+}
+
 void BoardManager::togglePaused() {
 	_isPaused = !_isPaused;
+}
+
+void BoardManager::ticTacToe() {
+
+}
+
+void BoardManager::finalizeToDos() {
+	
 }
 
 void BoardManager::updateFromConfig() {

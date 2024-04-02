@@ -15,7 +15,7 @@ inline const double LETTER_CAP_HEIGHT = 32;
 inline const double LINE_HEIGHT = 60;
 inline const double MAX_DESCENDER = -15;
 
-inline const double CHARACTER_WIDTHS[67] {
+inline const double CHARACTER_WIDTHS[68] {
 	40, //A
 	38, //B
 	42, //C

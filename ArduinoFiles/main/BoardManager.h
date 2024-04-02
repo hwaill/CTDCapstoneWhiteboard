@@ -123,6 +123,13 @@ class BoardManager {
 		void daytimeUpdate();
 		void eveningUpdate();
 
+		void forceMorningUpdate();
+		void forceDaytimeUpdate();
+		void forceEveningUpdate();
+
+		void ticTacToe();
+		void finalizeToDos();
+
 		void captureToDos();
 
 		char* getWifiSSID();
