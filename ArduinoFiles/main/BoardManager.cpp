@@ -290,11 +290,11 @@ void BoardManager::computerMove() {
   }
   if(row = 2 && col = 0){
     _myGCodeHandler->drawline(666, 69, 695, 29);
-    _myGCodeHandler->drawline(666, 29, 695, 49);
+    _myGCodeHandler->drawline(666, 29, 695, 69);
   }
   if(row = 2 && col = 1){
     _myGCodeHandler->drawline(738, 69, 767, 29);
-    _myGCodeHandler->drawline(738, 29, 767, 29);
+    _myGCodeHandler->drawline(738, 29, 767, 69);
   }
   if(row = 2 && col = 2){
     _myGCodeHandler->drawline(806, 69, 836, 29);
