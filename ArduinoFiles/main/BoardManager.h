@@ -44,6 +44,12 @@ inline const int LED_PIN = 8;
 //SD Chip Select Pin
 inline const int SD_CS_PIN = 10;
 
+inline const int LEFT_TODO_SENSORS[12] = {};
+inline const int RIGHT_TODO_SENSORS[12] = {};
+inline const int GRID_SENSORS[5][5] = {{}, {}, {}, {}, {}};
+inline const int LEFT_FOUR_SENSORS[4] = {};
+inline const int RIGHT_FOUR_SENSORS[4] = {};
+
 //holds button states
 inline const int NUM_BUTTONS = 7;
 inline const int BUTTON_PRESS_COOLDOWN = 750;
@@ -130,29 +136,26 @@ class BoardManager {
 		void ticTacToe();
 
 		//for tictactoe
-		void initalizeGame();
-		bool checkWin(char player);
-		bool checkRows(char player);
-		bool checkCols(char player);
-		bool checkDiags(char player);
-		bool isBoardFull(char player);
-		bool isValidMove(int row, int col);
-		void makeMove(int row, int col, char player);
-		void computerMove();
+		bool ticTacToe_checkWin(char player);
+		bool ticTacToe_isBoardFull();
+		void ticTacToe_computerMove();
 
-		const char PLAYER_X = 'X';
-		const char PLAYER_O = 'O'; 
-		const char EMPTY = ' ';
+		const char TICTACTOE_COMPUTER = 'X';
+		const char TICTACTOE_PLAYER = 'O'; 
+		const char TICTACTOE_EMPTY = ' ';
 		
-		const int ROWS = 3;
-		const int COLS = 3; 
+		char ticTacToe_board[3][3];
 		
-		char board[3][3];
-		
-		int sensorGrid[3][3] = {
-		    _hallSensorStates[GRID_SENSOR[0][0]], _hallSensorStates[GRID_SENSOR[0][2]], _hallSensorStates[GRID_SENSOR[0][4]], 
-		    _hallSensorStates[GRID_SENSOR[2][0]], _hallSensorStates[GRID_SENSOR[2][2]], _hallSensorStates[GRID_SENSOR[2][4]], 
-		    _hallSensorStates[GRID_SENSOR[4][0]], _hallSensorStates[GRID_SENSOR[4][2]], _hallSensorStates[GRID_SENSOR[4][4]], 
+		int ticTacToe_sensorGridIndexes[3][3] = {
+		    {GRID_SENSORS[0][0], GRID_SENSORS[0][2], GRID_SENSORS[0][4]}, 
+		    {GRID_SENSORS[2][0], GRID_SENSORS[2][2], GRID_SENSORS[2][4]}, 
+		    {GRID_SENSORS[4][0], GRID_SENSORS[4][2], GRID_SENSORS[4][4]} 
+		};
+
+		bool ticTacToe_sensorGridStates[3][3] = {
+			{0, 0, 0},
+			{0, 0, 0},
+			{0, 0, 0}
 		};
 		//for tictactoe
 

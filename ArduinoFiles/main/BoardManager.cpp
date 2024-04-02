@@ -128,115 +128,100 @@ void BoardManager::togglePaused() {
 }
 
 void BoardManager::ticTacToe() {
+	//check board is empty of magnets
+	updateHallEffectStates();
+	for(int row = 0; row < 3; row++) {
+		for(int col = 0; col < 3; col++) {
+			ticTacToe_sensorGridStates[row][col] = _hallSensorStates[ticTacToe_sensorGridIndexes[row][col]];
+			if(ticTacToe_sensorGridStates[row][col] == 1) {
+				return;
+			}
+		}
+	}
+
+	//reset board state
+	for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 3; j++) {
+      ticTacToe_board[i][j] = TICTACTOE_EMPTY;
+    }
+  }
+	
 	_myGCodeHandler->drawLine(713, 24.5, 713, 232.7);
 	_myGCodeHandler->drawLine(792.5, 24.5, 792.5, 232.7);
 	_myGCodeHandler->drawLine(647.142, 90, 853.38, 90);
 	_myGCodeHandler->drawLine(647.142, 170, 853.38, 170);
 	
-	bool flag = true;
-	
-	initalizeGame();
-	
-	// Player's turn
-	while (flag) {
-		for (int i = 0; i < ROWS; i++) {
-			for (int j = 0; j < COLS; j++) {
-				if (sensorGrid[i][j] == 0 && isValidMove(i, j)) {
-				    makeMove(i, j, PLAYER_X);
-				    // Check for win or draw
-				    if (checkWin(PLAYER_X)) {
-					_myGCodeHandler->setCursor(678.495,250);
-					_myGCodeHandler->setFontScale(1.2);
-					_myGCodeHandler->write("You win", WRAP_TRUNCATE, true);
-					flag = false; // Game over
-				    }
-				    if (isBoardFull()) {
-					_myGCodeHandler->setCursor(678.495,250);
-					_myGCodeHandler->setFontScale(1.2);
-					_myGCodeHandler->write("Draw", WRAP_TRUNCATE, true);
-					flag = false; // Game over
-				    }
-			
-			
-				    // Computer's turn
-				    computerMove();
-				    // Check for win or draw
-				    if (checkWin(PLAYER_O)) {
-					_myGCodeHandler->setCursor(678.495,250);
-					_myGCodeHandler->setFontScale(1.2);
-					_myGCodeHandler->write("You lose", WRAP_TRUNCATE, true);
-					flag = false; // Game over
-				    }
-				    if (isBoardFull()) {
-					_myGCodeHandler->setCursor(678.495,250);
-					_myGCodeHandler->setFontScale(1.2);
-					_myGCodeHandler->write("Draw", WRAP_TRUNCATE, true);
-					flag = false; // Game over
-		    			}
+	bool gameRunning = true;
+	bool playerTurn = true;
+
+	//game loop
+	while(gameRunning) {
+		if(playerTurn) {
+			//update magnet sensors
+			for(int row = 0; row < 3; row++) {
+				for(int col = 0; col < 3; col++) {
+					ticTacToe_sensorGridStates[row][col] = _hallSensorStates[ticTacToe_sensorGridIndexes[row][col]];
 				}
-	    		}
+			}
+
+			for(int row = 0; row < 3; row++) {
+				for(int col = 0; col < 3; col++) {
+					if(ticTacToe_sensorGridStates[row][col] && ticTacToe_board[row][col] == TICTACTOE_EMPTY) {
+						delay(1000);
+						if(ticTacToe_sensorGridStates[row][col]) {
+							ticTacToe_board[row][col] = TICTACTOE_PLAYER;
+							playerTurn = false;
+						}
+					}
+				}
+			}
+		} else {
+			//computer's turn
+			ticTacToe_computerMove();
+			playerTurn = true;
+		}
+
+		if(ticTacToe_checkWin(TICTACTOE_PLAYER)) {
+			_myGCodeHandler->setCursor(678.495,250);
+			_myGCodeHandler->setFontScale(1.2);
+			_myGCodeHandler->write("You win", WRAP_TRUNCATE, true);
+			gameRunning = false;
+		} else if(ticTacToe_checkWin(TICTACTOE_PLAYER)) {
+			_myGCodeHandler->setCursor(678.495,250);
+			_myGCodeHandler->setFontScale(1.2);
+			_myGCodeHandler->write("You lose", WRAP_TRUNCATE, true);
+			gameRunning = false;
+		} else if(ticTacToe_isBoardFull()) {
+			_myGCodeHandler->setCursor(678.495,250);
+			_myGCodeHandler->setFontScale(1.2);
+			_myGCodeHandler->write("Draw", WRAP_TRUNCATE, true);
+			gameRunning = false;
 		}
 	}
 }
 
 //start tictactoe extra functions
 
-//setup Game board
-void BoardManager::initalizeGame(){
-    for (int i = 0; i < ROWS; i++) {
-        for (int j = 0; j < COLS; j++) {
-            board[i][j] = EMPTY;
-        }
-    }
-
-}
-
-// Check if a player has won by completing a row
-bool BoardManager::checkRows(char player) {
-  for (int i = 0; i < ROWS; i++) {
-    if (board[i][0] == player && board[i][1] == player && board[i][2] == player) {
+bool BoardManager::ticTacToe_checkWin(char player) {
+	for(int i = 0; i < 3; i++) {
+		if (ticTacToe_board[i][0] == player && ticTacToe_board[i][1] == player && ticTacToe_board[i][2] == player) {
       return true;
     }
-  }
-  return false;
-}
 
-
-bool BoardManager::checkWin(char player) {
-  return checkRows(player) || checkCols(player) || checkDiagonals(player);
-}
-
-// Check if a player has won by completing a row
-bool BoardManager::checkRows(char player) {
-  for (int i = 0; i < ROWS; i++) {
-    if (board[i][0] == player && board[i][1] == player && board[i][2] == player) {
+		if (ticTacToe_board[0][i] == player && ticTacToe_board[1][i] == player && ticTacToe_board[2][i] == player) {
       return true;
     }
-  }
-  return false;
-}
+	}
 
-// Check if a player has won by completing a column
-bool BoardManager::checkCols(char player) {
-  for (int j = 0; j < COLS; j++) {
-    if (board[0][j] == player && board[1][j] == player && board[2][j] == player) {
-      return true;
-    }
-  }
-  return false;
-}
-
-// Check if a player has won by completing a diagonal
-bool BoardManager::checkDiags(char player) {
-  return (board[0][0] == player && board[1][1] == player && board[2][2] == player) ||
-         (board[0][2] == player && board[1][1] == player && board[2][0] == player);
+	return (ticTacToe_board[0][0] == player && ticTacToe_board[1][1] == player && ticTacToe_board[2][2] == player) ||
+         (ticTacToe_board[0][2] == player && ticTacToe_board[1][1] == player && ticTacToe_board[2][0] == player);
 }
 
 // Check if the board is full (i.e., no more moves can be made)
-bool BoardManager::isBoardFull() {
-  for (int i = 0; i < ROWS; i++) {
-    for (int j = 0; j < COLS; j++) {
-      if (board[i][j] == EMPTY) {
+bool BoardManager::ticTacToe_isBoardFull() {
+  for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 3; j++) {
+      if (ticTacToe_board[i][j] == TICTACTOE_EMPTY) {
         return false;
       }
     }
@@ -244,67 +229,52 @@ bool BoardManager::isBoardFull() {
   return true;
 }
 
-// Check if a move is valid
-bool BoardManager::isValidMove(int row, int col) {
-  return row >= 0 && row < ROWS && col >= 0 && col < COLS && board[row][col] == EMPTY;
-}
-
-// Make a move on the board
-void BoardManager::makeMove(int row, int col, char player) {
-    for (int i = 0; i < ROWS; i++) {
-        for (int j = 0; j < COLS; j++) {
-            if(sensorGrid[i][j] == HIGH){
-                board[row][col] = player;
-            }
-        }
-    }
-}
-
 // Computer makes a random move on the board
-void BoardManager::computerMove() {
+void BoardManager::ticTacToe_computerMove() {
   int row, col;
   do {
-    row = random(ROWS);
-    col = random(COLS);
-  } while (!isValidMove(row, col));
-  makeMove(row, col, PLAYER_O);
-  if(row = 0 && col = 0){
-    _myGCodeHandler->drawline(666, 218, 695, 178);
-    _myGCodeHandler->drawline(666, 178, 695, 218);
+    row = random(3);
+    col = random(3);
+  } while (!(ticTacToe_board[row][col] == TICTACTOE_EMPTY));
+
+  ticTacToe_board[row][col] = TICTACTOE_COMPUTER;
+
+  if(row == 0 && col == 0){
+    _myGCodeHandler->drawLine(666, 218, 695, 178);
+    _myGCodeHandler->drawLine(666, 178, 695, 218);
   }
-  if(row = 0 && col = 1){
-    _myGCodeHandler->drawline(737, 218, 767, 178);
-    _myGCodeHandler->drawline(737, 178, 767, 218);
+  if(row == 0 && col == 1){
+    _myGCodeHandler->drawLine(737, 218, 767, 178);
+    _myGCodeHandler->drawLine(737, 178, 767, 218);
   }
-  if(row = 0 && col = 2){
-    _myGCodeHandler->drawline(806, 218, 836, 178);
-    _myGCodeHandler->drawline(806, 178, 836, 218);
+  if(row == 0 && col == 2){
+    _myGCodeHandler->drawLine(806, 218, 836, 178);
+    _myGCodeHandler->drawLine(806, 178, 836, 218);
   }
-  if(row = 1 && col = 0){
-    _myGCodeHandler->drawline(666, 149, 695, 109);
-    _myGCodeHandler->drawline(666, 109, 695, 149);
+  if(row == 1 && col == 0){
+    _myGCodeHandler->drawLine(666, 149, 695, 109);
+    _myGCodeHandler->drawLine(666, 109, 695, 149);
   }
-  if(row = 1 && col = 1){
-    _myGCodeHandler->drawline(737, 149, 767, 109);
-    _myGCodeHandler->drawline(737, 109, 767, 149);
+  if(row == 1 && col == 1){
+    _myGCodeHandler->drawLine(737, 149, 767, 109);
+    _myGCodeHandler->drawLine(737, 109, 767, 149);
   }
-  if(row = 1 && col = 2){
-    _myGCodeHandler->drawline(806, 149, 836, 109);
-    _myGCodeHandler->drawline(806, 109, 836, 149);
+  if(row == 1 && col == 2){
+    _myGCodeHandler->drawLine(806, 149, 836, 109);
+    _myGCodeHandler->drawLine(806, 109, 836, 149);
   }
-  if(row = 2 && col = 0){
-    _myGCodeHandler->drawline(666, 69, 695, 29);
-    _myGCodeHandler->drawline(666, 29, 695, 69);
+  if(row == 2 && col == 0){
+    _myGCodeHandler->drawLine(666, 69, 695, 29);
+    _myGCodeHandler->drawLine(666, 29, 695, 69);
   }
-  if(row = 2 && col = 1){
-    _myGCodeHandler->drawline(738, 69, 767, 29);
-    _myGCodeHandler->drawline(738, 29, 767, 69);
+  if(row == 2 && col == 1){
+    _myGCodeHandler->drawLine(738, 69, 767, 29);
+    _myGCodeHandler->drawLine(738, 29, 767, 69);
   }
-  if(row = 2 && col = 2){
-    _myGCodeHandler->drawline(806, 69, 836, 29);
-    _myGCodeHandler->drawline(806, 29, 836, 69);
+  if(row == 2 && col == 2){
+    _myGCodeHandler->drawLine(806, 69, 836, 29);
+    _myGCodeHandler->drawLine(806, 29, 836, 69);
   }
-  
 }
 //end tictactoe extra functions
 
@@ -322,7 +292,7 @@ void BoardManager::drawWeather() {
 }
 
 void BoardManager::drawQuote() {
-    string quotes[6] = {
+    String quotes[6] = {
         "A winner is just a loser who tried one more time. George M. Moore, Jr.", 
         "Fall seven times, stand up eight. Japanese proverb", 
         "You miss 100 percent of the shots you do not take. Wayne Gretzky", 
@@ -332,7 +302,7 @@ void BoardManager::drawQuote() {
     };
 
     _myGCodeHandler->setCursor(639.149, 473.776);
-    _myGCodeHandler->setFontScale(0.8)
+    _myGCodeHandler->setFontScale(0.8);
     _myGCodeHandler->setTextConstraints(639.149,473.776,853.38, 473.555); 
     _myGCodeHandler->write(quotes[5], WRAP_TRUNCATE, true);
 
@@ -348,14 +318,14 @@ void BoardManager::drawMorningMoodQs() {
 
     _myGCodeHandler->setCursor(689.936, 400);
     _myGCodeHandler->setFontScale(1.2);
-    _myGCodeHandler->write("Morning Mood", WRAP_TRUNCATE, true)//fix this///////////////////////////////////
+    _myGCodeHandler->write("Morning Mood", WRAP_TRUNCATE, true);//fix this///////////////////////////////////
 
-    string moods[9] = {"Grateful", "Engeretic", "Peaceful", "Stressed", "Anxious", "Okay", "Sad", "Angry", "Content"};
+    String moods[9] = {"Grateful", "Engeretic", "Peaceful", "Stressed", "Anxious", "Okay", "Sad", "Angry", "Content"};
 
     for(int i = 0; i < 9; i++){
         _myGCodeHandler->setCursor(700, 354.962 - (spacing * i));
         _myGCodeHandler->setFontScale(0.8);
-        _myGCodeHandler->write(moods[i], WRAP_TRUNCATE, true)//fix this///////////////////////////////////
+        _myGCodeHandler->write(moods[i], WRAP_TRUNCATE, true);//fix this///////////////////////////////////
         _myGCodeHandler->drawRect(780.137, 376.131 - (spacing * i), 805.537, 350.731-(spacing * i));
     }
 
@@ -372,14 +342,14 @@ void BoardManager::drawEveningMoodQs() {
 
     _myGCodeHandler->setCursor(689.936, 400);
     _myGCodeHandler->setFontScale(1.2);
-    _myGCodeHandler->write("Evening Mood", WRAP_TRUNCATE, true)//fix this///////////////////////////////////
+    _myGCodeHandler->write("Evening Mood", WRAP_TRUNCATE, true);//fix this///////////////////////////////////
 
-    string moods[9] = {"Grateful", "Engeretic", "Peaceful", "Stressed", "Anxious", "Okay", "Sad", "Angry", "Content"};
+    String moods[9] = {"Grateful", "Engeretic", "Peaceful", "Stressed", "Anxious", "Okay", "Sad", "Angry", "Content"};
 
     for(int i = 0; i < 9; i++){
         _myGCodeHandler->setCursor(700, 354.962 - (spacing * i));
         _myGCodeHandler->setFontScale(0.8);
-        _myGCodeHandler->write(moods[i], WRAP_TRUNCATE, true)//fix this///////////////////////////////////
+        _myGCodeHandler->write(moods[i], WRAP_TRUNCATE, true);//fix this///////////////////////////////////
         _myGCodeHandler->drawRect(780.137, 376.131 - (spacing * i), 805.537, 350.731-(spacing * i));
     }
 
@@ -404,6 +374,7 @@ void BoardManager::updateFromConfig() {
 		_consoleSerial->println("initialization failed!");
 		_displayError("error: SD card failure", 0);
 		_displayError("restart board...", 1);
+		_myGCodeHandler->returnToHome();
 		while(true);
 	}
 	_consoleSerial->println("initialization success!");
@@ -672,6 +643,7 @@ void BoardManager::openBluetoothBLE() {
 		_consoleSerial->println("Starting BLE failed!");
 		_displayError("error: BLE failure", 0);
 		_displayError("restart board...", 1);
+		_myGCodeHandler->returnToHome();
 		while(true);
 	}
 
@@ -1033,8 +1005,7 @@ void BoardManager::drawListSection(double startY, double startX, int numItems, c
 void BoardManager::_displayError(const char* errorMessage, int lineNumber) {
 	_myGCodeHandler->setCursor(ERROR_START_X, ERROR_START_Y - lineNumber * LINE_HEIGHT * ERROR_FONT_SCALE);
 	_myGCodeHandler->setFontScale(ERROR_FONT_SCALE);
-	_myGCodeHandler->write(errorMessage, WRAP_ELLIPSES, false);
-	_myGCodeHandler->returnToHome();
+	_myGCodeHandler->write(errorMessage, WRAP_WRAP, false);
 }
 
 //reads all button states in just over 1ms
