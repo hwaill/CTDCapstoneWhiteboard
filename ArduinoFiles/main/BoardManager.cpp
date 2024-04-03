@@ -363,19 +363,51 @@ void BoardManager::drawWeather() {
 }
 
 void BoardManager::drawQuote() {
-    String quotes[6] = {
+    
+	string quotes[31] = {
         "A winner is just a loser who tried one more time. George M. Moore, Jr.", 
         "Fall seven times, stand up eight. Japanese proverb", 
         "You miss 100 percent of the shots you do not take. Wayne Gretzky", 
         "A person who never made a mistake never tried anything new. Albert Einstein", 
         "Every strike brings me closer to the next home run. Babe Ruth", 
-        "I have not failed. I have just found 10,000 ways that will not work. Thomas Edison"
+        "I have not failed. I have just found 10,000 ways that will not work. Thomas Edison",
+        "Be the change you wish to see in the world. Gandhi",
+        "Believe you can and you're halfway there. Theodore Roosevelt",
+        "In the middle of difficulty lies opportunity. Albert Einstein",
+        "Do one thing every day that scares you. Eleanor Roosevelt",
+        "Success is not final, failure is not fatal: It is the courage to continue that counts. Winston Churchill",
+        "The only way to do great work is to love what you do. Steve Jobs",
+        "Happiness is not something ready-made. It comes from your own actions. Dalai Lama",
+        "Dream big and dare to fail. Norman Vaughan",
+        "The best way to predict the future is to invent it. Alan Kay",
+        "Life is 10 percent what happens to us and 90 percent how we react to it. Charles R. Swindoll",
+        "The future belongs to those who believe in the beauty of their dreams. Eleanor Roosevelt",
+        "Don't count the days, make the days count. Muhammad Ali",
+        "Success is walking from failure to failure with no loss of enthusiasm. Winston Churchill",
+        "You must be the change you wish to see in the world. Mahatma Gandhi",
+        "Opportunities don't happen. You create them. Chris Grosser",
+        "Do what you can with all you have, wherever you are. Theodore Roosevelt",
+        "Your attitude, not your aptitude, will determine your altitude. Zig Ziglar",
+        "The only limit to our realization of tomorrow will be our doubts of today. Franklin D. Roosevelt",
+        "Don't watch the clock; do what it does. Keep going. Sam Levenson",
+        "Problems are not stop signs; they are guidelines. Robert H. Schuller",
+        "It does not matter how slowly you go as long as you do not stop. Confucius",
+        "I attribute my success to this: I never gave or took any excuse. Florence Nightingale",
+        "The best revenge is massive success. Frank Sinatra",
+        "The journey of a thousand miles begins with one step. Lao Tzu",
+        "Nothing is impossible, the word itself says 'I'm possible'! Audrey Hepburn"
     };
 
+	string currentQuote;
+	int index = rand() % 31;
+
+	currentQuote = quotes[index];
+
+	
     _myGCodeHandler->setCursor(639.149, 473.776);
     _myGCodeHandler->setFontScale(0.8);
     _myGCodeHandler->setTextConstraints(639.149,473.776,853.38, 473.555); 
-    _myGCodeHandler->write(quotes[5], WRAP_TRUNCATE, true);
+    _myGCodeHandler->write(currentQuote, WRAP_TRUNCATE, true);
 
     //write the Thomas Edison quote in top right corner
 
