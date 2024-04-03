@@ -29,7 +29,7 @@ String GCodeHandler::_RECV_HEADER = "RECEIVED: ";
 double GCodeHandler::CANVAS_START_X = 0;
 double GCodeHandler::CANVAS_START_Y = 0;
 double GCodeHandler::CANVAS_END_X = 863;
-double GCodeHandler::CANVAS_END_Y = 563;
+double GCodeHandler::CANVAS_END_Y = 563; //really 563
 
 /*
 	Public Functions
@@ -53,9 +53,6 @@ void GCodeHandler::setCursor(double x, double y) {
 	_cursorY = y;
 	
 	_checkCursorInBounds(false);
-	_consoleSerial->print(_cursorX);
-	_consoleSerial->print(" CURSOR POS ");
-	_consoleSerial->println(_cursorY);
 }
 
 void GCodeHandler::setFontScale(double scale) {
@@ -149,12 +146,10 @@ void GCodeHandler::write(const char* text, int wrapBehavior, bool obeyConstraint
 				_cursorY -= (LINE_HEIGHT * _fontScale);
 				_cursorX = xStart;
 			} else if(wrapBehavior == WRAP_TRUNCATE) {
-				_consoleSerial->println("wrapHere");
 				int lettersToInclude = 0;
 				while(_cursorX + _calculateWordWidth(textToWrite.substring(0, lettersToInclude + 1)) < xMax) {
 					lettersToInclude++;
 				}
-				_consoleSerial->println(textToWrite.substring(0, lettersToInclude));
 				_sendWord(textToWrite.substring(0, lettersToInclude));
 				return;
 			} else if(wrapBehavior == WRAP_ELLIPSES) {
@@ -176,7 +171,6 @@ void GCodeHandler::write(const char* text, int wrapBehavior, bool obeyConstraint
 			_sendWord(textToWrite.substring(0, textToWrite.indexOf(' ') + 1));
 			textToWrite = textToWrite.substring(textToWrite.indexOf(' ') + 1);
 		} else {
-			_consoleSerial->println(textToWrite.substring(0));
 			_sendWord(textToWrite.substring(0));
 		}
 	}
@@ -213,11 +207,11 @@ void GCodeHandler::boxZigZag(double startX, double startY, double endX, double e
 
 void GCodeHandler::_sendSingleCommand(String command) {
 	digitalWrite(8, HIGH);
-	_consoleSerial->println(command);
+	//_consoleSerial->println(command);
 	_gcodeSerial->print(command);
 	_gcodeSerial->print('\n');
 	String response = _waitGRBLSerial();
-	_consoleSerial->print(response);
+	//_consoleSerial->print(response);
 }
 
 void GCodeHandler::_sendSingleCommand(const char* command, double posX, double posY, double scale) {
@@ -284,14 +278,11 @@ void GCodeHandler::_sendWord(String word) {
 }
 
 double GCodeHandler::_calculateWordWidth(const char* word) {
-	_consoleSerial->print(word);
-	_consoleSerial->print(" ");
 	double width = 0;
 	const char* c = &word[0];
 	while(*c != '\0') {
 		width += CHARACTER_WIDTHS[_mapCharToIndex(*c++)] * _fontScale;
 	}
-	_consoleSerial->println(width);
 	return width;
 }
 

@@ -1,9 +1,6 @@
 // WiFiWeatherStation.ino
-#include "Arduino_LED_Matrix.h"
+//#include "Arduino_LED_Matrix.h"
 // #include "numbers.h"
-
-ArduinoLEDMatrix matrix;
-
 
 #include "WiFiS3.h"
 #include <Arduino_JSON.h>
@@ -44,8 +41,6 @@ void setup() {
     ;  // wait for serial port to connect. Needed for native USB port only
   }
 
-
-  matrix.begin();
 
   // check for the WiFi module:
   if (WiFi.status() == WL_NO_MODULE) {

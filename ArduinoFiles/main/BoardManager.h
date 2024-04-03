@@ -47,11 +47,11 @@ inline const int LED_PIN = 8;
 //SD Chip Select Pin
 inline const int SD_CS_PIN = 10;
 
-inline const int LEFT_TODO_SENSORS[12] = {};
-inline const int RIGHT_TODO_SENSORS[12] = {};
-inline const int GRID_SENSORS[5][5] = {{}, {}, {}, {}, {}};
-inline const int LEFT_FOUR_SENSORS[4] = {};
-inline const int RIGHT_FOUR_SENSORS[4] = {};
+inline const int LEFT_TODO_SENSORS[12] = {6, 4, 5, 3, 7, 2, 20, 22, 1, 23, 0, 21};
+inline const int RIGHT_TODO_SENSORS[12] = {63, 60, 62, 59, 61, 58, 52, 50, 48, 49, 51, 53};
+inline const int GRID_SENSORS[5][5] = {{11, 19, 29, 15, 41}, {8, 17, 31, 26, 40}, {9, 18, 27, 14, 44}, {10, 39, 28, 24, 43}, {12, 16, 30, 13, 42}};
+inline const int LEFT_FOUR_SENSORS[4] = {57, 47, 46, 45};
+inline const int RIGHT_FOUR_SENSORS[4] = {32, 33, 54, 55};
 
 //holds button states
 inline const int NUM_BUTTONS = 7;
@@ -67,15 +67,17 @@ inline const double ERROR_START_X = 60;
 inline const double ERROR_START_Y = 460;
 
 //for titles and subtitles
-inline const double TITLE_FONT_SCALE = 1.2;
+inline const double TITLE_FONT_SCALE = 1;
 inline const double TITLE_START_X = 30;
-inline const double TITLE_START_Y = 530;
-inline const double SUBTITLE_FONT_SCALE = 0.9;
-inline const double SUBTITLE_START_X = 30;
-inline const double SUBTITLE_START_Y = 475;
+inline const double TITLE_START_Y = 510;
+inline const double SUBTITLE_FONT_SCALE = 0.7;
+inline const double SUBTITLE_START_X = 150;
+inline const double SUBTITLE_START_Y = 458;
 
 //for todo lists
-inline const double TODO_LINE_HEIGHT = 37;
+inline const int LIST_LEFT = 0;
+inline const int LIST_RIGHT = 1;
+inline const double TODO_LINE_HEIGHT = 30;
 inline const double TODO_ITEM_FONT_SCALE = 0.6;
 inline const double TODO_LABEL_FONT_SCALE = 0.5;
 inline const double TODO_CURSOR_OFFSET_X = 9;
@@ -83,9 +85,12 @@ inline const double TODO_ITEM_WIDTH = 286;
 inline const double TODO_LEFT_LABEL_SPACE = 40;
 inline const double TODO_CHECKBOX_SPACE = 37;
 
+inline const double FIRST_SENSOR = 426.7;
+inline const double LEFT_SENSOR_X = 287;
+inline const double RIGHT_SENSOR_X = 607;
 inline const double TODO_Y_START = 487.727;
-inline const double TODO_LEFT_X_START = 33.282;
-inline const double TODO_RIGHT_X_START = 348.207;
+inline const double TODO_LEFT_X_START = 33;
+inline const double TODO_RIGHT_X_START = 315;
 
 inline const char* MONTH_LONG[12] = {
   "January",
@@ -154,9 +159,9 @@ class BoardManager {
 		char ticTacToe_board[3][3];
 		
 		int ticTacToe_sensorGridIndexes[3][3] = {
-		    {GRID_SENSORS[0][0], GRID_SENSORS[0][2], GRID_SENSORS[0][4]}, 
-		    {GRID_SENSORS[2][0], GRID_SENSORS[2][2], GRID_SENSORS[2][4]}, 
-		    {GRID_SENSORS[4][0], GRID_SENSORS[4][2], GRID_SENSORS[4][4]} 
+		    {11, 29, 41}, 
+		    {9, 27, 44}, 
+		    {12, 30, 42} 
 		};
 
 		bool ticTacToe_sensorGridStates[3][3] = {
@@ -195,7 +200,8 @@ class BoardManager {
 
 		int _numEvents;
 
-		void drawListSection(double startY, double startX, int numItems, char* listName, ToDoListItem *itemList, bool hasCheckboxes, bool hasLeftLabel);
+		void drawListSection(double rowStart, int leftOrRight, int numItems, char* listName, ToDoListItem *itemList, bool hasCheckboxes, bool hasLeftLabel);
+		bool getWeather(); 
 		void drawWeather();
 		void drawQuote();
 		void drawMorningMoodQs();
@@ -213,7 +219,6 @@ class BoardManager {
 		int temperature = 0; 
 		int keyIndex = 0;           
 		int status = WL_IDLE_STATUS;
-		char server[] = "api.open-meteo.com"; 
 
 
 		bool* _buttonStates;

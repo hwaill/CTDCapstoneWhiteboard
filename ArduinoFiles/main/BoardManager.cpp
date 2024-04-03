@@ -27,15 +27,32 @@ void BoardManager::initialize() {
 		_myGCodeHandler->returnToHome();
 	}
 	RTC.begin();
-	_consoleSerial->println("\nStarting connection to server...");
-	_timeClient->begin();
-	_timeClient->update();
+	do {
+		_consoleSerial->println("\nStarting connection to server...");
+		_timeClient->begin();
+		_timeClient->update();
 
 	// Get the current time from NTP
-	NTP();
+	
+		NTP();
+		RTC.getTime(*_currentTime);
+		_consoleSerial->println(_currentTime->toString());
+		_currentDay = _currentTime->getUnixTime() / 86400UL;
+	} while(_currentTime->getYear() > 2100);
 
-	RTC.getTime(*_currentTime);
-	_currentDay = _currentTime->getUnixTime() / 86400UL;
+	while(!getWeather()) {};
+
+	digitalWrite(LED_PIN, HIGH);
+	delay(400);
+	digitalWrite(LED_PIN, LOW);
+	delay(400);
+	digitalWrite(LED_PIN, HIGH);
+	delay(400);
+	digitalWrite(LED_PIN, LOW);
+	delay(400);
+	digitalWrite(LED_PIN, HIGH);
+	delay(400);
+	digitalWrite(LED_PIN, LOW);
 }
 
 void BoardManager::update() {
@@ -70,13 +87,9 @@ void BoardManager::morningUpdate() {
 		updateRewards();
 	}
 	//print good morning
-	_myGCodeHandler->drawLine(40, 40, 100, 475);
 	String text = "Good morning, ";
 	text += _userFirstName;
 	text += "!";
-	_myGCodeHandler->setCursor(TITLE_START_X, TITLE_START_Y);
-	_myGCodeHandler->setFontScale(TITLE_FONT_SCALE);
-	_myGCodeHandler->sendWord("Good");
 	_myGCodeHandler->setCursor(TITLE_START_X, TITLE_START_Y);
 	_myGCodeHandler->setFontScale(TITLE_FONT_SCALE);
 	_myGCodeHandler->write(text, WRAP_TRUNCATE, false);
@@ -93,15 +106,17 @@ void BoardManager::morningUpdate() {
 	_myGCodeHandler->setFontScale(SUBTITLE_FONT_SCALE);
 	_myGCodeHandler->write(text, WRAP_TRUNCATE, false);
 	//print todos
-	drawListSection(TODO_Y_START, TODO_LEFT_X_START, _numMorningToDos, "Morning To-Do", _morningToDoList, true, false);
+	drawListSection(1, LIST_LEFT, _numMorningToDos, "Morning To-Do", _morningToDoList, true, false);
 	//print events?
-	drawListSection(TODO_Y_START, TODO_RIGHT_X_START, _numWeeklyToDos, "Weekly To-Do", _weeklyToDoList, true, false);
+	//drawListSection(TODO_Y_START, TODO_RIGHT_X_START, _numWeeklyToDos, "Weekly To-Do", _weeklyToDoList, true, false);
 	//print weather
 	drawWeather();
 	//print quote
 	drawQuote();
 	//print sleep survey
 	drawMorningMoodQs();
+
+	_myGCodeHandler->returnToHome();
 
 	_lastUpdateType = UPDATE_TYPE_MORNING;
 }
@@ -155,13 +170,17 @@ void BoardManager::ticTacToe() {
 	_myGCodeHandler->drawLine(792.5, 24.5, 792.5, 232.7);
 	_myGCodeHandler->drawLine(647.142, 90, 853.38, 90);
 	_myGCodeHandler->drawLine(647.142, 170, 853.38, 170);
+
+	_myGCodeHandler->sendSingleCommand("G00 X611 Y307");
 	
 	bool gameRunning = true;
 	bool playerTurn = true;
 
 	//game loop
 	while(gameRunning) {
+
 		if(playerTurn) {
+			updateHallEffectStates();
 			//update magnet sensors
 			for(int row = 0; row < 3; row++) {
 				for(int col = 0; col < 3; col++) {
@@ -169,11 +188,13 @@ void BoardManager::ticTacToe() {
 				}
 			}
 
+
 			for(int row = 0; row < 3; row++) {
 				for(int col = 0; col < 3; col++) {
 					if(ticTacToe_sensorGridStates[row][col] && ticTacToe_board[row][col] == TICTACTOE_EMPTY) {
 						delay(1000);
-						if(ticTacToe_sensorGridStates[row][col]) {
+						updateHallEffectStates();
+						if(_hallSensorStates[ticTacToe_sensorGridIndexes[row][col]]) {
 							ticTacToe_board[row][col] = TICTACTOE_PLAYER;
 							playerTurn = false;
 						}
@@ -187,22 +208,24 @@ void BoardManager::ticTacToe() {
 		}
 
 		if(ticTacToe_checkWin(TICTACTOE_PLAYER)) {
-			_myGCodeHandler->setCursor(678.495,250);
-			_myGCodeHandler->setFontScale(1.2);
-			_myGCodeHandler->write("You win", WRAP_TRUNCATE, true);
+			_myGCodeHandler->setCursor(670,250);
+			_myGCodeHandler->setFontScale(0.8);
+			_myGCodeHandler->write("You win", WRAP_TRUNCATE, false);
 			gameRunning = false;
-		} else if(ticTacToe_checkWin(TICTACTOE_PLAYER)) {
-			_myGCodeHandler->setCursor(678.495,250);
-			_myGCodeHandler->setFontScale(1.2);
-			_myGCodeHandler->write("You lose", WRAP_TRUNCATE, true);
+		} else if(ticTacToe_checkWin(TICTACTOE_COMPUTER)) {
+			_myGCodeHandler->setCursor(670,250);
+			_myGCodeHandler->setFontScale(0.8);
+			_myGCodeHandler->write("You lose", WRAP_TRUNCATE, false);
 			gameRunning = false;
 		} else if(ticTacToe_isBoardFull()) {
 			_myGCodeHandler->setCursor(678.495,250);
-			_myGCodeHandler->setFontScale(1.2);
-			_myGCodeHandler->write("Draw", WRAP_TRUNCATE, true);
+			_myGCodeHandler->setFontScale(1);
+			_myGCodeHandler->write("Draw", WRAP_TRUNCATE, false);
 			gameRunning = false;
 		}
 	}
+
+	_myGCodeHandler->returnToHome();
 }
 
 //start tictactoe extra functions
@@ -236,6 +259,7 @@ bool BoardManager::ticTacToe_isBoardFull() {
 
 // Computer makes a random move on the board
 void BoardManager::ticTacToe_computerMove() {
+	randomSeed(millis());
   int row, col;
   do {
     row = random(3);
@@ -280,6 +304,7 @@ void BoardManager::ticTacToe_computerMove() {
     _myGCodeHandler->drawLine(806, 69, 836, 29);
     _myGCodeHandler->drawLine(806, 29, 836, 69);
   }
+	_myGCodeHandler->sendSingleCommand("G00 X811 Y307");
 }
 //end tictactoe extra functions
 
@@ -287,8 +312,44 @@ void BoardManager::finalizeToDos() {
 
 }
 
+bool BoardManager::getWeather() {
+	WiFiClient client;
+	// Wifi Connection
+	if (WiFi.status() == WL_NO_MODULE) {
+		_consoleSerial->println("Communication with WiFi module failed!");
+	
+		while (true){
 
-void BoardManager::read_response(){
+		}
+  }
+
+	String fv = WiFi.firmwareVersion();
+	if (fv < WIFI_FIRMWARE_LATEST_VERSION) {
+		_consoleSerial->println("Please upgrade the firmware");
+	}
+
+	while (status != WL_CONNECTED) {
+		_consoleSerial->print("Attempting to connect to SSID: ");
+		_consoleSerial->println(_wifiSSID);
+		status = WiFi.begin(_wifiSSID, _wifiPass); //subbed with variables from .h
+	}
+
+	client.stop();
+
+	_consoleSerial->println("\nStarting connection to server...");
+  
+  if (client.connect("api.open-meteo.com", 80)) {
+		_consoleSerial->println("connected to server");
+		client.println("GET /v1/forecast?latitude=" + String(_latitude) + "&longitude=" + String(_longitude) + "&temperature_unit=fahrenheit&current_weather=true HTTP/1.1");
+		client.println("Host: api.open-meteo.com");
+		client.println("Connection: close");
+		client.println();
+		lastConnectionTime = millis();
+	} else {
+		return false;
+  	_consoleSerial->println("connection failed");
+  }
+
 	uint32_t received_data_num = 0;
 	uint32_t data_num = 0;
 	bool jsonDetected = false;
@@ -307,69 +368,31 @@ void BoardManager::read_response(){
 	if (jsonDetected) {
 		
 		myObject = JSON.parse(data);
-		Serial.print("Temperature F: ");
+		_consoleSerial->print("Temperature F: ");
 		if (myObject.hasOwnProperty("current_weather")) {
 
 			temperature = (double)myObject["current_weather"]["temperature"];
-			Serial.println(temperature);
+			_consoleSerial->println(temperature);
 		}
 	}
-}
-
-void BoardManager::http_request(float latitude, float longitude) {
-	client.stop();
-
-	Serial.println("\nStarting connection to server...");
-  
-  	if (client.connect(server, 80)) {
-		Serial.println("connected to server");
-		client.println("GET /v1/forecast?latitude=" + String(latitude) + "&longitude=" + String(longitude) + "&temperature_unit=fahrenheit&current_weather=true HTTP/1.1");
-		client.println("Host: api.open-meteo.com");
-		client.println("Connection: close");
-		client.println();
-		lastConnectionTime = millis();
-	} else {
-   		Serial.println("connection failed");
-  	}
-}
-
-void BoardManager::drawWeather() {
-	// Wifi Connection
-	if (WiFi.status() == WL_NO_MODULE) {
-		Serial.println("Communication with WiFi module failed!");
-	
-		while (true)
-		;
-  	}
-
-	String fv = WiFi.firmwareVersion();
-	if (fv < WIFI_FIRMWARE_LATEST_VERSION) {
-		Serial.println("Please upgrade the firmware");
-	}
-
-	while (status != WL_CONNECTED) {
-		Serial.print("Attempting to connect to SSID: ");
-		Serial.println(_wifiSSID[30]);
-		status = WiFi.begin(_wifiSSID[30],_wifiPass[30]); //subbed with variables from .h
-	}
-  	printWifiStatus();
-
-	// Read Response and http request
-	read_response();
-	http_request(_latitude[12], _longitude[12]); //subbed with variables from .h
-
-    _myGCodeHandler->setCursor(639.149, 473.776);
-    _myGCodeHandler->setFontScale(0.8);
-    _myGCodeHandler->setTextConstraints(639.149,473.776,853.38, 473.555); 
-	_myGCodeHandler->write("Weather: " + temperature + "F", WRAP_TRUNCATE, true);
 
     //incomplete, need to ask hwo to get api stat update
 
 }
 
+void BoardManager::drawWeather() {
+  _myGCodeHandler->setCursor(639.149, 473.776);
+  _myGCodeHandler->setFontScale(0.8);
+  _myGCodeHandler->setTextConstraints(639.149,410,853.38,473.776);
+	String toWrite = "Weather: ";
+	toWrite += temperature;
+	toWrite += "F";
+	_myGCodeHandler->write(toWrite, WRAP_WRAP, true);
+}
+
 void BoardManager::drawQuote() {
     
-	string quotes[31] = {
+	String quotes[31] = {
         "A winner is just a loser who tried one more time. George M. Moore, Jr.", 
         "Fall seven times, stand up eight. Japanese proverb", 
         "You miss 100 percent of the shots you do not take. Wayne Gretzky", 
@@ -403,16 +426,17 @@ void BoardManager::drawQuote() {
         "Nothing is impossible, the word itself says 'I'm possible'! Audrey Hepburn"
     };
 
-	string currentQuote;
-	int index = rand() % 31;
+	String currentQuote;
+	randomSeed(millis());
+	int index = random(31);
 
 	currentQuote = quotes[index];
 
 	
-    _myGCodeHandler->setCursor(9, 70);
-    _myGCodeHandler->setFontScale(0.8);
-    _myGCodeHandler->setTextConstraints(6.849,90,630947, 90); 
-    _myGCodeHandler->write(currentQuote, WRAP_TRUNCATE, true);
+    _myGCodeHandler->setFontScale(0.7);
+    _myGCodeHandler->setTextConstraints(10,0,630, 120); 
+    _myGCodeHandler->setCursor(10, 70);
+    _myGCodeHandler->write(currentQuote, WRAP_WRAP, true);
 
     //write the Thomas Edison quote in top right corner
 
@@ -420,22 +444,12 @@ void BoardManager::drawQuote() {
 
 void BoardManager::drawMorningMoodQs() {
     //vertical spacing: 29
-    double spacing = 30;
     //moods coordinate start: 700, 354.962
     //checkbox start top right corner of box: 780,137, 376.131, 805.537, 350.731
 
-    _myGCodeHandler->setCursor(361, 439);
-    _myGCodeHandler->setFontScale(1.2);
-    _myGCodeHandler->write("Morning Mood", WRAP_TRUNCATE, true);//fix this///////////////////////////////////
+    ToDoListItem moods[9] = {{"Grateful",""},{"Energetic",""},{"Peaceful",""},{"Stressed",""},{"Anxious",""},{"Okay",""},{"Sad",""},{"Angry",""},{"Content",""}};
 
-    String moods[9] = {"Grateful", "Engeretic", "Peaceful", "Stressed", "Anxious", "Okay", "Sad", "Angry", "Content"};
-
-    for(int i = 0; i < 9; i++){
-        _myGCodeHandler->setCursor(419, 408 - (spacing * i));
-        _myGCodeHandler->setFontScale(0.8);
-        _myGCodeHandler->write(moods[i], WRAP_TRUNCATE, true);//fix this///////////////////////////////////
-        _myGCodeHandler->drawRect(594.55, 409 - (spacing * i), 619.95, 435.29-(spacing * i));
-    }
+    drawListSection(1, LIST_RIGHT, 9, "Morning Mood", moods, true, false);
 
     //ask henry about sensor updating and storing data
     //list of how which mood they feel in morning
@@ -447,10 +461,6 @@ void BoardManager::drawEveningMoodQs() {
     double spacing = 30;
     //moods coordinate start: 700, 354.962
     //checkbox start top right corner of box: 780,137, 376.131, 805.537, 350.731
-
-    _myGCodeHandler->setCursor(361, 439);
-    _myGCodeHandler->setFontScale(1.2);
-    _myGCodeHandler->write("Morning Mood", WRAP_TRUNCATE, true);//fix this///////////////////////////////////
 
     String moods[9] = {"Grateful", "Engeretic", "Peaceful", "Stressed", "Anxious", "Okay", "Sad", "Angry", "Content"};
 
@@ -465,11 +475,11 @@ void BoardManager::drawEveningMoodQs() {
 }
 
 void BoardManager::updateRewards() {
-	graphic1 = (750, 400);
-	grpahic2 = (647, 393);
-	graphic3 = (627, 312);
-	graphic4 = (702, 239);
-	graphic5 = (777, 307);
+	// graphic1 = (750, 400);
+	// grpahic2 = (647, 393);
+	// graphic3 = (627, 312);
+	// graphic4 = (702, 239);
+	// graphic5 = (777, 307);
 
 	//graphics will be on SD card
 	//write function to get txt file with gcode of graphic
@@ -1081,27 +1091,33 @@ void BoardManager::NTP() {
 	lastTimeUpdate = millis();
 }
 
-void BoardManager::drawListSection(double startY, double startX, int numItems, char *listName, ToDoListItem *itemList, bool hasCheckboxes, bool hasLeftLabel) {
+void BoardManager::drawListSection(double rowStart, int leftOrRight, int numItems, char *listName, ToDoListItem *itemList, bool hasCheckboxes, bool hasLeftLabel) {
+	if(numItems > 12 - (rowStart - 1)) {
+		numItems = 12 - (rowStart - 1);
+	}
+	
+	double startX = leftOrRight == LIST_LEFT ? TODO_LEFT_X_START : TODO_RIGHT_X_START;
 	double leftLineX = startX;
-	double endX = startX + TODO_ITEM_WIDTH;
+	double sensorX = leftOrRight == LIST_LEFT ? LEFT_SENSOR_X : RIGHT_SENSOR_X;
+	double rightLineX = sensorX - TODO_LINE_HEIGHT / 2.0;
+	double endX = sensorX + TODO_LINE_HEIGHT / 2.0;
 	if (hasLeftLabel) {
 		leftLineX += TODO_LEFT_LABEL_SPACE;
 	}
+	double startY = FIRST_SENSOR - ((rowStart - 1.5) * TODO_LINE_HEIGHT);
 
 	double endY = startY - ((numItems + 1) * TODO_LINE_HEIGHT);
 
 	_myGCodeHandler->drawLine(leftLineX, startY, leftLineX, endY);
-	for (int i = 1; i <= numItems; i++) {
-		_myGCodeHandler->drawLine(startX, startY - (i * TODO_LINE_HEIGHT), startX + TODO_ITEM_WIDTH, startY - (i * TODO_LINE_HEIGHT));
+	for (int i = 1; i <= numItems + 1; i++) {
+		_myGCodeHandler->drawLine(startX, startY - (i * TODO_LINE_HEIGHT), endX, startY - (i * TODO_LINE_HEIGHT));
 	}
 
 	if (hasCheckboxes) {
-		endX -= TODO_CHECKBOX_SPACE;
-		_myGCodeHandler->drawLine(startX + TODO_ITEM_WIDTH - TODO_CHECKBOX_SPACE, startY, startX + TODO_ITEM_WIDTH - TODO_CHECKBOX_SPACE, endY);
+		_myGCodeHandler->drawLine(rightLineX, startY, rightLineX, endY);
 	}
-
 	_myGCodeHandler->setFontScale(TODO_ITEM_FONT_SCALE);
-	_myGCodeHandler->setTextConstraints(startX, startY, endX, endY);
+	_myGCodeHandler->setTextConstraints(leftLineX, startY, rightLineX, endY);
 
 	double cursorOffsetX = TODO_CURSOR_OFFSET_X;
 	double cursorOffsetY = (TODO_LINE_HEIGHT - LETTER_CAP_HEIGHT * _myGCodeHandler->getFontScale()) / 2.0;
@@ -1109,9 +1125,8 @@ void BoardManager::drawListSection(double startY, double startX, int numItems, c
 	_myGCodeHandler->setCursor(leftLineX + cursorOffsetX, startY - TODO_LINE_HEIGHT + cursorOffsetY);
 
 	_myGCodeHandler->write(listName, WRAP_TRUNCATE, true);
-	_consoleSerial->println("d");
 
-	for (int i = 0; i < numItems; i++) {
+	for(int i = 0; i < numItems; i++) {
 		_myGCodeHandler->setCursor(leftLineX + cursorOffsetX, startY - ((i + 2) * TODO_LINE_HEIGHT) + cursorOffsetY);
 		_myGCodeHandler->write(itemList[i].name, WRAP_TRUNCATE, true);
 	}

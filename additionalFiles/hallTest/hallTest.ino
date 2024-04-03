@@ -32,23 +32,17 @@ void setup() {
 }
 
 void loop() {
-	// updateHallSensorValues();
-	updateButtonStates();
-	for(int i = 0; i < 16; i++) {
-		Serial.print(buttonStates[i] ? "1" : "0");
+	updateHallSensorValues();
+	for(int i = 0; i < 64; i++) {
+		// if(i == 66 || i == 57 || i == 34 || i == 35 || i == 36 || i == 37 || i == 38) {
+		// 	continue;
+		// }
+		Serial.print(hallSensorStates[i] ? "1" : "0");
+		if((i + 1) % 8 == 0) {
+			Serial.println();
+		}
 	}
-	// for(int i = 0; i < 64; i++) {
-	// 	if(i == 66 || i == 57 || i == 34 || i == 35 || i == 36 || i == 37 || i == 38) {
-	// 		continue;
-	// 	}
-	// 	Serial.print(hallSensorStates[i] ? "1" : "0");
-	// }
-
-	Serial.println();
-	digitalWrite(8, HIGH);
 	delay(500);
-	digitalWrite(8, LOW);
-	delay(1000);
 }
 
 void updateHallSensorValues() {
