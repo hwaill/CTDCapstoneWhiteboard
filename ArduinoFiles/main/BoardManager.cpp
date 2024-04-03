@@ -399,6 +399,7 @@ void BoardManager::drawQuote() {
     };
 
 	string currentQuote;
+	srand(time(0));
 	int index = rand() % 31;
 
 	currentQuote = quotes[index];
