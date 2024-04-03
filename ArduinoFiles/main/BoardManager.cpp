@@ -287,51 +287,154 @@ void BoardManager::finalizeToDos() {
 
 }
 
+
+void BoardManager::read_response(){
+	uint32_t received_data_num = 0;
+	uint32_t data_num = 0;
+	bool jsonDetected = false;
+	char data[500];
+
+	while (client.available() && data_num < 500) {
+		char c = client.read();
+		if ('{' == c) {
+			jsonDetected = true;
+		}
+		if (jsonDetected) {
+			data[data_num++] = c;
+		}
+	}
+
+	if (jsonDetected) {
+		
+		myObject = JSON.parse(data);
+		Serial.print("Temperature F: ");
+		if (myObject.hasOwnProperty("current_weather")) {
+
+			temperature = (double)myObject["current_weather"]["temperature"];
+			Serial.println(temperature);
+		}
+	}
+}
+
+void BoardManager::http_request(float latitude, float longitude) {
+	client.stop();
+
+	Serial.println("\nStarting connection to server...");
+  
+  	if (client.connect(server, 80)) {
+		Serial.println("connected to server");
+		client.println("GET /v1/forecast?latitude=" + String(latitude) + "&longitude=" + String(longitude) + "&temperature_unit=fahrenheit&current_weather=true HTTP/1.1");
+		client.println("Host: api.open-meteo.com");
+		client.println("Connection: close");
+		client.println();
+		lastConnectionTime = millis();
+	} else {
+   		Serial.println("connection failed");
+  	}
+}
+
 void BoardManager::drawWeather() {
+	// Wifi Connection
+	if (WiFi.status() == WL_NO_MODULE) {
+		Serial.println("Communication with WiFi module failed!");
+	
+		while (true)
+		;
+  	}
+
+	String fv = WiFi.firmwareVersion();
+	if (fv < WIFI_FIRMWARE_LATEST_VERSION) {
+		Serial.println("Please upgrade the firmware");
+	}
+
+	while (status != WL_CONNECTED) {
+		Serial.print("Attempting to connect to SSID: ");
+		Serial.println(_wifiSSID[30]);
+		status = WiFi.begin(_wifiSSID[30],_wifiPass[30]); //subbed with variables from .h
+	}
+  	printWifiStatus();
+
+	// Read Response and http request
+	read_response();
+	http_request(_latitude[12], _longitude[12]); //subbed with variables from .h
+
     _myGCodeHandler->setCursor(639.149, 473.776);
-    _myGCodeHandler->setFontScale(1.2);
+    _myGCodeHandler->setFontScale(0.8);
     _myGCodeHandler->setTextConstraints(639.149,473.776,853.38, 473.555); 
+	_myGCodeHandler->write("Weather: " + temperature + "F", WRAP_TRUNCATE, true);
 
     //incomplete, need to ask hwo to get api stat update
 
 }
 
 void BoardManager::drawQuote() {
-    String quotes[6] = {
+    
+	string quotes[31] = {
         "A winner is just a loser who tried one more time. George M. Moore, Jr.", 
         "Fall seven times, stand up eight. Japanese proverb", 
         "You miss 100 percent of the shots you do not take. Wayne Gretzky", 
         "A person who never made a mistake never tried anything new. Albert Einstein", 
         "Every strike brings me closer to the next home run. Babe Ruth", 
-        "I have not failed. I have just found 10,000 ways that will not work. Thomas Edison"
+        "I have not failed. I have just found 10,000 ways that will not work. Thomas Edison",
+        "Be the change you wish to see in the world. Gandhi",
+        "Believe you can and you're halfway there. Theodore Roosevelt",
+        "In the middle of difficulty lies opportunity. Albert Einstein",
+        "Do one thing every day that scares you. Eleanor Roosevelt",
+        "Success is not final, failure is not fatal: It is the courage to continue that counts. Winston Churchill",
+        "The only way to do great work is to love what you do. Steve Jobs",
+        "Happiness is not something ready-made. It comes from your own actions. Dalai Lama",
+        "Dream big and dare to fail. Norman Vaughan",
+        "The best way to predict the future is to invent it. Alan Kay",
+        "Life is 10 percent what happens to us and 90 percent how we react to it. Charles R. Swindoll",
+        "The future belongs to those who believe in the beauty of their dreams. Eleanor Roosevelt",
+        "Don't count the days, make the days count. Muhammad Ali",
+        "Success is walking from failure to failure with no loss of enthusiasm. Winston Churchill",
+        "You must be the change you wish to see in the world. Mahatma Gandhi",
+        "Opportunities don't happen. You create them. Chris Grosser",
+        "Do what you can with all you have, wherever you are. Theodore Roosevelt",
+        "Your attitude, not your aptitude, will determine your altitude. Zig Ziglar",
+        "The only limit to our realization of tomorrow will be our doubts of today. Franklin D. Roosevelt",
+        "Don't watch the clock; do what it does. Keep going. Sam Levenson",
+        "Problems are not stop signs; they are guidelines. Robert H. Schuller",
+        "It does not matter how slowly you go as long as you do not stop. Confucius",
+        "I attribute my success to this: I never gave or took any excuse. Florence Nightingale",
+        "The best revenge is massive success. Frank Sinatra",
+        "The journey of a thousand miles begins with one step. Lao Tzu",
+        "Nothing is impossible, the word itself says 'I'm possible'! Audrey Hepburn"
     };
 
-    _myGCodeHandler->setCursor(639.149, 473.776);
+	string currentQuote;
+	int index = rand() % 31;
+
+	currentQuote = quotes[index];
+
+	
+    _myGCodeHandler->setCursor(9, 70);
     _myGCodeHandler->setFontScale(0.8);
-    _myGCodeHandler->setTextConstraints(639.149,473.776,853.38, 473.555); 
-    _myGCodeHandler->write(quotes[5], WRAP_TRUNCATE, true);
+    _myGCodeHandler->setTextConstraints(6.849,90,630947, 90); 
+    _myGCodeHandler->write(currentQuote, WRAP_TRUNCATE, true);
 
     //write the Thomas Edison quote in top right corner
 
 }
 
 void BoardManager::drawMorningMoodQs() {
-    //vertical spacing: 38.762
-    double spacing = 38.762;
+    //vertical spacing: 29
+    double spacing = 30;
     //moods coordinate start: 700, 354.962
     //checkbox start top right corner of box: 780,137, 376.131, 805.537, 350.731
 
-    _myGCodeHandler->setCursor(689.936, 400);
+    _myGCodeHandler->setCursor(361, 439);
     _myGCodeHandler->setFontScale(1.2);
     _myGCodeHandler->write("Morning Mood", WRAP_TRUNCATE, true);//fix this///////////////////////////////////
 
     String moods[9] = {"Grateful", "Engeretic", "Peaceful", "Stressed", "Anxious", "Okay", "Sad", "Angry", "Content"};
 
     for(int i = 0; i < 9; i++){
-        _myGCodeHandler->setCursor(700, 354.962 - (spacing * i));
+        _myGCodeHandler->setCursor(419, 408 - (spacing * i));
         _myGCodeHandler->setFontScale(0.8);
         _myGCodeHandler->write(moods[i], WRAP_TRUNCATE, true);//fix this///////////////////////////////////
-        _myGCodeHandler->drawRect(780.137, 376.131 - (spacing * i), 805.537, 350.731-(spacing * i));
+        _myGCodeHandler->drawRect(594.55, 409 - (spacing * i), 619.95, 435.29-(spacing * i));
     }
 
     //ask henry about sensor updating and storing data
@@ -340,30 +443,37 @@ void BoardManager::drawMorningMoodQs() {
 }
 
 void BoardManager::drawEveningMoodQs() {
-       //vertical spacing: 38.762
-    double spacing = 38.762;
+      //vertical spacing: 29
+    double spacing = 30;
     //moods coordinate start: 700, 354.962
     //checkbox start top right corner of box: 780,137, 376.131, 805.537, 350.731
 
-    _myGCodeHandler->setCursor(689.936, 400);
+    _myGCodeHandler->setCursor(361, 439);
     _myGCodeHandler->setFontScale(1.2);
-    _myGCodeHandler->write("Evening Mood", WRAP_TRUNCATE, true);//fix this///////////////////////////////////
+    _myGCodeHandler->write("Morning Mood", WRAP_TRUNCATE, true);//fix this///////////////////////////////////
 
     String moods[9] = {"Grateful", "Engeretic", "Peaceful", "Stressed", "Anxious", "Okay", "Sad", "Angry", "Content"};
 
     for(int i = 0; i < 9; i++){
-        _myGCodeHandler->setCursor(700, 354.962 - (spacing * i));
+        _myGCodeHandler->setCursor(419, 408 - (spacing * i));
         _myGCodeHandler->setFontScale(0.8);
         _myGCodeHandler->write(moods[i], WRAP_TRUNCATE, true);//fix this///////////////////////////////////
-        _myGCodeHandler->drawRect(780.137, 376.131 - (spacing * i), 805.537, 350.731-(spacing * i));
+        _myGCodeHandler->drawRect(594.55, 409 - (spacing * i), 619.95, 435.29-(spacing * i));
     }
 
-    //ask henry about sensor updating and storing data
-    //list of which mood they feel at night
 
 }
 
 void BoardManager::updateRewards() {
+	graphic1 = (750, 400);
+	grpahic2 = (647, 393);
+	graphic3 = (627, 312);
+	graphic4 = (702, 239);
+	graphic5 = (777, 307);
+
+	//graphics will be on SD card
+	//write function to get txt file with gcode of graphic
+	//draw one graphic when 20% of TO DOs are sensed by sensor
 
 }
 

@@ -30,6 +30,8 @@ var eventsPage = document.getElementById("eventsPage");
 var themePage = document.getElementById("themePage");
 var weatherPage = document.getElementById("weatherPage");
 
+eventsPage.style.display = "none";
+
 var ticTacToePage = document.getElementById("ticTacToePage");
 var moodTrackerPage = document.getElementById("moodTrackerPage");
 var dailyQuotePage = document.getElementById("dailyQuotePage");
@@ -41,6 +43,22 @@ var weatherCheckBox = document.getElementById("Weather-Check");
 var gameCheckBox = document.getElementById("Game-Check");
 var moodCheckBox = document.getElementById("Mood-Check");
 var themeCheckBox = document.getElementById("Theme-Check");
+
+var todoCheckBoxAll = document.getElementById("Todo-Check-All");
+var weeklyCalCheckBoxAll = document.getElementById("WeeklyCal-Check-All");
+var quotesCheckBoxAll = document.getElementById("Quotes-Check-All");
+var weatherCheckBoxAll = document.getElementById("Weather-Check-All");
+var gameCheckBoxAll = document.getElementById("Game-Check-All");
+var moodCheckBoxAll = document.getElementById("Mood-Check-All");
+var themeCheckBoxAll = document.getElementById("Theme-Check-All");
+
+// todoCheckBoxAll.style.display = "none";
+weeklyCalCheckBoxAll.style.display = "none";
+// quotesCheckBoxALl.style.display = "none";
+// weatherCheckBoxAll.style.display = "none";
+gameCheckBoxAll.style.display = "none";
+// moodCheckBoxAll .style.display = "none";
+// themeCheckBoxAll.style.display = "none";
 
 var spaceCheckBox = document.getElementById("spaceTheme-Check");
 var plantsCheckBox = document.getElementById("plantTheme-Check");

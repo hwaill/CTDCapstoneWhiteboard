@@ -29,6 +29,7 @@
                 <h1 class="title">Welcome to your todos whiteboard configuration portal.</h1>
                 <h2 class="subtitle">Please connect to your board.</h2>
                 <button onclick="connectToBluetooth()">Connect</button>
+                <button onclick="goMain()">main</button>
                 <p id="connectionResultMessage"></p>
             </div>
         </div>
@@ -45,27 +46,27 @@
                             <input type="checkbox" id="Todo-Check" name="Todo-Check" onchange="updateFeatures()">
                             <label for="Todo-Check">To-Do List</label><br>
                         </div>
-                        <div class="featureItem">
+                        <div class="featureItem" id="WeeklyCal-Check-All">
                             <input type="checkbox" id="WeeklyCal-Check" name="WeeklyCal-Check" onchange="updateFeatures()">
                             <label for="WeeklyCal-Check">Weekly Calendar</label><br>
                         </div>
-                        <div class="featureItem">
+                        <div class="featureItem" id="Mood-Check-All">
                             <input type="checkbox" id="Mood-Check" name="Mood-Check" onchange="updateFeatures()">
                             <label for="Mood-Check">Mood Tracker</label><br>
                         </div>
-                        <div class="featureItem">
+                        <div class="featureItem" id="Weather-Check-All">
                             <input type="checkbox" id="Weather-Check" name="Weather-Check" onchange="updateFeatures()">
                             <label for="Weather-Check">Weather</label><br>
                         </div>
-                        <div class="featureItem">
+                        <div class="featureItem" id="Game-Check-All">
                             <input type="checkbox" id="Game-Check" name="Game-Check" onchange="updateFeatures()">
                             <label for="Game-Check">Tic-Tac-Toe</label><br>
                         </div>
-                        <div class="featureItem">
+                        <div class="featureItem" id="Quotes-Check-All">
                             <input type="checkbox" id="Quotes-Check" name="Quotes-Check" onchange="updateFeatures()">
                             <label for="Quotes-Check">Daily Quote</label><br>
                         </div>
-                        <div class="featureItem">
+                        <div class="featureItem" id="Theme-Check-All">
                             <input type="checkbox" id="Theme-Check" name="Theme-Check" onchange="updateFeatures()">
                             <label for="Theme-Check">Theme</label><br>
                         </div>

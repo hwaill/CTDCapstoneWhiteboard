@@ -10,6 +10,9 @@
 #include <SD.h>
 #include "RTC.h"
 #include <ArduinoBLE.h>
+#include <Arduino_JSON.h>
+#include <assert.h>
+
 
 struct ToDoListItem {
 	char name[50];
@@ -117,7 +120,11 @@ inline const int UPDATE_TYPE_OTHER = 4;
 
 class BoardManager {
 	public:
+
+		void http_request(float latitude, float longitude);
+  
 		BoardManager(Stream &consoleSerial, GCodeHandler &myGCodeHandler, NTPClient &timeClient, RTCTime &currentTime, bool *buttonStates, int *hallSensorValues, bool *hallSensorStates, unsigned long *lastButtonPressTime);
+
 		void initialize();
 		void updateFromConfig();
 
@@ -199,6 +206,16 @@ class BoardManager {
 		Stream* _consoleSerial;
 		GCodeHandler* _myGCodeHandler;
 
+		unsigned long lastConnectionTime = 0;              
+		const unsigned long postingInterval = 10L * 1000L;  
+		JSONVar myObject;
+		unsigned char frame[8][12];
+		int temperature = 0; 
+		int keyIndex = 0;           
+		int status = WL_IDLE_STATUS;
+		char server[] = "api.open-meteo.com"; 
+
+
 		bool* _buttonStates;
 		bool* _hallSensorStates;
 		int* _hallSensorValues;
@@ -212,8 +229,8 @@ class BoardManager {
 		bool _needsBluetoothConfig = false;
 
 		bool _hasWiFiInfo = false;
-		char _wifiSSID[30];
-		char _wifiPass[30];
+		char _wifiSSID[30]; // replace syd weather
+		char _wifiPass[30]; // replace syd weather
 		int _wifiStatus = WL_IDLE_STATUS;
 
 		RTCTime* _currentTime;
