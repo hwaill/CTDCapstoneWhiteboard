@@ -64,13 +64,13 @@ inline const unsigned long USER_INTERACTION_WAIT_COOLDOWN = 900000;
 //for error messages
 inline const double ERROR_FONT_SCALE = 1.2;
 inline const double ERROR_START_X = 60;
-inline const double ERROR_START_Y = 400;
+inline const double ERROR_START_Y = 460;
 
 //for titles and subtitles
-inline const double TITLE_FONT_SCALE = 2;
+inline const double TITLE_FONT_SCALE = 1.2;
 inline const double TITLE_START_X = 30;
-inline const double TITLE_START_Y = 510;
-inline const double SUBTITLE_FONT_SCALE = 1.2;
+inline const double TITLE_START_Y = 530;
+inline const double SUBTITLE_FONT_SCALE = 0.9;
 inline const double SUBTITLE_START_X = 30;
 inline const double SUBTITLE_START_Y = 475;
 
@@ -122,9 +122,9 @@ class BoardManager {
 	public:
 
 		void http_request(float latitude, float longitude);
+  
+		BoardManager(Stream &consoleSerial, GCodeHandler &myGCodeHandler, NTPClient &timeClient, RTCTime &currentTime, bool *buttonStates, int *hallSensorValues, bool *hallSensorStates, unsigned long *lastButtonPressTime);
 
-
-		BoardManager(Stream &consoleSerial, GCodeHandler &myGCodeHandler, NTPClient &timeClient, RTCTime &currentTime, bool *buttonStates, int *hallSensorValues, bool *hallSensorStates);
 		void initialize();
 		void updateFromConfig();
 
@@ -219,6 +219,7 @@ class BoardManager {
 		bool* _buttonStates;
 		bool* _hallSensorStates;
 		int* _hallSensorValues;
+		unsigned long* _lastButtonPressTime;
 
 		unsigned long _lastUserInteractionTime;
 
