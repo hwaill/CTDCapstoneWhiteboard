@@ -404,9 +404,9 @@ void BoardManager::drawQuote() {
 	currentQuote = quotes[index];
 
 	
-    _myGCodeHandler->setCursor(639.149, 473.776);
+    _myGCodeHandler->setCursor(9, 70);
     _myGCodeHandler->setFontScale(0.8);
-    _myGCodeHandler->setTextConstraints(639.149,473.776,853.38, 473.555); 
+    _myGCodeHandler->setTextConstraints(6.849,90,630947, 90); 
     _myGCodeHandler->write(currentQuote, WRAP_TRUNCATE, true);
 
     //write the Thomas Edison quote in top right corner
