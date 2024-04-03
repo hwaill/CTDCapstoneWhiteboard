@@ -414,22 +414,22 @@ void BoardManager::drawQuote() {
 }
 
 void BoardManager::drawMorningMoodQs() {
-    //vertical spacing: 38.762
-    double spacing = 38.762;
+    //vertical spacing: 29
+    double spacing = 30;
     //moods coordinate start: 700, 354.962
     //checkbox start top right corner of box: 780,137, 376.131, 805.537, 350.731
 
-    _myGCodeHandler->setCursor(689.936, 400);
+    _myGCodeHandler->setCursor(361, 439);
     _myGCodeHandler->setFontScale(1.2);
     _myGCodeHandler->write("Morning Mood", WRAP_TRUNCATE, true);//fix this///////////////////////////////////
 
     String moods[9] = {"Grateful", "Engeretic", "Peaceful", "Stressed", "Anxious", "Okay", "Sad", "Angry", "Content"};
 
     for(int i = 0; i < 9; i++){
-        _myGCodeHandler->setCursor(700, 354.962 - (spacing * i));
+        _myGCodeHandler->setCursor(419, 408 - (spacing * i));
         _myGCodeHandler->setFontScale(0.8);
         _myGCodeHandler->write(moods[i], WRAP_TRUNCATE, true);//fix this///////////////////////////////////
-        _myGCodeHandler->drawRect(780.137, 376.131 - (spacing * i), 805.537, 350.731-(spacing * i));
+        _myGCodeHandler->drawRect(594.55, 409 - (spacing * i), 619.95, 435.29-(spacing * i));
     }
 
     //ask henry about sensor updating and storing data
@@ -438,30 +438,37 @@ void BoardManager::drawMorningMoodQs() {
 }
 
 void BoardManager::drawEveningMoodQs() {
-       //vertical spacing: 38.762
-    double spacing = 38.762;
+      //vertical spacing: 29
+    double spacing = 30;
     //moods coordinate start: 700, 354.962
     //checkbox start top right corner of box: 780,137, 376.131, 805.537, 350.731
 
-    _myGCodeHandler->setCursor(689.936, 400);
+    _myGCodeHandler->setCursor(361, 439);
     _myGCodeHandler->setFontScale(1.2);
-    _myGCodeHandler->write("Evening Mood", WRAP_TRUNCATE, true);//fix this///////////////////////////////////
+    _myGCodeHandler->write("Morning Mood", WRAP_TRUNCATE, true);//fix this///////////////////////////////////
 
     String moods[9] = {"Grateful", "Engeretic", "Peaceful", "Stressed", "Anxious", "Okay", "Sad", "Angry", "Content"};
 
     for(int i = 0; i < 9; i++){
-        _myGCodeHandler->setCursor(700, 354.962 - (spacing * i));
+        _myGCodeHandler->setCursor(419, 408 - (spacing * i));
         _myGCodeHandler->setFontScale(0.8);
         _myGCodeHandler->write(moods[i], WRAP_TRUNCATE, true);//fix this///////////////////////////////////
-        _myGCodeHandler->drawRect(780.137, 376.131 - (spacing * i), 805.537, 350.731-(spacing * i));
+        _myGCodeHandler->drawRect(594.55, 409 - (spacing * i), 619.95, 435.29-(spacing * i));
     }
 
-    //ask henry about sensor updating and storing data
-    //list of which mood they feel at night
 
 }
 
 void BoardManager::updateRewards() {
+	graphic1 = (750, 400);
+	grpahic2 = (647, 393);
+	graphic3 = (627, 312);
+	graphic4 = (702, 239);
+	graphic5 = (777, 307);
+
+	//graphics will be on SD card
+	//write function to get txt file with gcode of graphic
+	//draw one graphic when 20% of TO DOs are sensed by sensor
 
 }
 
