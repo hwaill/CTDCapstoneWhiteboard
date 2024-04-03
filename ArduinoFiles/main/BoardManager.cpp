@@ -3,7 +3,7 @@
 void bleConnectHandler(BLEDevice central);
 void bleDisconnectHandler(BLEDevice central);
 
-BoardManager::BoardManager(Stream &consoleSerial, GCodeHandler &myGCodeHandler, NTPClient &timeClient, RTCTime &currentTime, bool *buttonStates, int *hallSensorValues, bool *hallSensorStates) {
+BoardManager::BoardManager(Stream &consoleSerial, GCodeHandler &myGCodeHandler, NTPClient &timeClient, RTCTime &currentTime, bool *buttonStates, int *hallSensorValues, bool *hallSensorStates, unsigned long *lastButtonPressTime) {
 	_consoleSerial = &consoleSerial;
 	_myGCodeHandler = &myGCodeHandler;
 	_timeClient = &timeClient;
@@ -11,6 +11,7 @@ BoardManager::BoardManager(Stream &consoleSerial, GCodeHandler &myGCodeHandler, 
 	_buttonStates = buttonStates;
 	_hallSensorValues = hallSensorValues;
 	_hallSensorStates = hallSensorStates;
+	_lastButtonPressTime = lastButtonPressTime;
 }
 
 void BoardManager::initialize() {
@@ -18,12 +19,12 @@ void BoardManager::initialize() {
 	_myGCodeHandler->initialize();
 	updateFromConfig();
 
-	openBluetoothBLE();
 	if(_hasWiFiInfo) {
 		_connectToWifi();
 	} else {
 		_displayError("Wifi credentials required!", 0);
 		_displayError("Please configure with bluetooth.", 1);
+		_myGCodeHandler->returnToHome();
 	}
 	RTC.begin();
 	_consoleSerial->println("\nStarting connection to server...");
@@ -69,9 +70,13 @@ void BoardManager::morningUpdate() {
 		updateRewards();
 	}
 	//print good morning
+	_myGCodeHandler->drawLine(40, 40, 100, 475);
 	String text = "Good morning, ";
 	text += _userFirstName;
 	text += "!";
+	_myGCodeHandler->setCursor(TITLE_START_X, TITLE_START_Y);
+	_myGCodeHandler->setFontScale(TITLE_FONT_SCALE);
+	_myGCodeHandler->sendWord("Good");
 	_myGCodeHandler->setCursor(TITLE_START_X, TITLE_START_Y);
 	_myGCodeHandler->setFontScale(TITLE_FONT_SCALE);
 	_myGCodeHandler->write(text, WRAP_TRUNCATE, false);
@@ -372,6 +377,7 @@ void BoardManager::updateFromConfig() {
 
 	if (!SD.begin(10)) {
 		_consoleSerial->println("initialization failed!");
+
 		_displayError("error: SD card failure", 0);
 		_displayError("restart board...", 1);
 		_myGCodeHandler->returnToHome();
@@ -676,7 +682,10 @@ void BoardManager::openBluetoothBLE() {
 	char temp[20];
 	while (true) {
 		updateButtonStates();
-		if(_buttonStates[BUTTON_INDEX[6]] && (unsigned long)(millis() - lastBluetoothEvent) >= 3000) break;
+		if(_buttonStates[BUTTON_INDEX[6]] && (unsigned long)(millis() - lastBluetoothEvent) >= 3000) {
+			_lastButtonPressTime[6] = millis();
+			break;
+		}
 		BLE.poll();
 
 		unsigned long t = millis();
@@ -913,16 +922,22 @@ bool BoardManager::_connectToWifi() {
 	// attempt to connect to WiFi network:
 	int attemptCount = 0;
 	while (_wifiStatus != WL_CONNECTED && attemptCount <= 10) {
+		updateButtonStates();
+		if(_buttonStates[BUTTON_INDEX[6]]) {
+			openBluetoothBLE();
+		}
+
 		_consoleSerial->print("Attempting to connect to SSID: ");
 		_consoleSerial->println(_wifiSSID);
 		_wifiStatus = WiFi.begin(_wifiSSID, _wifiPass);
 		attemptCount++;
-		delay(1000);
+		delay(500);
 	}
 
 	if(attemptCount > 10) {
 		_displayError("error: wifi failure", 0);
 		_displayError("some features will not work", 1);
+		_myGCodeHandler->returnToHome();
 		return false;
 	}
 
@@ -951,6 +966,8 @@ void BoardManager::NTP() {
 	auto unixTime = _timeClient->getEpochTime() + (_timeZoneOffsetHours * 3600);
 	RTCTime timeToSet = RTCTime(unixTime);
 	RTC.setTime(timeToSet);
+	_consoleSerial->print("Time retrieved: ");
+	_consoleSerial->println(timeToSet.toString());
 	lastTimeUpdate = millis();
 }
 

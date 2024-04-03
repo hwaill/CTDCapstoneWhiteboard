@@ -21,7 +21,7 @@ NTPClient timeClient(Udp);
 RTCTime currentTime;
 
 GCodeHandler myGCodeHandler(Serial1, Serial);
-BoardManager myBoardManager(Serial, myGCodeHandler, timeClient, currentTime, buttonStates, hallSensorValues, hallSensorStates);
+BoardManager myBoardManager(Serial, myGCodeHandler, timeClient, currentTime, buttonStates, hallSensorValues, hallSensorStates, lastButtonPressTime);
 
 void setup() {
 	//Serial is used to communicate with the console
@@ -73,7 +73,7 @@ void loop() {
 	}
 
 	//magic happens here
-	myBoardManager.update();
+	//myBoardManager.update();
 
 	//update RTC from internet
 	if((unsigned long)(millis() - myBoardManager.lastTimeUpdate) > 600000) {
