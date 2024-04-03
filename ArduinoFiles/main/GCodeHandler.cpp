@@ -43,7 +43,7 @@ void GCodeHandler::initialize() {
 	_sendSingleCommand("$X");
 	_sendSingleCommand("G10 P0 L20 X-24 Y-70 Z0.2");
 	_sendSingleCommand("$H");
-	_sendSingleCommand("G10 P0 L20 X-4 Y-40 Z0.2");
+	_sendSingleCommand("G10 P0 L20 X0 Y-40 Z0.2");
 	_sendSingleCommand("G00 X0 Y0");
 	digitalWrite(8, LOW);
 }
@@ -53,6 +53,9 @@ void GCodeHandler::setCursor(double x, double y) {
 	_cursorY = y;
 	
 	_checkCursorInBounds(false);
+	_consoleSerial->print(_cursorX);
+	_consoleSerial->print(" CURSOR POS ");
+	_consoleSerial->println(_cursorY);
 }
 
 void GCodeHandler::setFontScale(double scale) {
@@ -281,11 +284,14 @@ void GCodeHandler::_sendWord(String word) {
 }
 
 double GCodeHandler::_calculateWordWidth(const char* word) {
+	_consoleSerial->print(word);
+	_consoleSerial->print(" ");
 	double width = 0;
 	const char* c = &word[0];
 	while(*c != '\0') {
-		width += CHARACTER_WIDTHS[*c++] * _fontScale;
+		width += CHARACTER_WIDTHS[_mapCharToIndex(*c++)] * _fontScale;
 	}
+	_consoleSerial->println(width);
 	return width;
 }
 
@@ -546,12 +552,12 @@ void GCodeHandler::_checkCursorInBounds(bool obeyConstraints) {
 		minX = _textConstraintStartX;
 		maxX = _textConstraintEndX;
 		minY = _textConstraintStartY - MAX_DESCENDER * _fontScale;
-		maxY = _textConstraintEndY - LINE_HEIGHT * _fontScale;
+		maxY = _textConstraintEndY - LETTER_CAP_HEIGHT * _fontScale;
 	} else {
 		minX = CANVAS_START_X;
 		maxX = CANVAS_END_X;
 		minY = CANVAS_START_Y - MAX_DESCENDER * _fontScale;
-		maxY = CANVAS_END_Y - LINE_HEIGHT * _fontScale;
+		maxY = CANVAS_END_Y - LETTER_CAP_HEIGHT * _fontScale;
 	}
 	if(_cursorX < minX) {
 		_cursorX = minX;
@@ -559,8 +565,8 @@ void GCodeHandler::_checkCursorInBounds(bool obeyConstraints) {
 		_cursorX = maxX;
 	}
 
-	if(_cursorY > maxY - LINE_HEIGHT * _fontScale) {
-		_cursorY = maxY - LINE_HEIGHT * _fontScale;
+	if(_cursorY > maxY - LETTER_CAP_HEIGHT * _fontScale) {
+		_cursorY = maxY - LETTER_CAP_HEIGHT * _fontScale;
 	} else if(_cursorY < minX - MAX_DESCENDER * _fontScale) {
 		_cursorY = minX - MAX_DESCENDER * _fontScale;
 	}

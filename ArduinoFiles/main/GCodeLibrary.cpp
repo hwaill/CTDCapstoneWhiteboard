@@ -20,14 +20,14 @@ inline const double CHARACTER_WIDTHS[68] {
 	38, //B
 	42, //C
 	40, //D
-	36, //E
+	33, //E
 	36, //F
 	36, //G
 	36, //H
 	22, //I
 	32, //J
 	36, //K
-	34, //L
+	31, //L
 	45, //M
 	38, //N
 	43, //O
@@ -35,7 +35,7 @@ inline const double CHARACTER_WIDTHS[68] {
 	45, //Q
 	36, //R
 	36, //S
-	32, //T
+	30, //T
 	38, //U
 	40, //V
 	51, //W
@@ -44,11 +44,11 @@ inline const double CHARACTER_WIDTHS[68] {
 	40, //Z
 	29, //a
 	31, //b
-	34, //c
+	29, //c
 	32, //d
 	31, //e
 	18, //f
-	32, //g
+	31, //g
 	32, //h
 	14, //i
 	28, //j
@@ -56,11 +56,11 @@ inline const double CHARACTER_WIDTHS[68] {
 	14, //l
 	45, //m
 	36, //n
-	31, //o
-	36, //p
+	29, //o
+	34, //p
 	36, //q
-	22, //r
-	28, //s
+	20, //r
+	22, //s
 	24, //t
 	29, //u
 	36, //v
@@ -82,7 +82,7 @@ inline const double CHARACTER_WIDTHS[68] {
 	12, //!
 	12, //.
 	28, //?
-	28, //(space)
+	18, //(space)
 	12 //'
 };
 
@@ -102,8 +102,8 @@ inline const char* GRBL_SETTINGS[33] = {
 	"$21=1", //hard limits enable, boolean
 	"$22=1", //homing cycle enable, booleanm
 	"$23=3", //homing direction invert, mask
-	"$24=25", //homing locate feed rate, mm/min
-	"$25=500", //homing search seek rate, mm/min
+	"$24=50", //homing locate feed rate, mm/min
+	"$25=1250", //homing search seek rate, mm/min
 	"$26=250", //homing switch debounce delay, ms
 	"$27=1", //homing switch pull-off distance, mm
 	"$30=1000", //maximum spindle speed, RPM
@@ -1189,10 +1189,10 @@ inline const char* GC_PUNCT_QUESTION[] = {
 
 inline const char* GC_PUNCT_APOSTROPHE[] = {
 	"G00 Z0.30",
-	"G00 X1.439040 Y61.923520",
+	"G00 X1.439040 Y31.923520",
 	"G01 Z-0.30 F15000",
-	"G02 X3.588335 Y60.928691 Z-0.30 I0.803312 J-1.083627 F15000",
-	"G02 X1.781760 Y58.353280 Z-0.30 I-3.468704 J-0.228841",
+	"G02 X3.588335 Y30.928691 Z-0.30 I0.803312 J-1.083627 F15000",
+	"G02 X1.781760 Y28.353280 Z-0.30 I-3.468704 J-0.228841",
 	"G00 Z0.30",
 	"END"
 };
