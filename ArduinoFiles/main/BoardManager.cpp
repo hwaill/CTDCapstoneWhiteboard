@@ -3,21 +3,22 @@
 void bleConnectHandler(BLEDevice central);
 void bleDisconnectHandler(BLEDevice central);
 
-BoardManager::BoardManager(Stream &consoleSerial, GCodeHandler &myGCodeHandler, NTPClient &timeClient, RTCTime &currentTime, bool *buttonStates, int *hallSensorValues, bool *hallSensorStates, unsigned long *lastButtonPressTime) {
+BoardManager::BoardManager(Stream &consoleSerial, GCodeHandler &myGCodeHandler, NTPClient &timeClient, RTCTime &currentTime) {
 	_consoleSerial = &consoleSerial;
 	_myGCodeHandler = &myGCodeHandler;
 	_timeClient = &timeClient;
 	_currentTime = &currentTime;
-	_buttonStates = buttonStates;
-	_hallSensorValues = hallSensorValues;
-	_hallSensorStates = hallSensorStates;
-	_lastButtonPressTime = lastButtonPressTime;
+
+	// _buttonStates = buttonStates;
+	// _hallSensorValues = hallSensorValues;
+	// _hallSensorStates = hallSensorStates;
+	// _lastButtonPressTimes = lastButtonPressTimes;
 }
 
 void BoardManager::initialize() {
 	_lastUserInteractionTime = millis() - USER_INTERACTION_WAIT_COOLDOWN;
 	_myGCodeHandler->initialize();
-	updateFromConfig();
+	updateConfigFromSD();
 
 	if(_hasWiFiInfo) {
 		_connectToWifi();
@@ -27,12 +28,13 @@ void BoardManager::initialize() {
 		_myGCodeHandler->returnToHome();
 	}
 	RTC.begin();
+
 	do {
 		_consoleSerial->println("\nStarting connection to server...");
 		_timeClient->begin();
 		_timeClient->update();
 
-	// Get the current time from NTP
+		// Get the current time from NTP
 	
 		NTP();
 		RTC.getTime(*_currentTime);
@@ -40,22 +42,36 @@ void BoardManager::initialize() {
 		_currentDay = _currentTime->getUnixTime() / 86400UL;
 	} while(_currentTime->getYear() > 2100);
 
-	while(!getWeather()) {};
+	// FIXME: Get weather working
+	// while(!getWeather()) {};
 
-	digitalWrite(LED_PIN, HIGH);
+	digitalWrite(PIN_INDICATOR_LED, HIGH);
 	delay(400);
-	digitalWrite(LED_PIN, LOW);
+	digitalWrite(PIN_INDICATOR_LED, LOW);
 	delay(400);
-	digitalWrite(LED_PIN, HIGH);
+	digitalWrite(PIN_INDICATOR_LED, HIGH);
 	delay(400);
-	digitalWrite(LED_PIN, LOW);
+	digitalWrite(PIN_INDICATOR_LED, LOW);
 	delay(400);
-	digitalWrite(LED_PIN, HIGH);
+	digitalWrite(PIN_INDICATOR_LED, HIGH);
 	delay(400);
-	digitalWrite(LED_PIN, LOW);
+	digitalWrite(PIN_INDICATOR_LED, LOW);
 }
 
 void BoardManager::update() {
+	updateButtonStates();
+	for(int i = 0; i < NUM_BUTTONS; i++) {
+		if(_buttonStates[BUTTON_INDEX[i]] && (unsigned long)(millis() - _lastButtonPressTimes[i]) >= BUTTON_PRESS_COOLDOWN) {
+			_lastButtonPressTimes[i] = millis();
+			buttonPressed(i);
+			break;
+		}
+	}
+
+	if((unsigned long)(millis() - lastTimeUpdate) > 600000) {
+		NTP();
+	}
+
 	//checks if it is a new day (at midnight)
 	if(!_isPaused) {
 		if(_currentDay != _currentTime->getUnixTime() / 86400UL) {
@@ -83,6 +99,8 @@ void BoardManager::update() {
 
 void BoardManager::morningUpdate() {
 	//check previous to dos
+
+	// TODO: Revisit what to do for previous update
 	if(_lastUpdateType != UPDATE_TYPE_NONE && _lastUpdateType != UPDATE_TYPE_OTHER) {
 		updateRewards();
 	}
@@ -90,8 +108,8 @@ void BoardManager::morningUpdate() {
 	String text = "Good morning, ";
 	text += _userFirstName;
 	text += "!";
-	_myGCodeHandler->setCursor(TITLE_START_X, TITLE_START_Y);
-	_myGCodeHandler->setFontScale(TITLE_FONT_SCALE);
+	_myGCodeHandler->setCursor(LAYOUT_TITLE_START_X, LAYOUT_TITLE_START_Y);
+	_myGCodeHandler->setFontScale(LAYOUT_TITLE_FONT_SCALE);
 	_myGCodeHandler->write(text, WRAP_TRUNCATE, false);
 	//print the date
 	text = "It's ";
@@ -102,8 +120,8 @@ void BoardManager::morningUpdate() {
 	text += _currentTime->getDayOfMonth();
   text += ", ";
   text += _currentTime->getYear();
-	_myGCodeHandler->setCursor(SUBTITLE_START_X, SUBTITLE_START_Y);
-	_myGCodeHandler->setFontScale(SUBTITLE_FONT_SCALE);
+	_myGCodeHandler->setCursor(LAYOUT_SUBTITLE_START_X, LAYOUT_SUBTITLE_START_Y);
+	_myGCodeHandler->setFontScale(LAYOUT_SUBTITLE_FONT_SCALE);
 	_myGCodeHandler->write(text, WRAP_TRUNCATE, false);
 	//print todos
 	drawListSection(1, LIST_LEFT, _numMorningToDos, "Morning To-Do", _morningToDoList, true, false);
@@ -126,6 +144,7 @@ void BoardManager::forceMorningUpdate() {
 	morningUpdate();
 }
 
+// TODO: Daytime Update
 void BoardManager::daytimeUpdate() {
 }
 
@@ -134,6 +153,7 @@ void BoardManager::forceDaytimeUpdate() {
 	daytimeUpdate();
 }
 
+// TODO: Evening Update
 void BoardManager::eveningUpdate() {
 
 }
@@ -149,6 +169,7 @@ void BoardManager::togglePaused() {
 
 void BoardManager::ticTacToe() {
 	//check board is empty of magnets
+	// TODO: Move magnets away
 	updateHallEffectStates();
 	for(int row = 0; row < 3; row++) {
 		for(int col = 0; col < 3; col++) {
@@ -178,7 +199,6 @@ void BoardManager::ticTacToe() {
 
 	//game loop
 	while(gameRunning) {
-
 		if(playerTurn) {
 			updateHallEffectStates();
 			//update magnet sensors
@@ -187,7 +207,6 @@ void BoardManager::ticTacToe() {
 					ticTacToe_sensorGridStates[row][col] = _hallSensorStates[ticTacToe_sensorGridIndexes[row][col]];
 				}
 			}
-
 
 			for(int row = 0; row < 3; row++) {
 				for(int col = 0; col < 3; col++) {
@@ -207,6 +226,7 @@ void BoardManager::ticTacToe() {
 			playerTurn = true;
 		}
 
+		// TODO: Improve win message layout
 		if(ticTacToe_checkWin(TICTACTOE_PLAYER)) {
 			_myGCodeHandler->setCursor(670,250);
 			_myGCodeHandler->setFontScale(0.8);
@@ -229,7 +249,7 @@ void BoardManager::ticTacToe() {
 }
 
 //start tictactoe extra functions
-
+// TODO: Computer should draw a line to indicate win
 bool BoardManager::ticTacToe_checkWin(char player) {
 	for(int i = 0; i < 3; i++) {
 		if (ticTacToe_board[i][0] == player && ticTacToe_board[i][1] == player && ticTacToe_board[i][2] == player) {
@@ -258,6 +278,7 @@ bool BoardManager::ticTacToe_isBoardFull() {
 }
 
 // Computer makes a random move on the board
+// TODO: Make computer complete a line if a win is available
 void BoardManager::ticTacToe_computerMove() {
 	randomSeed(millis());
   int row, col;
@@ -307,13 +328,15 @@ void BoardManager::ticTacToe_computerMove() {
 	_myGCodeHandler->sendSingleCommand("G00 X811 Y307");
 }
 //end tictactoe extra functions
-
+// TODO: finalizeToDos
 void BoardManager::finalizeToDos() {
 
 }
 
+// FIXME: Weather
 bool BoardManager::getWeather() {
 	WiFiClient client;
+	_wifiStatus = WL_IDLE_STATUS;
 	// Wifi Connection
 	if (WiFi.status() == WL_NO_MODULE) {
 		_consoleSerial->println("Communication with WiFi module failed!");
@@ -328,10 +351,10 @@ bool BoardManager::getWeather() {
 		_consoleSerial->println("Please upgrade the firmware");
 	}
 
-	while (status != WL_CONNECTED) {
+	while(_wifiStatus != WL_CONNECTED) {
 		_consoleSerial->print("Attempting to connect to SSID: ");
 		_consoleSerial->println(_wifiSSID);
-		status = WiFi.begin(_wifiSSID, _wifiPass); //subbed with variables from .h
+		_wifiStatus = WiFi.begin(_wifiSSID, _wifiPass); //subbed with variables from .h
 	}
 
 	client.stop();
@@ -340,11 +363,16 @@ bool BoardManager::getWeather() {
   
   if (client.connect("api.open-meteo.com", 80)) {
 		_consoleSerial->println("connected to server");
-		client.println("GET /v1/forecast?latitude=" + String(_latitude) + "&longitude=" + String(_longitude) + "&temperature_unit=fahrenheit&current_weather=true HTTP/1.1");
+		String request = "GET /v1/forecast?latitude=";
+		request += _latitude;
+		request += "&longitude=";
+		request += _longitude;
+		request += "&temperature_unit=fahrenheit&current_weather=true HTTP/1.1";
+		_consoleSerial->println(request);
+		client.println(request);
 		client.println("Host: api.open-meteo.com");
 		client.println("Connection: close");
 		client.println();
-		lastConnectionTime = millis();
 	} else {
 		return false;
   	_consoleSerial->println("connection failed");
@@ -355,8 +383,10 @@ bool BoardManager::getWeather() {
 	bool jsonDetected = false;
 	char data[500];
 
+	_consoleSerial->println("reading response...");
 	while (client.available() && data_num < 500) {
 		char c = client.read();
+		_consoleSerial->print(c);
 		if ('{' == c) {
 			jsonDetected = true;
 		}
@@ -365,21 +395,17 @@ bool BoardManager::getWeather() {
 		}
 	}
 
+	// TODO: Would like more weather information to display
 	if (jsonDetected) {
-		
 		myObject = JSON.parse(data);
 		_consoleSerial->print("Temperature F: ");
 		if (myObject.hasOwnProperty("current_weather")) {
-
 			temperature = (double)myObject["current_weather"]["temperature"];
-			_consoleSerial->println(temperature);
 		}
 	}
-
-    //incomplete, need to ask hwo to get api stat update
-
 }
 
+// TODO: Make this better
 void BoardManager::drawWeather() {
   _myGCodeHandler->setCursor(639.149, 473.776);
   _myGCodeHandler->setFontScale(0.8);
@@ -390,90 +416,69 @@ void BoardManager::drawWeather() {
 	_myGCodeHandler->write(toWrite, WRAP_WRAP, true);
 }
 
+// TODO: Quote Formatting
 void BoardManager::drawQuote() {
-    
 	String quotes[31] = {
-        "A winner is just a loser who tried one more time. George M. Moore, Jr.", 
-        "Fall seven times, stand up eight. Japanese proverb", 
-        "You miss 100 percent of the shots you do not take. Wayne Gretzky", 
-        "A person who never made a mistake never tried anything new. Albert Einstein", 
-        "Every strike brings me closer to the next home run. Babe Ruth", 
-        "I have not failed. I have just found 10,000 ways that will not work. Thomas Edison",
-        "Be the change you wish to see in the world. Gandhi",
-        "Believe you can and you're halfway there. Theodore Roosevelt",
-        "In the middle of difficulty lies opportunity. Albert Einstein",
-        "Do one thing every day that scares you. Eleanor Roosevelt",
-        "Success is not final, failure is not fatal: It is the courage to continue that counts. Winston Churchill",
-        "The only way to do great work is to love what you do. Steve Jobs",
-        "Happiness is not something ready-made. It comes from your own actions. Dalai Lama",
-        "Dream big and dare to fail. Norman Vaughan",
-        "The best way to predict the future is to invent it. Alan Kay",
-        "Life is 10 percent what happens to us and 90 percent how we react to it. Charles R. Swindoll",
-        "The future belongs to those who believe in the beauty of their dreams. Eleanor Roosevelt",
-        "Don't count the days, make the days count. Muhammad Ali",
-        "Success is walking from failure to failure with no loss of enthusiasm. Winston Churchill",
-        "You must be the change you wish to see in the world. Mahatma Gandhi",
-        "Opportunities don't happen. You create them. Chris Grosser",
-        "Do what you can with all you have, wherever you are. Theodore Roosevelt",
-        "Your attitude, not your aptitude, will determine your altitude. Zig Ziglar",
-        "The only limit to our realization of tomorrow will be our doubts of today. Franklin D. Roosevelt",
-        "Don't watch the clock; do what it does. Keep going. Sam Levenson",
-        "Problems are not stop signs; they are guidelines. Robert H. Schuller",
-        "It does not matter how slowly you go as long as you do not stop. Confucius",
-        "I attribute my success to this: I never gave or took any excuse. Florence Nightingale",
-        "The best revenge is massive success. Frank Sinatra",
-        "The journey of a thousand miles begins with one step. Lao Tzu",
-        "Nothing is impossible, the word itself says 'I'm possible'! Audrey Hepburn"
-    };
+    "A winner is just a loser who tried one more time. George M. Moore, Jr.", 
+    "Fall seven times, stand up eight. Japanese proverb", 
+    "You miss 100 percent of the shots you do not take. Wayne Gretzky", 
+    "A person who never made a mistake never tried anything new. Albert Einstein", 
+    "Every strike brings me closer to the next home run. Babe Ruth", 
+    "I have not failed. I have just found 10,000 ways that will not work. Thomas Edison",
+    "Be the change you wish to see in the world. Gandhi",
+    "Believe you can and you're halfway there. Theodore Roosevelt",
+    "In the middle of difficulty lies opportunity. Albert Einstein",
+    "Do one thing every day that scares you. Eleanor Roosevelt",
+    "Success is not final, failure is not fatal: It is the courage to continue that counts. Winston Churchill",
+    "The only way to do great work is to love what you do. Steve Jobs",
+    "Happiness is not something ready-made. It comes from your own actions. Dalai Lama",
+    "Dream big and dare to fail. Norman Vaughan",
+    "The best way to predict the future is to invent it. Alan Kay",
+  	"Life is 10 percent what happens to us and 90 percent how we react to it. Charles R. Swindoll",
+    "The future belongs to those who believe in the beauty of their dreams. Eleanor Roosevelt",
+    "Don't count the days, make the days count. Muhammad Ali",
+    "Success is walking from failure to failure with no loss of enthusiasm. Winston Churchill",
+    "You must be the change you wish to see in the world. Mahatma Gandhi",
+    "Opportunities don't happen. You create them. Chris Grosser",
+    "Do what you can with all you have, wherever you are. Theodore Roosevelt",
+    "Your attitude, not your aptitude, will determine your altitude. Zig Ziglar",
+    "The only limit to our realization of tomorrow will be our doubts of today. Franklin D. Roosevelt",
+    "Don't watch the clock; do what it does. Keep going. Sam Levenson",
+    "Problems are not stop signs; they are guidelines. Robert H. Schuller",
+    "It does not matter how slowly you go as long as you do not stop. Confucius",
+    "I attribute my success to this: I never gave or took any excuse. Florence Nightingale",
+    "The best revenge is massive success. Frank Sinatra",
+    "The journey of a thousand miles begins with one step. Lao Tzu",
+    "Nothing is impossible, the word itself says 'I'm possible'! Audrey Hepburn"
+  };
 
 	String currentQuote;
 	randomSeed(millis());
 	int index = random(31);
 
 	currentQuote = quotes[index];
-
 	
-    _myGCodeHandler->setFontScale(0.7);
-    _myGCodeHandler->setTextConstraints(10,0,630, 120); 
-    _myGCodeHandler->setCursor(10, 70);
-    _myGCodeHandler->write(currentQuote, WRAP_WRAP, true);
-
-    //write the Thomas Edison quote in top right corner
-
+	_myGCodeHandler->setFontScale(0.7);
+	_myGCodeHandler->setTextConstraints(10,0,630, 120);
+	_myGCodeHandler->setCursor(10, 70);
+	_myGCodeHandler->write(currentQuote, WRAP_WRAP, true);
 }
 
+// TODO: Mood tracking revamp
 void BoardManager::drawMorningMoodQs() {
-    //vertical spacing: 29
-    //moods coordinate start: 700, 354.962
-    //checkbox start top right corner of box: 780,137, 376.131, 805.537, 350.731
+  ToDoListItem moods[9] = {{"Grateful",""},{"Energetic",""},{"Peaceful",""},{"Stressed",""},{"Anxious",""},{"Okay",""},{"Sad",""},{"Angry",""},{"Content",""}};
 
-    ToDoListItem moods[9] = {{"Grateful",""},{"Energetic",""},{"Peaceful",""},{"Stressed",""},{"Anxious",""},{"Okay",""},{"Sad",""},{"Angry",""},{"Content",""}};
-
-    drawListSection(1, LIST_RIGHT, 9, "Morning Mood", moods, true, false);
-
-    //ask henry about sensor updating and storing data
-    //list of how which mood they feel in morning
-
+  drawListSection(1, LIST_RIGHT, 9, "Morning Mood", moods, true, false);
 }
 
+// TODO: Mood tracking revamp
 void BoardManager::drawEveningMoodQs() {
-      //vertical spacing: 29
-    double spacing = 30;
-    //moods coordinate start: 700, 354.962
-    //checkbox start top right corner of box: 780,137, 376.131, 805.537, 350.731
+  ToDoListItem moods[9] = {{"Grateful",""},{"Energetic",""},{"Peaceful",""},{"Stressed",""},{"Anxious",""},{"Okay",""},{"Sad",""},{"Angry",""},{"Content",""}};
 
-    String moods[9] = {"Grateful", "Engeretic", "Peaceful", "Stressed", "Anxious", "Okay", "Sad", "Angry", "Content"};
-
-    for(int i = 0; i < 9; i++){
-        _myGCodeHandler->setCursor(419, 408 - (spacing * i));
-        _myGCodeHandler->setFontScale(0.8);
-        _myGCodeHandler->write(moods[i], WRAP_TRUNCATE, true);//fix this///////////////////////////////////
-        _myGCodeHandler->drawRect(594.55, 409 - (spacing * i), 619.95, 435.29-(spacing * i));
-    }
-
-
+  drawListSection(1, LIST_RIGHT, 9, "Evening Mood", moods, true, false);
 }
 
+// TODO: Rewards
 void BoardManager::updateRewards() {
 	// graphic1 = (750, 400);
 	// grpahic2 = (647, 393);
@@ -487,7 +492,9 @@ void BoardManager::updateRewards() {
 
 }
 
-void BoardManager::updateFromConfig() {
+// TODO: Better documentation
+// TODO: Could this be less of a shitshow?
+void BoardManager::updateConfigFromSD() {
 	File myFile;
 	String input;
 	char next;
@@ -753,6 +760,7 @@ void BoardManager::updateFromConfig() {
 	}
 }
 
+// TODO: Indicate to user upon completion
 void BoardManager::openBluetoothBLE() {
 	unsigned long lastBluetoothEvent = millis();
 	BLEService whiteboardService("722cf000-6c3d-48ac-8180-64551d967680");
@@ -803,7 +811,7 @@ void BoardManager::openBluetoothBLE() {
 	while (true) {
 		updateButtonStates();
 		if(_buttonStates[BUTTON_INDEX[6]] && (unsigned long)(millis() - lastBluetoothEvent) >= 3000) {
-			_lastButtonPressTime[6] = millis();
+			_lastButtonPressTimes[6] = millis();
 			break;
 		}
 		BLE.poll();
@@ -1082,6 +1090,7 @@ void BoardManager::_printWifiStatus() {
 	_consoleSerial->println(" dBm");
 }
 
+// TODO: Interrupt with button press?
 void BoardManager::NTP() {
 	auto unixTime = _timeClient->getEpochTime() + (_timeZoneOffsetHours * 3600);
 	RTCTime timeToSet = RTCTime(unixTime);
@@ -1096,86 +1105,86 @@ void BoardManager::drawListSection(double rowStart, int leftOrRight, int numItem
 		numItems = 12 - (rowStart - 1);
 	}
 	
-	double startX = leftOrRight == LIST_LEFT ? TODO_LEFT_X_START : TODO_RIGHT_X_START;
+	double startX = leftOrRight == LIST_LEFT ? LAYOUT_TODO_LEFT_X_START : LAYOUT_TODO_RIGHT_X_START;
 	double leftLineX = startX;
-	double sensorX = leftOrRight == LIST_LEFT ? LEFT_SENSOR_X : RIGHT_SENSOR_X;
-	double rightLineX = sensorX - TODO_LINE_HEIGHT / 2.0;
-	double endX = sensorX + TODO_LINE_HEIGHT / 2.0;
+	double sensorX = leftOrRight == LIST_LEFT ? LAYOUT_LEFT_SENSOR_X : LAYOUT_RIGHT_SENSOR_X;
+	double rightLineX = sensorX - LAYOUT_TODO_LINE_HEIGHT / 2.0;
+	double endX = sensorX + LAYOUT_TODO_LINE_HEIGHT / 2.0;
 	if (hasLeftLabel) {
-		leftLineX += TODO_LEFT_LABEL_SPACE;
+		leftLineX += LAYOUT_TODO_LEFT_LABEL_SPACE;
 	}
-	double startY = FIRST_SENSOR - ((rowStart - 1.5) * TODO_LINE_HEIGHT);
+	double startY = LAYOUT_FIRST_SENSOR_Y - ((rowStart - 1.5) * LAYOUT_TODO_LINE_HEIGHT);
 
-	double endY = startY - ((numItems + 1) * TODO_LINE_HEIGHT);
+	double endY = startY - ((numItems + 1) * LAYOUT_TODO_LINE_HEIGHT);
 
 	_myGCodeHandler->drawLine(leftLineX, startY, leftLineX, endY);
 	for (int i = 1; i <= numItems + 1; i++) {
-		_myGCodeHandler->drawLine(startX, startY - (i * TODO_LINE_HEIGHT), endX, startY - (i * TODO_LINE_HEIGHT));
+		_myGCodeHandler->drawLine(startX, startY - (i * LAYOUT_TODO_LINE_HEIGHT), endX, startY - (i * LAYOUT_TODO_LINE_HEIGHT));
 	}
 
 	if (hasCheckboxes) {
 		_myGCodeHandler->drawLine(rightLineX, startY, rightLineX, endY);
 	}
-	_myGCodeHandler->setFontScale(TODO_ITEM_FONT_SCALE);
+	_myGCodeHandler->setFontScale(LAYOUT_TODO_ITEM_FONT_SCALE);
 	_myGCodeHandler->setTextConstraints(leftLineX, startY, rightLineX, endY);
 
-	double cursorOffsetX = TODO_CURSOR_OFFSET_X;
-	double cursorOffsetY = (TODO_LINE_HEIGHT - LETTER_CAP_HEIGHT * _myGCodeHandler->getFontScale()) / 2.0;
+	double cursorOffsetX = LAYOUT_TODO_CURSOR_OFFSET_X;
+	double cursorOffsetY = (LAYOUT_TODO_LINE_HEIGHT - LETTER_CAP_HEIGHT * _myGCodeHandler->getFontScale()) / 2.0;
 
-	_myGCodeHandler->setCursor(leftLineX + cursorOffsetX, startY - TODO_LINE_HEIGHT + cursorOffsetY);
+	_myGCodeHandler->setCursor(leftLineX + cursorOffsetX, startY - LAYOUT_TODO_LINE_HEIGHT + cursorOffsetY);
 
 	_myGCodeHandler->write(listName, WRAP_TRUNCATE, true);
 
 	for(int i = 0; i < numItems; i++) {
-		_myGCodeHandler->setCursor(leftLineX + cursorOffsetX, startY - ((i + 2) * TODO_LINE_HEIGHT) + cursorOffsetY);
+		_myGCodeHandler->setCursor(leftLineX + cursorOffsetX, startY - ((i + 2) * LAYOUT_TODO_LINE_HEIGHT) + cursorOffsetY);
 		_myGCodeHandler->write(itemList[i].name, WRAP_TRUNCATE, true);
 	}
 
 	if (hasLeftLabel) {
-		_myGCodeHandler->setFontScale(TODO_LABEL_FONT_SCALE);
-		_myGCodeHandler->setTextConstraints(startX, startY, startX + TODO_LEFT_LABEL_SPACE, endY);
+		_myGCodeHandler->setFontScale(LAYOUT_TODO_LABEL_FONT_SCALE);
+		_myGCodeHandler->setTextConstraints(startX, startY, startX + LAYOUT_TODO_LEFT_LABEL_SPACE, endY);
 
-		cursorOffsetY = (TODO_LINE_HEIGHT - LETTER_CAP_HEIGHT * _myGCodeHandler->getFontScale()) / 2.0;
+		cursorOffsetY = (LAYOUT_TODO_LINE_HEIGHT - LETTER_CAP_HEIGHT * _myGCodeHandler->getFontScale()) / 2.0;
 
 		for (int i = 0; i < numItems; i++) {
-			_myGCodeHandler->setCursor(startX, startY - ((i + 2) * TODO_LINE_HEIGHT) + cursorOffsetY);
+			_myGCodeHandler->setCursor(startX, startY - ((i + 2) * LAYOUT_TODO_LINE_HEIGHT) + cursorOffsetY);
 			_myGCodeHandler->write(itemList[i].label, WRAP_TRUNCATE, true);
 		}
 	}
 }
 
 void BoardManager::_displayError(const char* errorMessage, int lineNumber) {
-	_myGCodeHandler->setCursor(ERROR_START_X, ERROR_START_Y - lineNumber * LINE_HEIGHT * ERROR_FONT_SCALE);
-	_myGCodeHandler->setFontScale(ERROR_FONT_SCALE);
+	_myGCodeHandler->setCursor(LAYOUT_ERROR_START_X, LAYOUT_ERROR_START_Y - lineNumber * LINE_HEIGHT * LAYOUT_ERROR_FONT_SCALE);
+	_myGCodeHandler->setFontScale(LAYOUT_ERROR_FONT_SCALE);
 	_myGCodeHandler->write(errorMessage, WRAP_WRAP, false);
 }
 
 //reads all button states in just over 1ms
 void BoardManager::updateButtonStates() {
 	for(int i = 0; i < 16; i++) {
-    digitalWrite(MULTI_SELECT0, bitRead(i, 0));
-    digitalWrite(MULTI_SELECT1, bitRead(i, 1));
-    digitalWrite(MULTI_SELECT2, bitRead(i, 2));
-    digitalWrite(MULTI_SELECT3, bitRead(i, 3));
+    digitalWrite(PIN_MULTIPLEXER_S0, bitRead(i, 0));
+    digitalWrite(PIN_MULTIPLEXER_S1, bitRead(i, 1));
+    digitalWrite(PIN_MULTIPLEXER_S2, bitRead(i, 2));
+    digitalWrite(PIN_MULTIPLEXER_S3, bitRead(i, 3));
     delayMicroseconds(63);
 
-		_buttonStates[i] = digitalRead(SIGNAL_BUTTON_MULTI);
+		_buttonStates[i] = digitalRead(PIN_MULTIPLEXER_SIGNAL_BUTTON);
   }
 }
 
 //reads all hall effect sensor values in just over 1ms
 void BoardManager::updateHallEffectStates() {
 	for(int i = 0; i < 16; i++) {
-    digitalWrite(MULTI_SELECT0, bitRead(i, 0));
-    digitalWrite(MULTI_SELECT1, bitRead(i, 1));
-    digitalWrite(MULTI_SELECT2, bitRead(i, 2));
-    digitalWrite(MULTI_SELECT3, bitRead(i, 3));
+    digitalWrite(PIN_MULTIPLEXER_S0, bitRead(i, 0));
+    digitalWrite(PIN_MULTIPLEXER_S1, bitRead(i, 1));
+    digitalWrite(PIN_MULTIPLEXER_S2, bitRead(i, 2));
+    digitalWrite(PIN_MULTIPLEXER_S3, bitRead(i, 3));
     delayMicroseconds(63);
 
-		_hallSensorValues[i] = analogRead(SIGNAL_HALL_MULTI1);
-		_hallSensorValues[i + 16] = analogRead(SIGNAL_HALL_MULTI2);
-		_hallSensorValues[i + 32] = analogRead(SIGNAL_HALL_MULTI3);
-		_hallSensorValues[i + 48] = analogRead(SIGNAL_HALL_MULTI4);
+		_hallSensorValues[i] = analogRead(PIN_MULTIPLEXER_SIGNAL_HALL1);
+		_hallSensorValues[i + 16] = analogRead(PIN_MULTIPLEXER_SIGNAL_HALL2);
+		_hallSensorValues[i + 32] = analogRead(PIN_MULTIPLEXER_SIGNAL_HALL3);
+		_hallSensorValues[i + 48] = analogRead(PIN_MULTIPLEXER_SIGNAL_HALL4);
   }
 
 	for(int i = 0; i < 64; i++) {

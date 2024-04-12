@@ -7,21 +7,13 @@
 #include <SD.h>
 #include "RTC.h"
 
-
-bool buttonStates[16];
-unsigned long lastButtonPressTime[16];
-
-//holds hall effect sensor values
-int hallSensorValues[64];
-bool hallSensorStates[64];
-
 WiFiUDP Udp;  // A UDP instance to let us send and receive packets over UDP
 NTPClient timeClient(Udp);
 
 RTCTime currentTime;
 
 GCodeHandler myGCodeHandler(Serial1, Serial);
-BoardManager myBoardManager(Serial, myGCodeHandler, timeClient, currentTime, buttonStates, hallSensorValues, hallSensorStates, lastButtonPressTime);
+BoardManager myBoardManager(Serial, myGCodeHandler, timeClient, currentTime);
 
 void setup() {
 	//Serial is used to communicate with the console
@@ -30,31 +22,27 @@ void setup() {
 	Serial1.begin(115200);
 	delay(100);
 
-	pinMode(MULTI_SELECT0, OUTPUT);
-	pinMode(MULTI_SELECT1, OUTPUT);
-	pinMode(MULTI_SELECT2, OUTPUT);
-	pinMode(MULTI_SELECT3, OUTPUT);
+	pinMode(PIN_MULTIPLEXER_S0, OUTPUT);
+	pinMode(PIN_MULTIPLEXER_S1, OUTPUT);
+	pinMode(PIN_MULTIPLEXER_S2, OUTPUT);
+	pinMode(PIN_MULTIPLEXER_S3, OUTPUT);
 
-	pinMode(SIGNAL_BUTTON_MULTI, INPUT);
-	pinMode(SIGNAL_HALL_MULTI1, INPUT);
-	pinMode(SIGNAL_HALL_MULTI2, INPUT);
-	pinMode(SIGNAL_HALL_MULTI3, INPUT);
-	pinMode(SIGNAL_HALL_MULTI4, INPUT);
+	pinMode(PIN_MULTIPLEXER_SIGNAL_BUTTON, INPUT);
+	pinMode(PIN_MULTIPLEXER_SIGNAL_HALL1, INPUT);
+	pinMode(PIN_MULTIPLEXER_SIGNAL_HALL2, INPUT);
+	pinMode(PIN_MULTIPLEXER_SIGNAL_HALL3, INPUT);
+	pinMode(PIN_MULTIPLEXER_SIGNAL_HALL4, INPUT);
 
-	pinMode(SERVO_1_ENABLE, OUTPUT);
-	pinMode(SERVO_2_ENABLE, OUTPUT);
-	pinMode(SERVO_SIGNAL, OUTPUT);
+	pinMode(PIN_SERVO_1_ENABLE, OUTPUT);
+	pinMode(PIN_SERVO_2_ENABLE, OUTPUT);
+	pinMode(PIN_SERVO_SIGNAL, OUTPUT);
 
-	pinMode(LED_PIN, OUTPUT);
+	pinMode(PIN_INDICATOR_LED, OUTPUT);
 
-	pinMode(SD_CS_PIN, OUTPUT);
+	pinMode(PIN_SD_CHIP_SELECT, OUTPUT);
 
-	digitalWrite(SERVO_1_ENABLE, HIGH);
-	digitalWrite(SERVO_2_ENABLE, HIGH);
-
-	for(int i = 0; i < 16; i++) {
-		lastButtonPressTime[i] = millis();
-	}
+	digitalWrite(PIN_SERVO_1_ENABLE, HIGH);
+	digitalWrite(PIN_SERVO_2_ENABLE, HIGH);
 
   myBoardManager.initialize();
 }
@@ -62,23 +50,10 @@ void setup() {
 void loop() {
 	RTC.getTime(currentTime);
 
-	//check for button presses
-	myBoardManager.updateButtonStates();
-	for(int i = 0; i < NUM_BUTTONS; i++) {
-		if(buttonStates[BUTTON_INDEX[i]] && (unsigned long)(millis() - lastButtonPressTime[i]) >= BUTTON_PRESS_COOLDOWN) {
-			lastButtonPressTime[i] = millis();
-			buttonPressed(i);
-			break;
-		}
-	}
-
 	//magic happens here
-	//myBoardManager.update();
+	myBoardManager.update();
 
 	//update RTC from internet
-	if((unsigned long)(millis() - myBoardManager.lastTimeUpdate) > 600000) {
-		myBoardManager.NTP();
-	}
 }
 
 void buttonPressed(int buttonNum) {

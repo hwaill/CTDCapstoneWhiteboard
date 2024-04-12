@@ -24,7 +24,7 @@ inline const double CHARACTER_WIDTHS[68] {
 	31, //F
 	36, //G
 	36, //H
-	22, //I
+	16, //I
 	30, //J
 	36, //K
 	31, //L
@@ -46,7 +46,7 @@ inline const double CHARACTER_WIDTHS[68] {
 	31, //b
 	28, //c
 	32, //d
-	31, //e
+	32, //e
 	18, //f
 	31, //g
 	31, //h

@@ -375,13 +375,21 @@ function updateSiteFromValues() {
 // order: Todo[1], WeeklyCalendar[2], Quotes[3], Weather[4], Game[5], Mood[6], Theme[7]
 
 function displaySelectedFeatures() {
-    todoPic.style.display = todoCheckBox.checked ? "block" : "none";
-    weeklyPic.style.display = weeklyCalCheckBox.checked ? "block" : "none";
-    themePic.style.display = themeCheckBox.checked ? "block" : "none";
-    weatherPic.style.display = weatherCheckBox.checked ? "block" : "none";
-    tictacPic.style.display = gameCheckBox.checked ? "block" : "none";
-    moodPic.style.display = moodCheckBox.checked ? "block" : "none";
-    quotePic.style.display = quotesCheckBox.checked ? "block" : "none";
+    // todoPic.style.display = todoCheckBox.checked ? "block" : "none";
+    // weeklyPic.style.display = weeklyCalCheckBox.checked ? "block" : "none";
+    // themePic.style.display = themeCheckBox.checked ? "block" : "none";
+    // weatherPic.style.display = weatherCheckBox.checked ? "block" : "none";
+    // tictacPic.style.display = gameCheckBox.checked ? "block" : "none";
+    // moodPic.style.display = moodCheckBox.checked ? "block" : "none";
+    // quotePic.style.display = quotesCheckBox.checked ? "block" : "none";
+
+    todoPic.style.display = "none";
+    weeklyPic.style.display = "none";
+    themePic.style.display = "none";
+    weatherPic.style.display = "none";
+    tictacPic.style.display = "none";
+    moodPic.style.display = "none";
+    quotePic.style.display = "none";
 }
 
 async function updateFeatures() {
