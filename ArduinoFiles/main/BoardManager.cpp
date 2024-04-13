@@ -1,7 +1,7 @@
 #include "BoardManager.h"
 
 void bleConnectHandler(BLEDevice central);
-void bleDisconnectHandler(BLEDevice central);
+void bleDiscon nectHandler(BLEDevice central);
 
 BoardManager::BoardManager(Stream &consoleSerial, GCodeHandler &myGCodeHandler, NTPClient &timeClient, RTCTime &currentTime) {
 	_consoleSerial = &consoleSerial;
