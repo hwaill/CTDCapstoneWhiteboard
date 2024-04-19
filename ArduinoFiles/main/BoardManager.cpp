@@ -43,7 +43,7 @@ void BoardManager::initialize() {
 	} while(_currentTime->getYear() > 2100);
 
 	// FIXME: Get weather working
-	// while(!getWeather()) {};
+	while(!getWeather()) {};
 
 	digitalWrite(PIN_INDICATOR_LED, HIGH);
 	delay(400);
@@ -94,6 +94,31 @@ void BoardManager::update() {
 				eveningUpdate();
 			}
 		}
+	}
+}
+
+void BoardManager::buttonPressed(int buttonNum) {
+	if(buttonNum == 0) {
+		//pause board button
+		togglePaused();
+	} else if(buttonNum == 1) {
+		//finalize to-dos button
+		finalizeToDos();
+	} else if(buttonNum == 2) {
+		//play a game button
+		ticTacToe();
+	} else if(buttonNum == 3) {
+		//evening update button
+		forceEveningUpdate();
+	} else if(buttonNum == 4) {
+		//daytime udpate button
+		forceDaytimeUpdate();
+	} else if(buttonNum == 5) {
+		//morning update button
+		forceMorningUpdate();
+	} else if(buttonNum == 6) {
+		//connect to bluetooth button
+		openBluetoothBLE();
 	}
 }
 
@@ -357,6 +382,8 @@ bool BoardManager::getWeather() {
 		_wifiStatus = WiFi.begin(_wifiSSID, _wifiPass); //subbed with variables from .h
 	}
 
+	_printWifiStatus();
+
 	client.stop();
 
 	_consoleSerial->println("\nStarting connection to server...");
@@ -378,29 +405,36 @@ bool BoardManager::getWeather() {
   	_consoleSerial->println("connection failed");
   }
 
-	uint32_t received_data_num = 0;
-	uint32_t data_num = 0;
-	bool jsonDetected = false;
-	char data[500];
+	bool readSuccess = false;
 
-	_consoleSerial->println("reading response...");
-	while (client.available() && data_num < 500) {
-		char c = client.read();
-		_consoleSerial->print(c);
-		if ('{' == c) {
-			jsonDetected = true;
+	while(!readSuccess) {
+		uint32_t received_data_num = 0;
+		uint32_t data_num = 0;
+		bool jsonDetected = false;
+		char data[500];
+
+		_consoleSerial->println("reading response...");
+		while (client.available() && data_num < 500) {
+			char c = client.read();
+			_consoleSerial->print(c);
+			if ('{' == c) {
+				jsonDetected = true;
+			}
+			if (jsonDetected) {
+				data[data_num++] = c;
+			}
 		}
+		_consoleSerial->println();
+		// TODO: Would like more weather information to display
 		if (jsonDetected) {
-			data[data_num++] = c;
-		}
-	}
-
-	// TODO: Would like more weather information to display
-	if (jsonDetected) {
-		myObject = JSON.parse(data);
-		_consoleSerial->print("Temperature F: ");
-		if (myObject.hasOwnProperty("current_weather")) {
-			temperature = (double)myObject["current_weather"]["temperature"];
+			_consoleSerial->println("JSON DETECTED");
+			myObject = JSON.parse(data);
+			_consoleSerial->print("Temperature F: ");
+			if (myObject.hasOwnProperty("current_weather")) {
+				temperature = (double)myObject["current_weather"]["temperature"];
+				_consoleSerial->println(temperature);
+			}
+			readSuccess = true;
 		}
 	}
 }
@@ -1052,6 +1086,7 @@ bool BoardManager::_connectToWifi() {
 	while (_wifiStatus != WL_CONNECTED && attemptCount <= 10) {
 		updateButtonStates();
 		if(_buttonStates[BUTTON_INDEX[6]]) {
+			_consoleSerial->println("Opening bluetooth override.");
 			openBluetoothBLE();
 		}
 

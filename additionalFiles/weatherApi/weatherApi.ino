@@ -14,8 +14,8 @@ JSONVar myObject;
 unsigned char frame[8][12];
 int temperature = 0;
 ///////please enter your sensitive data in the Secret tab/arduino_secrets.h
-char ssid[] = "iPhone";  // your network SSID (name)
-char pass[] = "henryhenryhenry";  // your network password (use for WPA, or use as key for WEP)
+char ssid[] = "WifiDeluxe";  // your network SSID (name)
+char pass[] = "fruitsandvegetables";  // your network password (use for WPA, or use as key for WEP)
 int keyIndex = 0;           // your network key index number (needed only for WEP)
 
 int status = WL_IDLE_STATUS;

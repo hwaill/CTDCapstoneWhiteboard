@@ -55,28 +55,3 @@ void loop() {
 
 	//update RTC from internet
 }
-
-void buttonPressed(int buttonNum) {
-	if(buttonNum == 0) {
-		//pause board button
-		myBoardManager.togglePaused();
-	} else if(buttonNum == 1) {
-		//finalize to-dos button
-		myBoardManager.finalizeToDos();
-	} else if(buttonNum == 2) {
-		//play a game button
-		myBoardManager.ticTacToe();
-	} else if(buttonNum == 3) {
-		//evening update button
-		myBoardManager.forceEveningUpdate();
-	} else if(buttonNum == 4) {
-		//daytime udpate button
-		myBoardManager.forceDaytimeUpdate();
-	} else if(buttonNum == 5) {
-		//morning update button
-		myBoardManager.forceMorningUpdate();
-	} else if(buttonNum == 6) {
-		//connect to bluetooth button
-		myBoardManager.openBluetoothBLE();
-	}
-}
