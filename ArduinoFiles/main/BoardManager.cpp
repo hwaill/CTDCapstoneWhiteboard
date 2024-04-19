@@ -518,6 +518,28 @@ void BoardManager::drawWeeklyToDo() {
 	drawListSection(1, LIST_RIGHT, 9, "Weekly To Do's", moods, true, false);
 }
 
+void BoardManager::CornerMoodTracker() {
+	_myGCodeHandler->setCursor(670,250);
+	_myGCodeHandler->setFontScale(0.8);
+	_myGCodeHandler->write("How was your..?", WRAP_TRUNCATE, false);
+
+	_myGCodeHandler->setCursor(670,250);
+	_myGCodeHandler->setFontScale(0.8);
+	_myGCodeHandler->write("sleep?", WRAP_TRUNCATE, false);
+
+	_myGCodeHandler->setCursor(670,250);
+	_myGCodeHandler->setFontScale(0.8);
+	_myGCodeHandler->write("energy?", WRAP_TRUNCATE, false);
+
+	_myGCodeHandler->setCursor(670,250);
+	_myGCodeHandler->setFontScale(0.8);
+	_myGCodeHandler->write("mood?", WRAP_TRUNCATE, false);
+
+	//TODO: need to finish
+	//not done yet
+
+}
+
 
 // TODO: Rewards
 void BoardManager::updateRewards() {
