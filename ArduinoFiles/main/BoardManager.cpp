@@ -1,7 +1,7 @@
 #include "BoardManager.h"
 
 void bleConnectHandler(BLEDevice central);
-void bleDiscon nectHandler(BLEDevice central);
+void bleDisconnectHandler(BLEDevice central);
 
 BoardManager::BoardManager(Stream &consoleSerial, GCodeHandler &myGCodeHandler, NTPClient &timeClient, RTCTime &currentTime) {
 	_consoleSerial = &consoleSerial;
@@ -94,6 +94,31 @@ void BoardManager::update() {
 				eveningUpdate();
 			}
 		}
+	}
+}
+
+void BoardManager::buttonPressed(int buttonNum) {
+	if(buttonNum == 0) {
+		//pause board button
+		togglePaused();
+	} else if(buttonNum == 1) {
+		//finalize to-dos button
+		finalizeToDos();
+	} else if(buttonNum == 2) {
+		//play a game button
+		ticTacToe();
+	} else if(buttonNum == 3) {
+		//evening update button
+		forceEveningUpdate();
+	} else if(buttonNum == 4) {
+		//daytime udpate button
+		forceDaytimeUpdate();
+	} else if(buttonNum == 5) {
+		//morning update button
+		forceMorningUpdate();
+	} else if(buttonNum == 6) {
+		//connect to bluetooth button
+		openBluetoothBLE();
 	}
 }
 
@@ -1052,6 +1077,7 @@ bool BoardManager::_connectToWifi() {
 	while (_wifiStatus != WL_CONNECTED && attemptCount <= 10) {
 		updateButtonStates();
 		if(_buttonStates[BUTTON_INDEX[6]]) {
+			_consoleSerial->println("Opening bluetooth override.");
 			openBluetoothBLE();
 		}
 
