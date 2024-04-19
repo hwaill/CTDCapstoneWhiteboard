@@ -43,7 +43,7 @@ void BoardManager::initialize() {
 	} while(_currentTime->getYear() > 2100);
 
 	// FIXME: Get weather working
-	// while(!getWeather()) {};
+	while(!getWeather()) {};
 
 	digitalWrite(PIN_INDICATOR_LED, HIGH);
 	delay(400);
@@ -382,6 +382,8 @@ bool BoardManager::getWeather() {
 		_wifiStatus = WiFi.begin(_wifiSSID, _wifiPass); //subbed with variables from .h
 	}
 
+	_printWifiStatus();
+
 	client.stop();
 
 	_consoleSerial->println("\nStarting connection to server...");
@@ -403,29 +405,36 @@ bool BoardManager::getWeather() {
   	_consoleSerial->println("connection failed");
   }
 
-	uint32_t received_data_num = 0;
-	uint32_t data_num = 0;
-	bool jsonDetected = false;
-	char data[500];
+	bool readSuccess = false;
 
-	_consoleSerial->println("reading response...");
-	while (client.available() && data_num < 500) {
-		char c = client.read();
-		_consoleSerial->print(c);
-		if ('{' == c) {
-			jsonDetected = true;
+	while(!readSuccess) {
+		uint32_t received_data_num = 0;
+		uint32_t data_num = 0;
+		bool jsonDetected = false;
+		char data[500];
+
+		_consoleSerial->println("reading response...");
+		while (client.available() && data_num < 500) {
+			char c = client.read();
+			_consoleSerial->print(c);
+			if ('{' == c) {
+				jsonDetected = true;
+			}
+			if (jsonDetected) {
+				data[data_num++] = c;
+			}
 		}
+		_consoleSerial->println();
+		// TODO: Would like more weather information to display
 		if (jsonDetected) {
-			data[data_num++] = c;
-		}
-	}
-
-	// TODO: Would like more weather information to display
-	if (jsonDetected) {
-		myObject = JSON.parse(data);
-		_consoleSerial->print("Temperature F: ");
-		if (myObject.hasOwnProperty("current_weather")) {
-			temperature = (double)myObject["current_weather"]["temperature"];
+			_consoleSerial->println("JSON DETECTED");
+			myObject = JSON.parse(data);
+			_consoleSerial->print("Temperature F: ");
+			if (myObject.hasOwnProperty("current_weather")) {
+				temperature = (double)myObject["current_weather"]["temperature"];
+				_consoleSerial->println(temperature);
+			}
+			readSuccess = true;
 		}
 	}
 }
