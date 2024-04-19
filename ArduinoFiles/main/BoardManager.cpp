@@ -512,6 +512,13 @@ void BoardManager::drawEveningMoodQs() {
   drawListSection(1, LIST_RIGHT, 9, "Evening Mood", moods, true, false);
 }
 
+void BoardManager::drawWeeklyToDo() {
+	ToDoListItem moods[5] = {{"Do Laundry",""}, {"Dishes",""}, {"Dinner Date",""}, {"Trash",""}, {"Water Plants", ""}};
+
+	drawListSection(1, LIST_RIGHT, 9, "Weekly To Do's", moods, true, false);
+}
+
+
 // TODO: Rewards
 void BoardManager::updateRewards() {
 	// graphic1 = (750, 400);
