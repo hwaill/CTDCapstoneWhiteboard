@@ -42,7 +42,6 @@ void BoardManager::initialize() {
 		_currentDay = _currentTime->getUnixTime() / 86400UL;
 	} while(_currentTime->getYear() > 2100);
 
-	// FIXME: Get weather working
 	while(!getWeather()) {};
 
 	digitalWrite(PIN_INDICATOR_LED, HIGH);
@@ -151,13 +150,12 @@ void BoardManager::morningUpdate() {
 	//print todos
 	drawListSection(1, LIST_LEFT, _numMorningToDos, "Morning To-Do", _morningToDoList, true, false);
 	//print events?
-	//drawListSection(TODO_Y_START, TODO_RIGHT_X_START, _numWeeklyToDos, "Weekly To-Do", _weeklyToDoList, true, false);
-	//print weather
+	drawWeeklyToDos();//print weather
 	drawWeather();
 	//print quote
 	drawQuote();
 	//print sleep survey
-	drawMorningMoodQs();
+	//drawMorningMoodQs();
 
 	_myGCodeHandler->returnToHome();
 
@@ -247,6 +245,7 @@ void BoardManager::ticTacToe() {
 			}
 		} else {
 			//computer's turn
+			// TODO: Make computer avoid bumping possible magnets
 			ticTacToe_computerMove();
 			playerTurn = true;
 		}
@@ -303,7 +302,6 @@ bool BoardManager::ticTacToe_isBoardFull() {
 }
 
 // Computer makes a random move on the board
-// TODO: Make computer complete a line if a win is available
 void BoardManager::ticTacToe_computerMove() {
 	randomSeed(millis());
   int row, col;
@@ -358,7 +356,6 @@ void BoardManager::finalizeToDos() {
 
 }
 
-// FIXME: Weather
 bool BoardManager::getWeather() {
 	WiFiClient client;
 	_wifiStatus = WL_IDLE_STATUS;
@@ -439,7 +436,7 @@ bool BoardManager::getWeather() {
 	}
 }
 
-// TODO: Make this better
+// TODO: Make weather display better
 void BoardManager::drawWeather() {
   _myGCodeHandler->setCursor(639.149, 473.776);
   _myGCodeHandler->setFontScale(0.8);
@@ -512,33 +509,32 @@ void BoardManager::drawEveningMoodQs() {
   drawListSection(1, LIST_RIGHT, 9, "Evening Mood", moods, true, false);
 }
 
-void BoardManager::drawWeeklyToDo() {
-	ToDoListItem moods[5] = {{"Do Laundry",""}, {"Dishes",""}, {"Dinner Date",""}, {"Trash",""}, {"Water Plants", ""}};
+void BoardManager::drawWeeklyToDos() {
+	ToDoListItem moods[5] = {{"Do laundry",""}, {"Dishes",""}, {"Dinner date",""}, {"Trash",""}, {"Water plants", ""}};
 
-	drawListSection(1, LIST_RIGHT, 9, "Weekly To Do's", moods, true, false);
+	drawListSection(1, LIST_RIGHT, 5, "Weekly To-Do", moods, true, false);
 }
 
-void BoardManager::CornerMoodTracker() {
-	_myGCodeHandler->setCursor(670,250);
-	_myGCodeHandler->setFontScale(0.8);
-	_myGCodeHandler->write("How was your..?", WRAP_TRUNCATE, false);
+// void BoardManager::CornerMoodTracker() {
+// 	_myGCodeHandler->setCursor(670,250);
+// 	_myGCodeHandler->setFontScale(0.8);
+// 	_myGCodeHandler->write("How was your..?", WRAP_TRUNCATE, false);
 
-	_myGCodeHandler->setCursor(670,250);
-	_myGCodeHandler->setFontScale(0.8);
-	_myGCodeHandler->write("sleep?", WRAP_TRUNCATE, false);
+// 	_myGCodeHandler->setCursor(670,250);
+// 	_myGCodeHandler->setFontScale(0.8);
+// 	_myGCodeHandler->write("sleep?", WRAP_TRUNCATE, false);
 
-	_myGCodeHandler->setCursor(670,250);
-	_myGCodeHandler->setFontScale(0.8);
-	_myGCodeHandler->write("energy?", WRAP_TRUNCATE, false);
+// 	_myGCodeHandler->setCursor(670,250);
+// 	_myGCodeHandler->setFontScale(0.8);
+// 	_myGCodeHandler->write("energy?", WRAP_TRUNCATE, false);
 
-	_myGCodeHandler->setCursor(670,250);
-	_myGCodeHandler->setFontScale(0.8);
-	_myGCodeHandler->write("mood?", WRAP_TRUNCATE, false);
+// 	_myGCodeHandler->setCursor(670,250);
+// 	_myGCodeHandler->setFontScale(0.8);
+// 	_myGCodeHandler->write("mood?", WRAP_TRUNCATE, false);
 
-	//TODO: need to finish
-	//not done yet
-
-}
+// 	//TODO: need to finish
+// 	//not done yet
+// }
 
 
 // TODO: Rewards

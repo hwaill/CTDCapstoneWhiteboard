@@ -181,6 +181,7 @@ class BoardManager {
 		void drawQuote();
 		void drawMorningMoodQs();
 		void drawEveningMoodQs();
+		void drawWeeklyToDos();
 
 		void updateRewards();
 	private:
