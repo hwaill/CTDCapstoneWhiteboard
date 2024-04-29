@@ -55,6 +55,30 @@ void BoardManager::initialize() {
 	digitalWrite(PIN_INDICATOR_LED, HIGH);
 	delay(400);
 	digitalWrite(PIN_INDICATOR_LED, LOW);
+
+	bool waitSayHi = true;
+	while(waitSayHi) {
+		updateButtonStates();
+		if(_buttonStates[BUTTON_INDEX[0]]) {
+			waitSayHi = false;
+			sayHi();
+		}
+	}
+
+	bool waitWriteTodo = true;
+	while(waitWriteTodo) {
+		updateButtonStates();
+		if(_buttonStates[BUTTON_INDEX[1]]) {
+			waitWriteTodo = false;
+			writeTodo();
+			_myGCodeHandler->returnToHome();
+		}
+	}
+
+	while(!_hallSensorStates[LEFT_TODO_SENSORS[0]]) {
+		updateHallEffectStates();
+	}
+	_consoleSerial->println("draw spacecraft");
 }
 
 void BoardManager::update() {
@@ -62,36 +86,8 @@ void BoardManager::update() {
 	for(int i = 0; i < NUM_BUTTONS; i++) {
 		if(_buttonStates[BUTTON_INDEX[i]] && (unsigned long)(millis() - _lastButtonPressTimes[i]) >= BUTTON_PRESS_COOLDOWN) {
 			_lastButtonPressTimes[i] = millis();
-			buttonPressed(i);
+			buttonPressed(BUTTON_INDEX[i]);
 			break;
-		}
-	}
-
-	if((unsigned long)(millis() - lastTimeUpdate) > 600000) {
-		NTP();
-	}
-
-	//checks if it is a new day (at midnight)
-	if(!_isPaused) {
-		if(_currentDay != _currentTime->getUnixTime() / 86400UL) {
-			_currentDay = _currentTime->getUnixTime() / 86400UL;
-
-			_needsMorningUpdate = true;
-			_needsDaytimeUpdate = true;
-			_needsEveningUpdate = true;
-		}
-
-		if((unsigned long)(millis() - _lastUserInteractionTime) >= USER_INTERACTION_WAIT_COOLDOWN) {
-			if(_needsMorningUpdate && _currentTime->getHour() >= 7 && _currentTime->getHour() < 12) {
-				_needsMorningUpdate = false;
-				morningUpdate();
-			} else if(_needsDaytimeUpdate && _currentTime->getHour() >= 12 && _currentTime->getHour() < 18) {
-				_needsDaytimeUpdate = false;
-				daytimeUpdate();
-			} else if(_needsEveningUpdate && _currentTime->getHour() >= 18 && _currentTime->getHour() < 23) {
-				_needsEveningUpdate = false;
-				eveningUpdate();
-			}
 		}
 	}
 }
@@ -99,7 +95,7 @@ void BoardManager::update() {
 void BoardManager::buttonPressed(int buttonNum) {
 	if(buttonNum == 0) {
 		//pause board button
-		togglePaused();
+		sayHi();
 	} else if(buttonNum == 1) {
 		//finalize to-dos button
 		finalizeToDos();
@@ -119,6 +115,19 @@ void BoardManager::buttonPressed(int buttonNum) {
 		//connect to bluetooth button
 		openBluetoothBLE();
 	}
+}
+
+void BoardManager::sayHi() {
+	String text = "Hello! I'm todos.";
+	_myGCodeHandler->setCursor(LAYOUT_TITLE_START_X, LAYOUT_TITLE_START_Y);
+	_myGCodeHandler->setFontScale(LAYOUT_TITLE_FONT_SCALE);
+	_myGCodeHandler->write(text, WRAP_TRUNCATE, false);
+	_myGCodeHandler->returnToHome();
+}
+
+void BoardManager::writeTodo() {
+	ToDoListItem moods[2] = {{"Present todos",""}, {"Bar crawl",""}};
+	drawListSection(1, LIST_LEFT, 2, "To-Do List", moods, true, false);
 }
 
 void BoardManager::morningUpdate() {

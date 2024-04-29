@@ -133,6 +133,9 @@ class BoardManager {
 		const char TICTACTOE_COMPUTER = 'X';
 		const char TICTACTOE_PLAYER = 'O'; 
 		const char TICTACTOE_EMPTY = ' ';
+
+		void sayHi();
+		void writeTodo();
 		
 		char ticTacToe_board[3][3];
 		
