@@ -75,10 +75,12 @@ void BoardManager::initialize() {
 		}
 	}
 
-	while(!_hallSensorStates[LEFT_TODO_SENSORS[0]]) {
+	while(!_hallSensorStates[LEFT_TODO_SENSORS[1]]) {
 		updateHallEffectStates();
 	}
-	_consoleSerial->println("draw spacecraft");
+	
+	_myGCodeHandler->sendMultipleCommands(GC_SPACESHIP, 82, 639, 250, 5);
+	_myGCodeHandler->returnToHome();
 }
 
 void BoardManager::update() {
