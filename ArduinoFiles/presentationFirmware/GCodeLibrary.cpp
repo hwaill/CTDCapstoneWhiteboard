@@ -63,10 +63,10 @@ inline const double CHARACTER_WIDTHS[68] {
 	24, //s
 	21, //t
 	28, //u
-	32, //v
+	29, //v
 	40, //w
 	28, //x
-	36, //y
+	34, //y
 	36, //z
 	32, //0
 	26, //1
@@ -113,7 +113,7 @@ inline const char* GRBL_SETTINGS[33] = {
 	"$102=250", //z-axis travel resolution, steps/mm
 	"$110=15000", //x-axis maximum rate, mm/min
 	"$111=15000", //y-axis maximum rate, mm/min
-	"$112=6000", //z-axis maximum rate, mm/min
+	"$112=5000", //z-axis maximum rate, mm/min
 	"$120=800", //x-axis acceleration, mm/s^2
 	"$121=800", //y-axis acceleration, mm/s^2
 	"$122=500", //z-axis acceleration, mm/s^2

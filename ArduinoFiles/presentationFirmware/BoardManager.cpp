@@ -62,6 +62,20 @@ void BoardManager::initialize() {
 		if(_buttonStates[BUTTON_INDEX[0]]) {
 			waitSayHi = false;
 			sayHi();
+		} else if(_buttonStates[BUTTON_INDEX[4]]) {
+			drawWeeklyToDos();
+			drawWeather();
+			drawQuote();
+			_myGCodeHandler->returnToHome();
+			while(true) {
+
+			}
+		} else if(_buttonStates[BUTTON_INDEX[5]]) {
+			drawQuote();
+			_myGCodeHandler->returnToHome();
+			while(true) {
+
+			}
 		}
 	}
 
@@ -78,7 +92,7 @@ void BoardManager::initialize() {
 	while(!_hallSensorStates[LEFT_TODO_SENSORS[1]]) {
 		updateHallEffectStates();
 	}
-	
+
 	_myGCodeHandler->sendMultipleCommands(GC_SPACESHIP, 82, 639, 250, 5);
 	_myGCodeHandler->returnToHome();
 }
@@ -498,7 +512,7 @@ void BoardManager::drawQuote() {
 	randomSeed(millis());
 	int index = random(31);
 
-	currentQuote = quotes[index];
+	currentQuote = quotes[9];
 	
 	_myGCodeHandler->setFontScale(0.7);
 	_myGCodeHandler->setTextConstraints(10,0,630, 120);
