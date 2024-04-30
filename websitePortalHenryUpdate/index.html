@@ -28,7 +28,7 @@
             <div class="needsConnectionContent">
                 <h1 class="title">Welcome to your todos whiteboard configuration portal.</h1>
                 <h2 class="subtitle">Please connect to your board.</h2>
-                <button onclick="goMain()">Connect</button>
+                <button onclick="connectToBluetooth()">Connect</button>
                 <p id="connectionResultMessage"></p>
             </div>
         </div>
@@ -145,8 +145,12 @@
                 <!--intructions/ maybe board preview ----------------------->
                 <div class="featureConfig" id="boardDisplayPage">
                     <div class="featureConfigContent">
-                        <h1>Board Preview</h2>
-                        <p>On the left, select your features.</p>
+
+                        <div class="title-board">
+                            <h1>Board Preview</h2>
+                            <p>On the left, select your features.</p>
+                        </div>
+                    
                         <div class="boardHolder">
                             <img id="board" src="images/whiteBoard.png">
                        
